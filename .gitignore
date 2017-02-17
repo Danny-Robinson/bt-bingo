@@ -39,4 +39,4 @@ jspm_packages
 # mac OS folder file
 .DS_STORE
 
-.idea
+.idea/
