@@ -1,9 +1,11 @@
 import React from 'react';
 import TicketBook from './TicketBook';
-import bingoTicketApi from '../fakeDB/bingoTicket';
+import bingoTicketApi from '../../fakeDB/bingoTicket';
+import NavigationBar from './static/NavigationBar';
 
 const App = ({ text }) => (
   <span>
+      <NavigationBar />
       <TicketBook book={bingoTicketApi.provideBook()} />
   </span>
 );
