@@ -35,7 +35,6 @@ class TicketBookApi {
     static genCount = 0;
     static gen2Count = 0;
     static gen3Count = 0;
-    static cycleCount = 0;
     static genWave1Complete = false;
     static genWave2Complete = false;
     static genWave3Complete = false;
@@ -62,12 +61,11 @@ class TicketBookApi {
             this.gen3Count++;
             this.genWave3();
         }
-        if (this.allocatedNumbers.length < 90){
-            this.cycleCount++;
-            if (this.cycleCount < 10){
-                this.generateTicket();
-            }
+        if (this.allocatedNumbers.length < 90 || this.hasBlankColumn()){
+            //console.log("Regen");
+            this.generateTicket();
         }
+        //TODO: Reorder columns; descending
         //console.log("Ticket built successfully");
     }
 
@@ -147,6 +145,18 @@ class TicketBookApi {
         }
     }
 
+    static hasBlankColumn(){
+        let hasBlankCol = false;
+        for (let ticket=0; ticket < 6; ticket++){
+            for (let column=0; column<9; column++){
+                if (this.allocatedCellsInTicketColumn(ticket, column) == 0){
+                    hasBlankCol = true;
+                }
+            }
+        }
+        return hasBlankCol;
+    }
+
     static stealForRow(stealToTicket, stealToRow, unallocatedCol){
         let emptyCols = this.getEmptyCols(stealToTicket, stealToRow);
         for (let i = 0; i<emptyCols.length; i++){
@@ -170,14 +180,19 @@ class TicketBookApi {
 }
 
     static notLastNumberInTicketCol(ticket, column){
+        return (this.allocatedCellsInTicketColumn(ticket, column) != 1);
+    }
+
+    static allocatedCellsInTicketColumn(ticket, column){
         let count = 0;
         for (let row =0; row < 3; row++){
             if (this.cellHasValue(ticket, row, column)){
                 count ++;
             }
         }
-        return (count != 1);
+        return count;
     }
+
     static findEmptyCol() {
         if (this.emptyWave > 5) {
             this.emptyWave = 0;
