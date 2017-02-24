@@ -41,7 +41,8 @@ class TicketBookApi {
 
     static provideBook(){
         this.generateTicket();
-        return this.getTicketBook();
+        this.reorderCols();
+        return this.getTicketBook();  //will become write to database
     }
 
     static getTicketBook() {
@@ -65,8 +66,6 @@ class TicketBookApi {
             //console.log("Regen");
             this.generateTicket();
         }
-        //TODO: Reorder columns; descending
-        //console.log("Ticket built successfully");
     }
 
     static refresh(){
@@ -145,6 +144,58 @@ class TicketBookApi {
         }
     }
 
+    static reorderCols(){
+        for (let ticket=0; ticket<6; ticket++){
+            for (let column=0; column<9; column++){
+                this.orderColumn(ticket, column);
+            }
+        }
+    }
+
+    static orderColumn(ticket, column){
+        let cell1 = ticketBook[ticket][0][column];
+        let cell2 = ticketBook[ticket][1][column];
+        let cell3 = ticketBook[ticket][2][column];
+        let allocatedCells = this.allocatedCellsInTicketColumn(ticket, column);
+        if (allocatedCells == 3){
+            if (!(cell1 < cell2 && cell2 < cell3)){
+                this.reorderThreeCells(ticket, column)
+            }
+        } else if (allocatedCells == 2){
+            if (!this.cellHasValue(ticket, 0, column)){
+                if (!(cell2 < cell3)) {
+                    this.swapCell(ticket, 1, ticket, 2, column);
+                }
+            } else if (!this.cellHasValue(ticket, 1, column)){
+                if (!(cell1 < cell3)) {
+                    this.swapCell(ticket, 0, ticket, 2, column);
+                }
+            } else if (!this.cellHasValue(ticket, 2, column)){
+                if (!(cell1 < cell2)){
+                    this.swapCell(ticket, 0, ticket, 1, column);
+                }
+            }
+        }
+    }
+
+    static reorderThreeCells(ticket, column){
+        let cell1 = ticketBook[ticket][0][column];
+        let cell2 = ticketBook[ticket][1][column];
+        let cell3 = ticketBook[ticket][2][column];
+        while (!(cell1 < cell2 && cell2 < cell3)){
+            if (cell1 > cell2){
+                this.swapCell(ticket, 0, ticket, 1, column);
+            } else if (cell2 > cell3) {
+                this.swapCell(ticket, 1, ticket, 2, column);
+            } else if (cell1 > cell3){
+                this.swapCell(ticket, 0, ticket, 2, column);
+            }
+            cell1 = ticketBook[ticket][0][column];
+            cell2 = ticketBook[ticket][1][column];
+            cell3 = ticketBook[ticket][2][column];
+        }
+    }
+
     static hasBlankColumn(){
         let hasBlankCol = false;
         for (let ticket=0; ticket < 6; ticket++){
@@ -166,7 +217,7 @@ class TicketBookApi {
                         && this.rowHasCellToSteal(ticket, row, emptyCols[i])
                         && this.notLastNumberInTicketCol(ticket, row, emptyCols[i])
                         && !(ticket == stealToTicket && row == stealToRow)){
-                        this.stealCell(ticket, row, stealToTicket, stealToRow, emptyCols[i]);
+                        this.swapCell(ticket, row, stealToTicket, stealToRow, emptyCols[i]);
                         return;
                     }
                 }
@@ -174,10 +225,11 @@ class TicketBookApi {
         }
     }
 
-    static stealCell(ticket, row, stealToTicket, stealToRow, stealToColumn){
-    ticketBook[stealToTicket][stealToRow][stealToColumn] = ticketBook[ticket][row][stealToColumn];
-    ticketBook[ticket][row][stealToColumn] = '';
-}
+    static swapCell(ticket, row, ticket2, row2, column){
+        let temp = ticketBook[ticket][row][column];
+        ticketBook[ticket][row][column] = ticketBook[ticket2][row2][column];
+        ticketBook[ticket2][row2][column] = temp;
+    }
 
     static notLastNumberInTicketCol(ticket, column){
         return (this.allocatedCellsInTicketColumn(ticket, column) != 1);
