@@ -7,7 +7,7 @@ import React from 'react';
 const rootElement = document.getElementById('root');
 
 let render = () => {
-	const App = require('./components/App').default;
+	const App = require('./view/components/App').default;
 	ReactDOM.render(<App text="example text" />, rootElement);
   //<Router history={browserHistory} routes={routes}/>, document.getElementById('app'));
 };
@@ -33,7 +33,7 @@ if (module.hot) {
     }
   };
 
-  module.hot.accept('./components/App', () => {
+  module.hot.accept('./view/components/App', () => {
     setTimeout(render);
   });
 }
