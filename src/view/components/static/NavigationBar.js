@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from '../../../../css/static/navigationBar.css';
+import {Link} from 'react-router';
 
 const NavigationBar = () => (
 
@@ -31,16 +32,16 @@ const NavigationBar = () => (
     <nav>
        <ul>
             <li >
-                <a href="">Active tickets</a>
+                <Link to="/" activeClassName="active">Active tickets</Link>
             </li>
             <li>
-                <a href="">Purchase tickets</a>
+                <Link to="/purchaseTickets" activeClassName="active">Purchase Tickets</Link>
             </li>
             <li>
-                <a href="">Expired tickets</a>
+                <Link to="/expiredTickets" activeClassName="active">Expired Tickets</Link>
             </li>
             <li>
-                <a href="">Leaderboard</a>
+                <Link to="/leaderboard" activeClassName="active">Leaderboard</Link>
             </li>
             <li>
                 <a href="">Logout</a>
