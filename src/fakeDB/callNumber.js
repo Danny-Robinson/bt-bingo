@@ -3,21 +3,23 @@
 let prev_numbers = [];
 
 let min = 1;
-let max = 5;
+let max = 90;
 
 class callNumber {
+    //import callNumber from '../../fakeDB/callNumber';
     //<div>{callNumber.getAllRandomNumbers()}</div>
 
     static getAllRandomNumbers()
     {
         while (true) {
-            //let randNum = this.getValidRandomNumber();
-            //if (randNum == -1) {
-
             if (this.prevNumbers_IsFull()) {
+                this.prevNumbers_PrintAll();
                 return this.prevNumbers_Get(0);
             } else {
-                this.prevNumbers_Push(this.getValidRandomNumber());
+                let num = this.getValidRandomNumber();
+                if (num != -1){
+                    this.prevNumbers_Push(num);
+                }
             }
         }
     }
@@ -46,6 +48,11 @@ class callNumber {
         return -1;
     }
 
+    static prevNumbers_PrintAll() {
+        for (let x = 0; x <= this.prevNumbers_Length(); x++) {
+            console.log(this.prevNumbers_Get(x));
+        }
+    }
     static prevNumbers_IsFull(){
         return (this.prevNumbers_Length() >= max);
     }
@@ -58,11 +65,11 @@ class callNumber {
     static prevNumbers_Length() {
         return prev_numbers.length;
     }
-    static prevNumbers_IndexOf(num) {
-        return prev_numbers.indexOf(num);
-    }
     static prevNumbers_ExistsIn(num){
         return (this.prevNumbers_IndexOf(num) != -1);
+    }
+    static prevNumbers_IndexOf(num) {
+        return prev_numbers.indexOf(num);
     }
 }
 
