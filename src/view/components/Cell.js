@@ -18,7 +18,8 @@ class Cell extends Component {
   render() {
     const { number } = this.props;
     return (
-        <button type="button" className="btn btn-secondary" disabled={!number} onClick={this.dab} style={{ width: '45px', height: '45px', backgroundColor: this.state.dabbed ? 'pink' : 'white' }}>
+        <button type="button" className="btn btn-secondary" disabled={!number} onClick={this.dab}
+                style={{ width: '45px', height: '45px', backgroundColor: this.state.dabbed ? 'pink' : 'white' }}>
         {number}
       </button>
     );

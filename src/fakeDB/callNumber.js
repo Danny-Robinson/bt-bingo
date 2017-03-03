@@ -40,17 +40,17 @@ class callNumber {
                     return randomNumber;
                 }
             } catch (Exception) {
-                console.log("getValidRandomNumber Exception");
+                //console.log("getValidRandomNumber Exception");
             }
         }else {
-            console.log("prev_numbers is full");
+            //console.log("prev_numbers is full");
         }
         return -1;
     }
 
     static prevNumbers_PrintAll() {
         for (let x = 0; x <= this.prevNumbers_Length(); x++) {
-            console.log(this.prevNumbers_Get(x));
+            //console.log(this.prevNumbers_Get(x));
         }
     }
     static prevNumbers_IsFull(){
@@ -58,6 +58,9 @@ class callNumber {
     }
     static prevNumbers_Get(index){
         return prev_numbers[index];
+    }
+    static prevNumbers_Get_All(){
+        return prev_numbers;
     }
     static prevNumbers_Push(num){
         prev_numbers.push(num);
