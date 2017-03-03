@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import NavigationBar from './static/NavigationBar';
-import TicketBook from './TicketBook';
-import NumbersCalled from './NumbersCalled';
-import bingoTicketApi from '../../fakeDB/bingoTicket';
+import NavigationBar from '../static/NavigationBar';
+import TicketBook from '../ticket/TicketBook';
+import NumbersCalled from '../NumbersCalled';
+import bingoTicketApi from '../../../fakeDB/bingoTicket';
 
 class ActiveTicketsPage extends Component {
     constructor(props) {

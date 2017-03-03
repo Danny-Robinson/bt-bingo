@@ -1,5 +1,5 @@
 import React from 'react';
-import NavigationBar from './static/NavigationBar';
+import NavigationBar from '../static/NavigationBar';
 
 const PurchaseTicketsPage = () => (
     <span>

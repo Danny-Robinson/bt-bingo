@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { Router, Route, browserHistory } from 'react-router'
-import PurchaseTicketsPage from './PurchaseTicketsPage';
-import ExpiredTicketsPage from './ExpiredTicketsPage';
-import LeaderboardPage from './LeaderboardPage';
-import ActiveTicketsPage from './ActiveTicketsPage';
+import PurchaseTicketsPage from './pages/PurchaseTicketsPage';
+import ExpiredTicketsPage from './pages/ExpiredTicketsPage';
+import LeaderboardPage from './pages/LeaderboardPage';
+import ActiveTicketsPage from './pages/ActiveTicketsPage';
 
 class App extends Component {
     render() {
