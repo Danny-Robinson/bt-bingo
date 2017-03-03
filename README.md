@@ -8,3 +8,5 @@ DEV - npm run dev <br />
 PROD - npm start <br />
  <br />
 Kanban board at https://drive.google.com/file/d/0B8sUXLkW28t2dm9GdVY0ZW1rVXc/view?usp=sharing
+
+![alt text](screenshots/ActiveTickets.PNG "Active Tickets Page")
