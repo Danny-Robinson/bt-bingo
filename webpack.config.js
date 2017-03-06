@@ -16,5 +16,8 @@ module.exports = {
       loader: 'style!css',
       include: path.join(__dirname, 'css')
     }]
-  }
+  },
+    node: {
+        fs: "empty"
+    }
 };
