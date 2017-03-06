@@ -1,5 +1,6 @@
 const path = require('path');
 const express = require('express');
+const mongoApi = require("./src/fakeDB/mongoApi");
 
 module.exports = (app, port) => {
   app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -20,6 +21,11 @@ module.exports = (app, port) => {
 
             socket.on('message',function(event){
                 console.log('Received message from client!',event);
+            });
+
+            socket.on('custom',function(event){
+                mongoApi.test();
+                console.log('Received custom event',event);
             });
 
             socket.on('disconnect', () => {
