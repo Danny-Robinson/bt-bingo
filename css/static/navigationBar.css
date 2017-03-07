@@ -21,18 +21,44 @@ li:hover {
     list-style-type:none;
     text-decoration:none;
     background-color:deeppink;
-    box-shadow:0 0 20px deeppink;
 }
 
 a {
     height:60px;
     padding-top:10px;
     display:block;
-    vertical-align:middle;
     text-decoration:none;
     color:white;
 }
 
 a:hover, a:active {
     text-decoration:none;
+}
+
+@media screen and (max-width: 758px){
+    nav {
+        height:auto;
+    }
+
+    ul {
+        padding:0px;
+        display:block;
+    }
+
+    li {
+        width:100%;
+        font-size:15px;
+    }
+
+    a {
+        font-size: 1.5em;
+    }
+}
+
+@media screen and (max-width: 354px) {
+    a {
+        font-size:1em;
+    }
+
+
 }
