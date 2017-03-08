@@ -41,7 +41,6 @@ module.exports = (app, port) => {
             socket.on('disconnect', () => {
                 console.log('User disconnected from Server');
             });
-goit
         });
 
 
