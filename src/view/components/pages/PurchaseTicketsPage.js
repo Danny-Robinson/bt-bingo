@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import NavigationBar from '../static/NavigationBar';
 const socket = io();
 
@@ -6,31 +6,46 @@ socket.on('connect',function() {
     console.log('Client has connected to the server!');
 });
 socket.on('message',function(data) {
-    console.log('Received a message from the server!',data);
+    alert(data);
 });
 socket.on('disconnect',function() {
     console.log('The client has disconnected!');
 });
 
-function sendMessageToServer(message) {
-    socket.send(message);
+class PurchaseTicketsPage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {value: ''};
+        this.handleChange = this.handleChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    handleChange(event) {
+        this.setState({value: event.target.value});
+    }
+
+    handleSubmit(event) {
+        socket.emit('purchase', this.state.value);
+        event.preventDefault();
+    }
+
+    render()
+    {
+        return (
+            <span>
+                <NavigationBar/>
+                <form onSubmit={this.handleSubmit}>
+                    <fieldset>
+                        <legend>Purchase a ticket</legend>
+                        <label>
+                            Name:
+                            <input type="text" value={this.state.value} onChange={this.handleChange} />
+                        </label>
+                        <input type="submit" value="Purchase" />
+                    </fieldset>
+                </form>
+            </span>
+        );
+    }
 }
-
-function sendCustomToServer() {
-    socket.emit('custom', { hello: 'world' });
-}
-
-function handleClick(e) {
-    e.preventDefault();
-    sendCustomToServer();
-}
-
-const PurchaseTicketsPage = () => (
-    <span>
-        <NavigationBar/>
-        IM A PURCHASE TICKETS PAGE
-        <button onClick={handleClick}>PURCHASE TICKET</button>
-  </span>
-);
-
 export default PurchaseTicketsPage;

@@ -1,6 +1,8 @@
 const path = require('path');
 const express = require('express');
 const mongoApi = require("./src/fakeDB/mongoApi");
+const bingoTicket = require("./src/fakeDB/bingoTicket");
+
 
 module.exports = (app, port) => {
   app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -23,15 +25,23 @@ module.exports = (app, port) => {
                 console.log('Received message from client!',event);
             });
 
-            socket.on('custom',function(event){
-                mongoApi.test();
-                console.log('Received custom event',event);
+            socket.on('purchase',function(event){
+                mongoApi.addTicket(bingoTicket.provideBook(), event);
+                socket.send('Purchased ticket for user: ' + event);
+            });
+
+            socket.on('getTicket',function(event){
+                mongoApi.getTicket(function (ticket) {
+                    if (ticket != "") {
+                        socket.emit('deliverTicket', JSON.stringify(ticket));
+                    }
+                });
             });
 
             socket.on('disconnect', () => {
                 console.log('User disconnected from Server');
             });
-
+goit
         });
 
 

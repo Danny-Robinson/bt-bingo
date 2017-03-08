@@ -1,3 +1,4 @@
+'use strict';
 let MongoClient = require('mongodb').MongoClient
     , assert = require('assert');
 
@@ -5,41 +6,82 @@ let url = 'mongodb://localhost:27017/bingo';
 
 class MongoApi {
 
+    static addTicket(ticket, user){
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                console.log("Connected successfully to server");
+                MongoApi.insertTicket(db, ticket, user, function () {
+                    db.close();
+                });
+            }
+        });
+    }
+
+    static getTicket(callback){
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                console.log("Connected successfully to server");
+                MongoApi.findDocuments(db, function (result) {
+                    callback(result);
+                });
+            }
+        });
+        callback("");
+    }
+
+
+    static findTicket(db, callback) {
+        let collection = db.collection('tickets');
+        collection.findOne(function(err, result) {
+            console.log("Found ticket");
+            console.log("0", result);
+            callback(result);
+        });
+    }
+
+    static insertTicket(db, ticket, user, callback) {
+        let collection = db.collection('tickets');
+        let doc = {};
+        doc[user] = JSON.stringify(ticket);
+        collection.insert(doc, function(err, result) {
+            console.log("Inserted ticket");
+            console.log(result);
+            callback(result);
+        });
+    }
+
     static test() {
         MongoClient.connect(url, function (err, db) {
             assert.equal(null, err);
             console.log("Connected successfully to server");
-            MongoApi.insertDocuments(db, function () {
-                MongoApi.updateDocument(db, function () {
-                    MongoApi.removeDocument(db, function () {
-                        db.close();
-                    });
-                });
+            let tick = [ [ [ '', '', 27, 39, '', 55, '', 70, 86 ],    [ 1, 15, '', '', '', '', 61, 71, 90 ], [ '', 19, 29, '', 46, 59, 63, '', '' ] ],
+                [ [ '', 14, 20, 30, 40, '', '', 73, '' ],    [ '', 18, 22, 37, '', '', '', 79, 84 ],    [ 8, '', 28, '', 42, 53, 62, '', '' ] ],
+                [ [ '', '', 21, 35, 44, 50, 68, '', '' ],    [ 5, '', 26, '', 48, '', '', 76, 81 ],    [ 7, 10, '', '', '', 52, 69, 77, '' ] ],
+                [ [ '', '', '', 31, 43, 57, 60, '', 88 ],    [ 3, 11, 23, '', '', 58, '', '', 89 ],    [ '', 16, '', 33, 47, '', 65, 78, '' ] ],
+                [ [ '', '', '', '', 45, 56, 64, 72, 83 ],    [ 4, 13, 25, 34, '', '', '', '', 85 ],    [ '', 17, '', 38, '', '', 67, 74, 87 ] ],
+                [ [ 2, '', '', '', 41, 51, 66, '', 80 ],    [ 6, '', 24, 32, 49, '', '', 75, '' ],    [ 9, 12, '', 36, '', 54, '', '', 82 ] ] ]
+            let doc =
+                {ticket: JSON.stringify(tick)}
+            ;
+            MongoApi.insertDocuments(db, doc, function () {
+                db.close;
             });
         });
     };
 
-    static insertDocuments(db, callback) {
-    let collection = db.collection('documents');
-    collection.insertMany([
-        {a : 1}, {a : 2}, {a : 3}
-    ], function(err, result) {
-        assert.equal(err, null);
-        assert.equal(3, result.result.n);
-        assert.equal(3, result.ops.length);
+    static insertDocuments(db, doc, callback) {
+    let collection = db.collection('test');
+    collection.insert(doc, function(err, result) {
         console.log("Inserted 3 documents into the collection");
+        console.log(result);
         callback(result);
     });
 }
 
     static findDocuments(db, callback) {
-    // Get the documents collection
-    let collection = db.collection('documents');
-    // Find some documents
-    collection.find({'a': 3}).toArray(function(err, docs) {
-        assert.equal(err, null);
+    let collection = db.collection('tickets');
+    collection.find().toArray(function(err, docs) {
         console.log("Found the following records");
-        console.log(docs);
         callback(docs);
     });
 }

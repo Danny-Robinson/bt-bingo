@@ -3,6 +3,7 @@ import NavigationBar from '../static/NavigationBar';
 import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import bingoTicketApi from '../../../fakeDB/bingoTicket';
+const socket = io();
 
 class ActiveTicketsPage extends Component {
     constructor(props) {
@@ -11,16 +12,30 @@ class ActiveTicketsPage extends Component {
             book: []
         };
 
-        this.getNewBook = this.getNewBook.bind(this);
+        this.setBook = this.setBook.bind(this);
     }
 
-    getNewBook() {
+    setBook(newBook) {
         this.setState({
-            book: bingoTicketApi.provideBook()
+            book: newBook
         });
     }
-    componentDidMount() {
-        this.getNewBook();
+
+    componentWillMount() {
+        socket.emit('getTicket');  //Can be changed to get ticket by user, eliminates below for loop
+        socket.on('deliverTicket', function (book) {
+            book = JSON.parse(book);
+            for (let i=0; i<book.length; i++)
+                for (let name in book[i]) {
+                    if (name == "Danny"){ //if name == user
+                        this.setBook(JSON.parse(book[i][name]));
+                    }
+                }
+         }.bind(this));
+        if (this.state.book[0] == null){
+            this.setBook(bingoTicketApi.provideBook());
+            console.log("Dummy book");
+        }
     }
 
     render()

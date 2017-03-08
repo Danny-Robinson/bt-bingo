@@ -1,5 +1,4 @@
 let ticketBook;
-
 let blankTicketBook = [[
     ['', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', ''],
@@ -25,19 +24,18 @@ let blankTicketBook = [[
     ['', '', '', '', '', '', '', '', ''],
     ['', '', '', '', '', '', '', '', '']
 ]];
+let allocatedNumbers = [];
+let ticketGen = 0;
+let wave = 0;
+let emptyWave = 0;
+let genCount = 0;
+let gen2Count = 0;
+let gen3Count = 0;
+let genWave1Complete = false;
+let genWave2Complete = false;
+let genWave3Complete = false;
 
 class TicketBookApi {
-
-    static allocatedNumbers = [];
-    static ticketGen = 0;
-    static wave = 0;
-    static emptyWave = 0;
-    static genCount = 0;
-    static gen2Count = 0;
-    static gen3Count = 0;
-    static genWave1Complete = false;
-    static genWave2Complete = false;
-    static genWave3Complete = false;
 
     static provideBook(){
         this.generateTicket();
@@ -568,7 +566,7 @@ class TicketBookApi {
     }
 }
 
-export default TicketBookApi;
+module.exports = TicketBookApi;
 
 // let ticketBook2 = [[
 //   ['1', '', '26', '', '48', '', '63', '79', ''],
