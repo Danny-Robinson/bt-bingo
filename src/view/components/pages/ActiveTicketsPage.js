@@ -27,12 +27,12 @@ class ActiveTicketsPage extends Component {
             book = JSON.parse(book);
             for (let i=0; i<book.length; i++)
                 for (let name in book[i]) {
-                    if (name == "Danny"){ //if name == user
+                    if (name === "Danny"){ //if name == user
                         this.setBook(JSON.parse(book[i][name]));
                     }
                 }
          }.bind(this));
-        if (this.state.book[0] == null){
+        if (this.state.book[0] === null){
             this.setBook(bingoTicketApi.provideBook());
             console.log("Dummy book");
         }
