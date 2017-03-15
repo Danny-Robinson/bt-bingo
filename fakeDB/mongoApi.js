@@ -3,6 +3,8 @@ let MongoClient = require('mongodb').MongoClient
     , assert = require('assert');
 
 let url = 'mongodb://localhost:27017/bingo';
+const CalculateBingo = require("./CalculateBingo");
+
 
 class MongoApi {
 
@@ -17,7 +19,7 @@ class MongoApi {
         });
     }
 
-    static getTicket(callback){
+    static getAllTickets(callback){
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
                 console.log("Connected successfully to server");
@@ -28,6 +30,36 @@ class MongoApi {
         });
         callback("");
     }
+
+    static getUserTickets(user, callback){
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                console.log("Connected successfully to server");
+                MongoApi.findTicket(user, db, function (result) {
+                    callback(result);
+                });
+            }
+        });
+        callback("");
+    }
+
+    static getCalledNumbers(){
+        let calledNums = [5,22,38,42,72,10,13,25,39,46,56,53,61,78,90,1,20,41,84];
+        return calledNums;
+    }
+
+    static getBingo(user, callback){
+        console.log(user);
+        let result ="";
+        let calledNums = MongoApi.getCalledNumbers();
+        MongoApi.getUserTickets(user, function (ticket) {
+            if (ticket) {
+                result = CalculateBingo.isItBingo(calledNums, ticket);
+                callback(result);
+            }
+        });
+    }
+
 
 
     static findTicket(db, callback) {
@@ -80,11 +112,23 @@ class MongoApi {
 
     static findDocuments(db, callback) {
     let collection = db.collection('tickets');
-    collection.find().toArray(function(err, docs) {
-        console.log("Found the following records");
-        callback(docs);
-    });
-}
+        collection.find().toArray(function(err, docs) {
+            console.log("Found the following records");
+            callback(docs);
+        });
+    }
+
+    static findTicket(user, db, callback) {
+        console.log(user.user);
+        var key = user.user;
+        var userObject = {};
+        userObject[key] = {$exists:true};
+        let collection = db.collection('tickets');
+        collection.find(userObject).toArray(function (err, docs) {
+            console.log("Found the following records");
+            callback(docs);
+        });
+    }
 
     static updateDocument(db, callback) {
     // Get the documents collection

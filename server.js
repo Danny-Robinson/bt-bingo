@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
-const mongoApi = require("./src/fakeDB/mongoApi");
-const bingoTicket = require("./src/fakeDB/bingoTicket");
+const mongoApi = require("./fakeDB/mongoApi");
+const bingoTicket = require("./fakeDB/bingoTicket");
 
 
 module.exports = (app, port) => {
@@ -30,10 +30,21 @@ module.exports = (app, port) => {
                 socket.send('Purchased ticket for user: ' + event);
             });
 
-            socket.on('getTicket',function(event){
-                mongoApi.getTicket(function (ticket) {
+            socket.on('getAllTickets',function(event){
+                console.log("GetTicket received");
+                mongoApi.getAllTickets(function (ticket) {
                     if (ticket != "") {
                         socket.emit('deliverTicket', JSON.stringify(ticket));
+                    }
+                });
+            });
+
+            socket.on('getBingo', function(user){
+                mongoApi.getBingo(user, function (bingo) {
+                    if (bingo) {
+                        socket.emit('deliverBingo', bingo);
+                    } else {
+                        socket.emit('deliverBingo', false);
                     }
                 });
             });
