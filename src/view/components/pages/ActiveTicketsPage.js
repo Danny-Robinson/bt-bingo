@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import NavigationBar from '../static/NavigationBar';
 import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
-import bingoTicketApi from '../../../fakeDB/bingoTicket';
+import BingoButton from '../BingoButton';
+import bingoTicketApi from '../../../../fakeDB/bingoTicket';
 const socket = io();
 
 class ActiveTicketsPage extends Component {
@@ -22,7 +23,7 @@ class ActiveTicketsPage extends Component {
     }
 
     componentWillMount() {
-        socket.emit('getTicket');  //Can be changed to get ticket by user, eliminates below for loop
+        socket.emit('getAllTickets');  //Can be changed to get ticket by user, eliminates below for loop
         socket.on('deliverTicket', function (book) {
             book = JSON.parse(book);
             for (let i=0; i<book.length; i++)
@@ -48,7 +49,12 @@ class ActiveTicketsPage extends Component {
                         <TicketBook book={this.state.book}/>
                     </span>
                     <span>
-                        <NumbersCalled/>
+                        <div>
+                            <NumbersCalled/>
+                        </div>
+                        <div>
+                            <BingoButton socket={socket}/>
+                        </div>
                     </span>
                 </div>
             </span>
