@@ -1,6 +1,6 @@
 
 
-let prev_numbers = [];
+let prev_numbers = [1,2,3,4,5,6,7,8];
 
 let min = 1;
 let max = 90;
@@ -8,6 +8,7 @@ let max = 90;
 class callNumber {
     //import callNumber from '../../fakeDB/callNumber';
     //<div>{callNumber.getAllRandomNumbers()}</div>
+    //<div> Previous numbers: {callNumber.prevNumbers_Get_All()} </div>
 
     static getAllRandomNumbers()
     {
@@ -60,7 +61,7 @@ class callNumber {
         return prev_numbers[index];
     }
     static prevNumbers_Get_All(){
-        return prev_numbers;
+        return prev_numbers.toString();
     }
     static prevNumbers_Push(num){
         prev_numbers.push(num);
