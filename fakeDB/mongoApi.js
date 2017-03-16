@@ -22,7 +22,6 @@ class MongoApi {
     static getAllTickets(callback){
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
-                console.log("Connected successfully to server");
                 MongoApi.findDocuments(db, function (result) {
                     callback(result);
                 });
@@ -34,7 +33,6 @@ class MongoApi {
     static getUserTickets(user, callback){
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
-                console.log("Connected successfully to server");
                 MongoApi.findTicket(user, db, function (result) {
                     callback(result);
                 });
@@ -113,7 +111,6 @@ class MongoApi {
     static findDocuments(db, callback) {
     let collection = db.collection('tickets');
         collection.find().toArray(function(err, docs) {
-            console.log("Found the following records");
             callback(docs);
         });
     }
@@ -125,7 +122,6 @@ class MongoApi {
         userObject[key] = {$exists:true};
         let collection = db.collection('tickets');
         collection.find(userObject).toArray(function (err, docs) {
-            console.log("Found the following records");
             callback(docs);
         });
     }

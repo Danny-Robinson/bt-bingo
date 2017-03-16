@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Router, Route, browserHistory } from 'react-router'
 import PurchaseTicketsPage from './pages/PurchaseTicketsPage';
 import ExpiredTicketsPage from './pages/ExpiredTicketsPage';
-import LeaderboardPage from './pages/LeaderboardPage';
+import Chat from './chat/Chat';
 import ActiveTicketsPage from './pages/ActiveTicketsPage';
 
 class App extends Component {
@@ -13,7 +13,7 @@ class App extends Component {
                 <Route path='/activeTickets' component={ActiveTicketsPage}/>
                 <Route path='/purchaseTickets' component={PurchaseTicketsPage}/>
                 <Route path='/expiredTickets' component={ExpiredTicketsPage}/>
-                <Route path='/leaderboard' component={LeaderboardPage}/>
+                <Route path='/chat' component={Chat}/>
             </Router>
         )
     }

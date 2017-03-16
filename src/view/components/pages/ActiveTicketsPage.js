@@ -4,6 +4,7 @@ import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
 import bingoTicketApi from '../../../../fakeDB/bingoTicket';
+import Chat from '../chat/Chat';
 const socket = io();
 
 class ActiveTicketsPage extends Component {
@@ -54,6 +55,7 @@ class ActiveTicketsPage extends Component {
                         </div>
                         <div>
                             <BingoButton socket={socket}/>
+                            <Chat socket={socket} />
                         </div>
                     </span>
                 </div>
