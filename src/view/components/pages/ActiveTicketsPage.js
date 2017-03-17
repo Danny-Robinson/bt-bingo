@@ -3,7 +3,7 @@ import NavigationBar from '../static/NavigationBar';
 import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
-import bingoTicketApi from '../../../../fakeDB/bingoTicket';
+import bingoTicket from '../../../fakeDB/bingoTicket';
 import Chat from '../chat/Chat';
 const socket = io();
 
@@ -35,7 +35,7 @@ class ActiveTicketsPage extends Component {
                 }
          }.bind(this));
         if (this.state.book[0] == null){
-            this.setBook(bingoTicketApi.provideBook());
+            this.setBook(bingoTicket.provideBook());
             console.log("Dummy book");
         }
     }

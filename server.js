@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
-const mongoApi = require("./fakeDB/mongoApi");
-const bingoTicket = require("./fakeDB/bingoTicket");
+const mongoApi = require("./src/fakeDB/mongoApi");
+const bingoTicket = require("./src/fakeDB/bingoTicket");
 
 
 module.exports = (app, port) => {
