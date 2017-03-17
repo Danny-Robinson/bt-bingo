@@ -8,7 +8,11 @@ class BingoButton extends Component {
     componentDidMount() {
         const { socket } = this.props;
         socket.on('deliverBingo', function (bingo) {
-            console.log(bingo)
+            if (bingo){
+                alert("Bingo! You win")
+            } else {
+                alert("No Dice")
+            }
         }.bind(this));
     }
 
