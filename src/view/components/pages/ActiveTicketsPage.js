@@ -3,6 +3,7 @@ import NavigationBar from '../static/NavigationBar';
 import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
+import DabChanger from '../DabChanger';
 import bingoTicket from '../../../fakeDB/bingoTicket';
 import Chat from '../chat/Chat';
 const socket = io();
@@ -11,10 +12,19 @@ class ActiveTicketsPage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            book: []
+            book: [],
+            cursor: 'https://en.gravatar.com/userimage/75305515/3cd028414a041e4693cfd08120356375.png',
+            colour: 'blue'
         };
-
+        this.handleChange = this.handleChange.bind(this);
         this.setBook = this.setBook.bind(this);
+    }
+
+    handleChange(url, colour) {
+        this.setState({
+            cursor: url,
+            colour: colour
+        });
     }
 
     setBook(newBook) {
@@ -46,14 +56,17 @@ class ActiveTicketsPage extends Component {
             <span>
                 <NavigationBar />
                 <div style={{display: 'flex'}}>
+                    <span style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                        <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
+                    </span>
                     <span>
-                        <TicketBook book={this.state.book}/>
                     </span>
                     <span>
                         <div>
                             <NumbersCalled/>
                         </div>
                         <div>
+                            <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
                             <BingoButton socket={socket}/>
                             <Chat socket={socket} />
                         </div>

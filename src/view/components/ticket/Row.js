@@ -1,9 +1,9 @@
 import React from 'react';
 import Cell from './Cell';
 
-export default ({ cells }) => (
+export default ({ cells, cursor, colour }) => (
   <div style={{ display: 'flex' }}>
-    {cells.map(number => <Cell number={number} />)}
+    {cells.map(number => <Cell number={number} cursor={cursor} colour={colour}/>)}
   </div>
 );
 
