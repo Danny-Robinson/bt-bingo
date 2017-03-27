@@ -3,6 +3,7 @@ import NavigationBar from '../static/NavigationBar';
 import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
+import DabChanger from '../DabChanger';
 import bingoTicket from '../../../fakeDB/bingoTicket';
 import RoleAwareComponent from '../RoleAwareComponent'
 import Chat from '../chat/Chat';
@@ -12,11 +13,21 @@ class ActiveTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
         this.state = {
-            book: []
+            book: [],
+            cursor: 'https://en.gravatar.com/userimage/75305515/3cd028414a041e4693cfd08120356375.png',
+            colour: 'blue'
         };
+        this.handleChange = this.handleChange.bind(this);
         this.authorize = ['user'];
 
         this.setBook = this.setBook.bind(this);
+    }
+
+    handleChange(url, colour) {
+        this.setState({
+            cursor: url,
+            colour: colour
+        });
     }
 
     setBook(newBook) {
@@ -44,21 +55,24 @@ class ActiveTicketsPage extends RoleAwareComponent {
 
     render()
     {
-        var sessionObject = JSON.parse(localStorage.getItem('sessionID'));
+    var sessionObject = JSON.parse(localStorage.getItem('sessionID'));
 
-        if (sessionObject.isLoggedIn === true && this.authorize.indexOf(sessionObject.group) > -1) {
+       if (sessionObject.isLoggedIn === true && this.authorize.indexOf(sessionObject.group) > -1) {
             return (
                 <span>
                     <NavigationBar />
                     <div style={{display: 'flex'}}>
+                        <span style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                            <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
+                        </span>
                         <span>
-                            <TicketBook book={this.state.book}/>
                         </span>
                         <span>
                             <div>
                                 <NumbersCalled/>
                             </div>
                             <div>
+                                <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
                                 <BingoButton socket={socket}/>
                                 <Chat socket={socket} />
                             </div>
@@ -66,7 +80,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
                     </div>
                 </span>
             );
-        }
+       }
     }
 }
 export default ActiveTicketsPage;
