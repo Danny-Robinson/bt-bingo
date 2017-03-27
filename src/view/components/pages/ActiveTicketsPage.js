@@ -4,15 +4,17 @@ import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
 import bingoTicket from '../../../fakeDB/bingoTicket';
+import RoleAwareComponent from '../RoleAwareComponent'
 import Chat from '../chat/Chat';
 const socket = io();
 
-class ActiveTicketsPage extends Component {
+class ActiveTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
         this.state = {
             book: []
         };
+        this.authorize = ['user'];
 
         this.setBook = this.setBook.bind(this);
     }
@@ -42,25 +44,29 @@ class ActiveTicketsPage extends Component {
 
     render()
     {
-        return (
-            <span>
-                <NavigationBar />
-                <div style={{display: 'flex'}}>
-                    <span>
-                        <TicketBook book={this.state.book}/>
-                    </span>
-                    <span>
-                        <div>
-                            <NumbersCalled/>
-                        </div>
-                        <div>
-                            <BingoButton socket={socket}/>
-                            <Chat socket={socket} />
-                        </div>
-                    </span>
-                </div>
-            </span>
-        );
+        var sessionObject = JSON.parse(localStorage.getItem('sessionID'));
+
+        if (sessionObject.isLoggedIn === true && this.authorize.indexOf(sessionObject.group) > -1) {
+            return (
+                <span>
+                    <NavigationBar />
+                    <div style={{display: 'flex'}}>
+                        <span>
+                            <TicketBook book={this.state.book}/>
+                        </span>
+                        <span>
+                            <div>
+                                <NumbersCalled/>
+                            </div>
+                            <div>
+                                <BingoButton socket={socket}/>
+                                <Chat socket={socket} />
+                            </div>
+                        </span>
+                    </div>
+                </span>
+            );
+        }
     }
 }
 export default ActiveTicketsPage;

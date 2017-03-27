@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NavigationBar from '../static/NavigationBar';
+import RoleAwareComponent from '../RoleAwareComponent';
 const socket = io();
 
 socket.on('connect',function() {
@@ -12,12 +13,13 @@ socket.on('disconnect',function() {
     console.log('The client has disconnected!');
 });
 
-class PurchaseTicketsPage extends Component {
+class PurchaseTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
         this.state = {value: ''};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.authorize = ['admin'];
     }
 
     handleChange(event) {

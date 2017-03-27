@@ -15,6 +15,12 @@ module.exports = {
       test: /\.css$/,
       loader: 'style!css',
       include: path.join(__dirname, 'css')
+    }, {
+      test: /\.(jpg|png|svg)$/,
+      loader: 'file-loader',
+      options: {
+        name: './images/[hash].[ext]',
+      },
     }]
   },
     node: {

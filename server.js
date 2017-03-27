@@ -3,7 +3,6 @@ const express = require('express');
 const mongoApi = require("./src/fakeDB/mongoApi");
 const bingoTicket = require("./src/fakeDB/bingoTicket");
 
-
 module.exports = (app, port) => {
   app.use('/public', express.static(path.join(__dirname, 'public')));
   app.use('/bootstrap', express.static(
