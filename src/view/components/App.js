@@ -21,13 +21,9 @@ class App extends Component {
                     <Route path='/activeTickets' component={ActiveTicketsPage} authorize={['user']}/>
                     <Route path='/purchaseTickets' component={PurchaseTicketsPage} authorize={['admin']}/>
                     <Route path='/expiredTickets' component={ExpiredTicketsPage} authorize={['user']}/>
-                    <Route path='/chat' component={Chat}/>
                 </Router>
             );
     }
 }
-
-/*generate will be moved to purchase component*/
-/*Book will then be grabbed from mongodb*/
 
 export default App;
