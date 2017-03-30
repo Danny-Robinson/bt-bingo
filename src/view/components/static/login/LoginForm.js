@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import App from '../../App';
-import styles from '../../../../../css/static/login.css'
+import styles from '../../../../../css/static/_login.scss'
 
 
 const LoginForm = ( {handleLoginClick} ) => (

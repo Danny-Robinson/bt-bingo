@@ -7,6 +7,8 @@ import DabChanger from '../DabChanger';
 import bingoTicket from '../../../fakeDB/bingoTicket';
 import RoleAwareComponent from '../RoleAwareComponent'
 import Chat from '../chat/Chat';
+import styles from '../../../../css/pages/_activeTickets.scss';
+
 const socket = io();
 
 class ActiveTicketsPage extends RoleAwareComponent {
@@ -53,34 +55,35 @@ class ActiveTicketsPage extends RoleAwareComponent {
         }
     }
 
-    render()
-    {
-    var sessionObject = JSON.parse(localStorage.getItem('sessionID'));
+    render() {
+        var sessionObject = JSON.parse(localStorage.getItem('userSession'));
 
-       if (sessionObject.isLoggedIn === true && this.authorize.indexOf(sessionObject.group) > -1) {
-            return (
-                <span>
-                    <NavigationBar />
-                    <div style={{display: 'flex'}}>
-                        <span style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
-                            <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
-                        </span>
-                        <span>
-                        </span>
-                        <span>
-                            <div>
-                                <NumbersCalled/>
-                            </div>
-                            <div>
-                                <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
-                                <BingoButton socket={socket}/>
-                                <Chat socket={socket} />
-                            </div>
-                        </span>
-                    </div>
-                </span>
-            );
-       }
+        if (sessionObject.isLoggedIn === true && this.authorize.indexOf(sessionObject.group) > -1) {
+             return (
+                 <span>
+                     <NavigationBar />
+                     <div className="pageContent">
+                         <span style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                             <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
+                         </span>
+                         <span>
+                         </span>
+                         <span>
+                             <div>
+                                 <NumbersCalled/>
+                             </div>
+                             <div>
+                                 <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
+                                 <BingoButton socket={socket}/>
+                                 <Chat socket={socket} />
+                             </div>
+                         </span>
+                     </div>
+                 </span>
+             );
+        } else {
+            <ReactRedirect location='/'></ReactRedirect>
+        }
     }
 }
 export default ActiveTicketsPage;

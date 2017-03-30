@@ -61,7 +61,7 @@ class LoginPage extends Component {
                 session.isLoggedIn = true;
                 session.group = 'user';
                 session.sessionID = data;
-                localStorage.setItem('sessionID', JSON.stringify(session));
+                localStorage.setItem('userSession', JSON.stringify(session));
                 window.location="/activeTickets";
             }.bind(this),
             error: function(xhr, status, error) {

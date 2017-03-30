@@ -1,0 +1,14 @@
+@mixin textfield-styling($marginBottom) {
+    width:70%;
+    height:50px;
+    border-radius:10px;
+    margin-right:auto;
+    margin-left:auto;
+    margin-top: 20px;
+    margin-bottom: $marginBottom;
+    font-size:1.3em;
+    padding-left:10px;
+    background:transparent;
+    border-style:groove;
+    color:white;
+}

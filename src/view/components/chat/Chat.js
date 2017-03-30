@@ -3,7 +3,7 @@ import MessageList from './MessageList';
 import MessageForm from './MessageForm';
 import ChangeNameForm from './ChangeNameForm';
 import React, { Component } from 'react';
-//import styles from '../../../../css/static/chat.css';
+import styles from '../../../../css/static/_chat.scss';
 
 class Chat extends Component {
     constructor(props) {
@@ -102,7 +102,7 @@ class Chat extends Component {
 
     render() {
         return (
-            <div>
+            <div id="chatContainer">
                 <UsersList users={this.state.users}/>
                 <MessageList messages={this.state.messages}/>
                 <MessageForm onMessageSubmit={this.handleMessageSubmit} user={this.state.user} />

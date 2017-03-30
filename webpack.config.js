@@ -12,9 +12,8 @@ module.exports = {
       loader: 'babel',
       include: path.join(__dirname, 'src')
     }, {
-      test: /\.css$/,
-      loader: 'style!css',
-      include: path.join(__dirname, 'css')
+      test: /\.scss$/,
+       loaders: [ 'style', 'css', 'sass' ]
     }, {
       test: /\.(jpg|png|svg)$/,
       loader: 'file-loader',
