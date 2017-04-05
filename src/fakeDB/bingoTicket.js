@@ -37,14 +37,18 @@ let genWave3Complete = false;
 
 class TicketBookApi {
 
-    static provideBook(){
+    static provideBook(number){
         this.generateTicket();
         this.reorderCols();
-        return this.getTicketBook();  //will become write to database
+        return this.getTicketBook(number);
     }
 
-    static getTicketBook() {
-        return ticketBook;
+    static getTicketBook(number) {
+        let arr = ticketBook.slice(0);
+        arr.splice(number - 1, 6 - number);
+        console.log("Tickets: ", number);
+        console.log(arr.toString());
+        return arr;
     }
 
     static generateTicket(){

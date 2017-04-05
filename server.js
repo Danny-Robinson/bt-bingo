@@ -22,6 +22,12 @@ module.exports = (app, port) => {
 
 
         io.on('connection', (socket) => {
+
+            process.on('uncaughtException', function (err) {
+                console.error(err.stack);
+                console.log("Node NOT Exiting...");
+            });
+
             console.log('User connected to Server');
             let name = userNames.getGuestName();
             socket.emit('init', {
@@ -62,9 +68,10 @@ module.exports = (app, port) => {
                 console.log('Received message from client!',event);
             });
 
-            socket.on('purchase',function(event){
-                mongoApi.addTicket(bingoTicket.provideBook(), event);
-                socket.send('Purchased ticket for user: ' + event);
+            socket.on('purchase',function(data){
+                console.log(data.number);
+                mongoApi.addTicket(bingoTicket.provideBook(data.number), data.user );
+                socket.send('Purchased ticket for user: ' + data.user);
             });
 
             socket.on('getAllTickets',function(event){

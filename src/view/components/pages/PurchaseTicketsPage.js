@@ -16,18 +16,21 @@ socket.on('disconnect',function() {
 class PurchaseTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
-        this.state = {value: ''};
+        this.state = {number: 1, user: "test4Ticks"};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.authorize = ['admin'];
     }
 
     handleChange(event) {
-        this.setState({value: event.target.value});
+        this.setState({number: event.target.number});
     }
 
     handleSubmit(event) {
-        socket.emit('purchase', this.state.value);
+        let data = {user: this.state.user, number: this.state.number};
+        console.log(this.state.number);
+        console.log(this.state.user);
+        socket.emit('purchase', data);
         event.preventDefault();
     }
 
@@ -41,7 +44,7 @@ class PurchaseTicketsPage extends RoleAwareComponent {
                         <legend>Purchase a ticket</legend>
                         <label>
                             Name:
-                            <input type="text" value={this.state.value} onChange={this.handleChange} />
+                            <input type="number" value={this.state.number} min="1" max="6" onChange={e => { this.setState({number: e.target.value}) }} />
                         </label>
                         <input type="submit" value="Purchase" />
                     </fieldset>
