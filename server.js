@@ -1,12 +1,11 @@
 const path = require('path');
 const express = require('express');
-const mongoApi = require("./src/fakeDB/mongoApi");
-const bingoTicket = require("./src/fakeDB/bingoTicket");
+const mongoApi = require("./fakeDB/mongoApi");
+const bingoTicket = require("./fakeDB/bingoTicket");
+const callNumber = require("./fakeDB/callNumber");
 const ldap = require('ldapjs');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
-const callNumber = require("./src/fakeDB/callNumber");
-
 
 module.exports = (app, port) => {
   app.use('/public', express.static(path.join(__dirname, 'public')));

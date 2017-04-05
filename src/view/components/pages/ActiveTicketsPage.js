@@ -4,7 +4,6 @@ import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
 import DabChanger from '../DabChanger';
-import bingoTicket from '../../../fakeDB/bingoTicket';
 import RoleAwareComponent from '../RoleAwareComponent'
 import Chat from '../chat/Chat';
 import styles from '../../../../css/pages/_activeTickets.scss';
@@ -49,14 +48,10 @@ class ActiveTicketsPage extends RoleAwareComponent {
                     }
                 }
          }.bind(this));
-        if (this.state.book[0] == null){
-            this.setBook(bingoTicket.provideBook());
-            console.log("Dummy book");
-        }
     }
 
     render() {
-        var sessionObject = JSON.parse(localStorage.getItem('userSession'));
+        let sessionObject = JSON.parse(localStorage.getItem('userSession'));
 
         if (sessionObject.isLoggedIn === true && this.authorize.indexOf(sessionObject.group) > -1) {
              return (

@@ -4,7 +4,6 @@ let MongoClient = require('mongodb').MongoClient
 
 let url = 'mongodb://localhost:27017/bingo';
 const CalculateBingo = require("./CalculateBingo");
-var calledNums = [5,22,38,42,72,10,13,25,39,46,56,53,61,78,90,1,20,41,84];
 
 
 class MongoApi {
@@ -62,16 +61,19 @@ class MongoApi {
     static getCalledNumbers(callback){
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
-                let collection = db.collection('bingo');
+                let collection = db.collection('calledNumbers');
                 collection.findOne({"numbers": {$exists : true}}, function(err, result) {
-                    //assert(result["numbers"] != "");
-                    callback(result["numbers"]);
+                    if (!result){
+                        MongoApi.firstNumInsert(db,function(){});
+                    } else {
+                        callback(result["numbers"]);
+                    }
                 });
             }
         });
     }
     static setNumbers(numbers, db){
-        let collection = db.collection('bingo');
+        let collection = db.collection('calledNumbers');
         collection.updateOne({ "numbers" : {$exists : true}}
             , { $set: { "numbers" : numbers} });
     }
@@ -79,7 +81,7 @@ class MongoApi {
         console.log("resettingNumbers");
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
-                let collection = db.collection('bingo');
+                let collection = db.collection('calledNumbers');
                 collection.updateOne({"numbers": {$exists: true}}, {$set: {"numbers": []}});
             }
         });
@@ -88,13 +90,15 @@ class MongoApi {
     static getBingo(user, callback){
         console.log(user);
         let result ="";
-        let calledNums = MongoApi.getCalledNumbers();
-        MongoApi.getUserTickets(user, function (ticket) {
-            if (ticket) {
-                result = CalculateBingo.isItBingo(calledNums, ticket);
-                callback(result);
-            }
+        MongoApi.getCalledNumbers(function (calledNums){
+            MongoApi.getUserTickets(user, function (ticket) {
+                if (ticket) {
+                    result = CalculateBingo.isItBingo(calledNums, ticket);
+                    callback(result);
+                }
+            });
         });
+
     }
 
     static findTicket(db, callback) {
@@ -137,13 +141,20 @@ class MongoApi {
     };
 
     static insertDocuments(db, doc, callback) {
-    let collection = db.collection('test');
-    collection.insert(doc, function(err, result) {
-        console.log("Inserted 3 documents into the collection");
-        console.log(result);
-        callback(result);
-    });
-}
+        let collection = db.collection('test');
+        collection.insert(doc, function(err, result) {
+            console.log("Inserted 3 documents into the collection");
+            console.log(result);
+            callback(result);
+        });
+    }
+
+    static firstNumInsert(db, callback) {
+        let collection = db.collection('calledNumbers');
+        collection.insert({numbers: []}, function(err, result) {
+            callback(result);
+        });
+    }
 
     static findDocuments(db, callback) {
         let collection = db.collection('tickets');

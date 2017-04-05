@@ -18,7 +18,7 @@ class BingoButton extends Component {
 
     checkForBingo() {
         const { socket } = this.props;
-        let user = {user: "Danny"} ;
+        let user = {user: "test4Ticks"} ;
         socket.emit('getBingo', user);
     }
 
