@@ -1,0 +1,50 @@
+.pageContent {
+    display:flex;
+    min-width:446px;
+    background-color: white;
+
+    @media screen and (max-width:775px) {
+        display:block;
+        margin-top:-16px;
+    }
+
+    .row {
+        width:60%;
+        background:rgba(173,255,47, 0.5);
+        border-radius:10px;
+        box-shadow:0 0 20px black;
+        border-style: groove;
+        font-style: italic;
+        text-decoration:bold;
+
+        @media screen and (max-width:775px) {
+            width:100% !important;
+        }
+    }
+
+    div#bingo-button {
+
+        .btn-secondary {
+            width:180px;
+            height:60px;
+            border-radius:20px;
+            box-shadow:0 0 20px black;
+            background-color:#551a8b;
+            background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #551a8b), color-stop(0.6, #551a8b), color-stop(0.61, #551a8b), color-stop(1, #ffffff));
+            background-image: -moz-linear-gradient(center bottom, #551a8b 0%, #551a8b 60%, #551a8b 61%, #ffffff 100%);
+            background-image: linear-gradient(to top, #551a8b 0%, #551a8b 60%, #551a8b 61%, #ffffff 100%);
+
+            >h3 {
+                color:yellow;
+                text-decoration:bold;
+                text-shadow:0 0 20px yellow;
+            }
+        }
+
+        .btn-secondary:hover {
+            box-shadow:0 0 10px #551a8b;
+            background-color:#551a8b;
+            background-image:none;
+        }
+    }
+}

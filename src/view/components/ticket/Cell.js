@@ -3,10 +3,22 @@ import React, { Component } from 'react';
 class Cell extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      dabbed: false
-    };
-    this.dab = this.dab.bind(this);
+      const { colour, cursor } = this.props;
+      this.state = {
+          dabbed: false,
+          colour: colour,
+          cursor: cursor
+      };
+      this.dab = this.dab.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    let colour = nextProps.colour;
+    let cursor = nextProps.cursor;
+      this.setState({
+          colour: colour,
+          cursor: cursor
+      });
   }
 
   dab() {
@@ -19,7 +31,8 @@ class Cell extends Component {
     const { number } = this.props;
     return (
         <button type="button" className="btn btn-secondary" disabled={!number} onClick={this.dab}
-                style={{ width: '45px', height: '45px', backgroundColor: this.state.dabbed ? 'pink' : 'white' }}>
+                style={{ cursor: `url(${this.state.cursor}) 5 70,pointer` ,
+                    width: '45px', height: '45px', backgroundColor: this.state.dabbed ? this.state.colour : 'white' }}>
         {number}
       </button>
     );

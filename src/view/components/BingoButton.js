@@ -24,9 +24,11 @@ class BingoButton extends Component {
 
     render() {
         return (
-            <button type="button" className="btn btn-secondary" onClick={this.checkForBingo}>
-                Bingo!
-            </button>
+            <div id="bingo-button">
+                <button type="button" className="btn btn-secondary" onClick={this.checkForBingo}>
+                    <h3>Bingo!</h3>
+                </button>
+            </div>
         );
     }
 }

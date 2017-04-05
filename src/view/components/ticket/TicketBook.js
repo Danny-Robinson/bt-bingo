@@ -3,9 +3,10 @@ import Ticket from './Ticket';
 
 // const book = this.props.book
 // const { book } = this.props
-export default ({ book }) => (
+export default ({ book, cursor, colour }) => (
 	<div>
-    { book.map((ticket, index) => <Ticket key={`ticket${index}`} name={`Ticket ${index + 1}`} rows={ticket} />) }
+    { book.map((ticket, index) => <Ticket key={`ticket${index}`} name={`Ticket ${index + 1}`} rows={ticket}
+										  cursor={cursor} colour={colour}/>) }
 	</div>
 );
 
