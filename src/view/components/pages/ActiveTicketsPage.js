@@ -51,7 +51,7 @@ class ActiveTicketsPage extends Component {
                     </span>
                     <span>
                         <div>
-                            <NumbersCalled/>
+                            <NumbersCalled socket={socket}/>
                         </div>
                         <div>
                             <BingoButton socket={socket}/>

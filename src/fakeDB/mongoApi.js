@@ -4,6 +4,7 @@ let MongoClient = require('mongodb').MongoClient
 
 let url = 'mongodb://localhost:27017/bingo';
 const CalculateBingo = require("./CalculateBingo");
+var calledNums = [5,22,38,42,72,10,13,25,39,46,56,53,61,78,90,1,20,41,84];
 
 
 class MongoApi {
@@ -41,9 +42,47 @@ class MongoApi {
         callback("");
     }
 
-    static getCalledNumbers(){
-        let calledNums = [5,22,38,42,72,10,13,25,39,46,56,53,61,78,90,1,20,41,84];
-        return calledNums;
+    static pushCalledNumber(number){
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                MongoApi.getCalledNumbers(function (numbers) {
+                    if(numbers.indexOf(number) === -1){
+                        numbers.reverse();
+                        numbers.push(number);
+                        numbers.reverse();
+                        MongoApi.setNumbers(numbers, db);
+                        console.log("pushedNum Success: ", number, ", now: ", numbers);
+                    }else {
+                        console.log("MongoApi Error - Num already in list - ", number);
+                    }
+                });
+            }
+        });
+    }
+    static getCalledNumbers(callback){
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('bingo');
+                collection.findOne({"numbers": {$exists : true}}, function(err, result) {
+                    //assert(result["numbers"] != "");
+                    callback(result["numbers"]);
+                });
+            }
+        });
+    }
+    static setNumbers(numbers, db){
+        let collection = db.collection('bingo');
+        collection.updateOne({ "numbers" : {$exists : true}}
+            , { $set: { "numbers" : numbers} });
+    }
+    static resetCalledNumbers() {
+        console.log("resettingNumbers");
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('bingo');
+                collection.updateOne({"numbers": {$exists: true}}, {$set: {"numbers": []}});
+            }
+        });
     }
 
     static getBingo(user, callback){
@@ -57,8 +96,6 @@ class MongoApi {
             }
         });
     }
-
-
 
     static findTicket(db, callback) {
         let collection = db.collection('tickets');
@@ -109,7 +146,7 @@ class MongoApi {
 }
 
     static findDocuments(db, callback) {
-    let collection = db.collection('tickets');
+        let collection = db.collection('tickets');
         collection.find().toArray(function(err, docs) {
             callback(docs);
         });

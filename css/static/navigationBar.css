@@ -17,7 +17,23 @@ li {
     text-align:center;
 }
 
+
 li:hover {
+    list-style-type:none;
+    text-decoration:none;
+    background-color:deeppink;
+}
+cl{
+    list-style-type: none;
+    display: flex;
+}
+ci{
+    width: 30px;
+    height: 25px;
+    border: 1px solid grey;
+    text-align:center;
+}
+ci:hover{
     list-style-type:none;
     text-decoration:none;
     background-color:deeppink;

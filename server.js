@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const mongoApi = require("./src/fakeDB/mongoApi");
 const bingoTicket = require("./src/fakeDB/bingoTicket");
+const callNumber = require("./src/fakeDB/callNumber");
 
 
 module.exports = (app, port) => {
@@ -89,6 +90,41 @@ module.exports = (app, port) => {
                 });
                 userNames.free(name);
                 console.log('User disconnected from Server');
+            });
+
+            /**
+             * Call Number script integration: get, reset, callNewNum,
+             */
+            socket.on('resetCalledNumbers', function () {
+                mongoApi.resetCalledNumbers();
+                socket.emit('resettedList');
+            });
+            socket.on('callNewNum', function () {
+                mongoApi.getCalledNumbers(function (original_numbers) {
+                    let randNum = callNumber.getValidRandomNumber(original_numbers);
+                    if (randNum !== -1) {
+                        mongoApi.pushCalledNumber(randNum);
+                        mongoApi.getCalledNumbers(function (new_numbers) {
+                            new_numbers.reverse();
+                            new_numbers.push(randNum);
+                            new_numbers.reverse();
+                            socket.emit('deliverCalledNumbers', new_numbers);
+                        });
+                    } else {
+                        console.log("Error - calledNumber list Full");
+                        socket.emit('deliverCalledNumbers', original_numbers);
+                    }
+                });
+            });
+            socket.on('getInitialCalledNums', function () {
+                mongoApi.getCalledNumbers(function (numbers) {
+                    socket.emit('deliverCalledNumbers', numbers);
+                });
+            });
+            socket.on('getCalledNumbers', function() {
+                mongoApi.getCalledNumbers(function (numbers) {
+                    socket.emit('deliverCalledNumbers', numbers);
+                });
             });
         });
 
