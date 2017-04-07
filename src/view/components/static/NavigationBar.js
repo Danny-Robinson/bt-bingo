@@ -19,7 +19,7 @@ const NavigationBar = () => (
                 <Link to="/leaderboard" activeClassName="active">Leaderboard</Link>
             </li>
             <li>
-                <a href="">Logout</a>
+                <a href="/logout">Logout</a>
             </li>
         </ul>
     </nav>

@@ -11,6 +11,8 @@ class User {
     constructor(username, password) {
         this.username = username;
         this.password = password;
+        this.sessionId = "";
+        this.userRole = "";
     }
 
     get getUsername() {
@@ -19,6 +21,14 @@ class User {
 
     get getPassword() {
         return this.password;
+    }
+
+    setSessionId(sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    setUserRole(userRole) {
+        this.userRole = userRole;
     }
 }
 

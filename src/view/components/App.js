@@ -6,6 +6,7 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import Chat from './chat/Chat';
 import ActiveTicketsPage from './pages/ActiveTicketsPage';
 import LoginPage from './static/login/LoginPage';
+import LogoutPage from './pages/LogoutPage';
 
 class App extends Component {
 
@@ -20,9 +21,10 @@ class App extends Component {
                 <Router history={browserHistory}>
                     <Route path='/' component={LoginPage}/>
                     <Route path='/activeTickets' component={ActiveTicketsPage} authorize={['user']}/>
-                    <Route path='/purchaseTickets' component={PurchaseTicketsPage} authorize={['admin']}/>
+                    <Route path='/purchaseTickets' component={PurchaseTicketsPage} authorize={['user', 'admin']}/>
                     <Route path='/expiredTickets' component={ExpiredTicketsPage} authorize={['user']}/>
                     <Route path='/leaderboard' component={LeaderboardPage} authorize={['user']}/>
+                    <Route path='/logout' component={LogoutPage}/>
                 </Router>
             );
     }

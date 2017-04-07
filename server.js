@@ -82,6 +82,25 @@ module.exports = (app, port) => {
                 });
             });
 
+            socket.on('storeSession', function(JSONuser) {
+                var userObject = JSON.parse(JSONuser);
+                userObject["userRole"] = 'user';
+                mongoApi.storeUserSession(userObject, function (result) {
+                    if (result != "") {
+                        socket.emit('storedSession');
+                    }
+                });
+            });
+
+
+            socket.on('removeUserSession', function() {
+                mongoApi.removeUserSession(function (user) {
+                    if (user !== null) {
+                        socket.emit('removedUserSession');
+                    }
+                });
+            });
+
             socket.on('getBingo', function(user){
                 mongoApi.getBingo(user, function (bingo) {
                     if (bingo) {

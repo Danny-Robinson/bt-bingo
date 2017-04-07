@@ -4,6 +4,9 @@ import LoginForm from './LoginForm';
 import LoginFormError from './LoginFormError';
 import User from '../../../../model/User';
 import cookie from "react-cookie";
+import styles from '../../../../../css/_app.scss'
+
+const socket = io();
 
 class LoginPage extends Component {
 
@@ -58,10 +61,14 @@ class LoginPage extends Component {
             success: function(data) {
                 //start the session
                 let session = LoginPage.getLoginState();
-                session.isLoggedIn = true;
-                session.group = 'user';
                 session.sessionID = data;
-                localStorage.setItem('userSession', JSON.stringify(session));
+                //store the session
+                userEntity.setSessionId(data);
+                socket.emit('storeSession', JSON.stringify(userEntity));
+                socket.on('storedSession', function() {
+                    console.log('successfully stored session');
+                    localStorage.setItem('userSession', JSON.stringify(session));
+                });
                 window.location="/activeTickets";
             }.bind(this),
             error: function(xhr, status, error) {
