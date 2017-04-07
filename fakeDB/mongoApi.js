@@ -87,6 +87,85 @@ class MongoApi {
         });
     }
 
+    /**
+     * Leaderboard get with calculations, etc.
+     * @param callback
+     */
+    static getAllLeaderBoard(callback) {
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('winners');
+                collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    callback(result);
+                });
+            }
+        });
+    }
+
+    /**
+     * Update/insert winner into All Time Leaderboard.
+     * @param winner of type: (user, score).
+     */
+    static upsertWinnerToLeaderboard(winner) {
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('winners');
+                collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    result = JSON.parse(result);
+                    console.log("result:",result);
+                    if(result.get(winner.user)!== null){
+                        result.push(winner);
+                        console.log("result:",result);
+                    }
+                    let resultArray = result.toArray();
+                    console.log("result:",resultArray);
+                    resultArray.push(winner);
+                    console.log("result:",resultArray);
+                    //collection.updateOne({"winners": {$exists: true}}, {$set: {"winners": [result]}});
+                });
+            }
+        });
+    }
+    static getAllBingoNumbersLeft(callback){
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('rtwinners');
+                collection.findOne({"winners": {$exists : true}}, function(err, result) {
+                    callback(result);
+                });
+                //callback format: "winners": [{"user" : "w", "numsleft" : "x"}, {"user" : "y", "numsleft" : "z"}]
+            }
+        });
+    }
+
+    /**
+     * update/ insert RTLeader to RTWinners collection.
+     * @param RTleader - format: {"user": "x", "numsleft": "Y"}
+     */
+    static upsertRTLeader(RTleader, callback){
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('rtwinners');
+                collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    let temp_winners = result["winners"].slice();
+                    let index = temp_winners.indexOf(RTleader);
+                    if(index === -1) {
+                        temp_winners.push(RTleader);
+                        console.log("winners:", temp_winners);
+                        collection.updateOne(result, {$set : {"winners": temp_winners}});
+                        callback(temp_winners);
+                    }else{
+                        temp_winners[index] = RTleader;
+                        console.log("Already added, changed score:", temp_winners);
+                        collection.updateOne(result, {$set : {"winners": temp_winners}});
+                        callback(temp_winners);
+                    }
+                });
+            }
+        });
+    }
+
+
     static getBingo(user, callback){
         console.log(user);
         let result ="";

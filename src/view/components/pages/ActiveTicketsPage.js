@@ -6,6 +6,7 @@ import BingoButton from '../BingoButton';
 import DabChanger from '../DabChanger';
 import RoleAwareComponent from '../RoleAwareComponent'
 import Chat from '../chat/Chat';
+import WinnersLeaderboard from '../leaderboards/WinnersLeaderboard';
 import styles from '../../../../css/pages/_activeTickets.scss';
 
 const socket = io();
@@ -62,6 +63,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
                              <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
                          </span>
                          <span>
+                            <WinnersLeaderboard socket={socket} />
                          </span>
                          <span>
                              <div>

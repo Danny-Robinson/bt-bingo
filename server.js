@@ -100,6 +100,67 @@ module.exports = (app, port) => {
                 console.log('User disconnected from Server');
             });
 
+            socket.on('getListOfUsers', function () {
+                mongoApi.getAllTickets(function (book) {
+                    if (book != "") {
+                        let userList = [];
+                        book = JSON.parse(book);
+                        for (let i = 0; i < book.length; i++) {
+                            for (let name in book[i]) {
+                                userList.push(name);
+                            }
+                        }
+                        socket.emit('deliverUserList', userList);
+                    }
+                });
+            });
+            socket.on('getUserNumsLeft', function () {
+                mongoApi.getAllTickets(function (book) {
+                    if (book != "") {
+                        book = JSON.parse(book);
+                        for (let i = 0; i < book.length; i++) {
+                            for (let name in book[i]) {
+
+                                this.setBook(JSON.parse(book[i][name]));
+
+                            }
+                        }
+                        socket.emit('deliverUserNumsLeft', userList);
+                    }
+                });
+            });
+
+            /**
+             * Leaderboard functionality:
+             * Add new winner when: user clicks "BingoButton" > validate win > then 'insert/ increment' the user's score to the All-time Leaderboard.
+             * Add real-time current-game winner: Access all users' tickets in the db > calculate: nums left to win, for each user > order by numsLeft > save to db.
+             */
+            socket.on('getWinnersLeaderboard', function () {
+                mongoApi.getAllLeaderBoard(function (winners) {
+                    socket.emit('leaderBoardInit', winners);
+                });
+            });
+            socket.on('putNewWinner', function (winner) {
+                mongoApi.upsertWinnerToLeaderboard(function (winners) {
+
+                });
+            });
+            socket.on('getRTLeaderboard', function () {
+                mongoApi.getRTLeaderboard(function (winners) {
+                    socket.emit('RTleaderBoardInit', winners);
+                });
+            });
+            socket.on('getAllBingoNumbersLeft', function(){
+                mongoApi.getAllBingoNumbersLeft(function (data) {
+                        socket.emit('deliverAllUserNumsLeft', data);
+                    });
+            });
+            socket.on('addRTLeader', function(RTLeader){
+                mongoApi.upsertRTLeader(RTLeader, function (winners) {
+                    socket.emit('deliverAddedRTLeader', winners);
+                });
+            });
+
             /**
              * Call Number script integration: get, reset, callNewNum,
              */
