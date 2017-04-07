@@ -61,13 +61,13 @@ class NumbersCalled extends React.Component {
             <div>
                 <div>Last Number: {this.state.lastNum}</div>
                 <div>Called Numbers:</div>
-                <cl>{this.state.numbersList}</cl>
                 <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
                     Reset!
                 </button>
                 <button type="button" className="btn btn-refresh" onClick={this.refreshNumbers}>
                     Update
                 </button>
+                <cl>{this.state.numbersList}</cl>
             </div>
         );
     }
