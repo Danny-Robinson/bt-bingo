@@ -4,7 +4,7 @@ import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
 import DabChanger from '../DabChanger';
-import bingoTicket from '../../../fakeDB/bingoTicket';
+import bingoTicket from '../../../../fakeDB/bingoTicket';
 import RoleAwareComponent from '../RoleAwareComponent';
 import Chat from '../chat/Chat';
 import WinnersLeaderboard from '../leaderboards/WinnersLeaderboard';

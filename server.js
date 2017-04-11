@@ -1,6 +1,6 @@
 const path = require('path');
 const express = require('express');
-const mongoApi = require("./fakeDB/mongoApi");
+const mongoApi = require("./src/fakeDB/mongoApi");
 const bingoTicket = require("./fakeDB/bingoTicket");
 const callNumber = require("./fakeDB/callNumber");
 const ldap = require('ldapjs');
@@ -70,8 +70,12 @@ module.exports = (app, port) => {
             });
 
             socket.on('purchase',function(data){
-                mongoApi.addTicket(bingoTicket.provideBook(data.number), data.user );
-                socket.send('Purchased ticket for user: ' + data.user);
+
+                mongoApi.getUsernameFromSession(data, function (username) {
+                    mongoApi.addTicket(bingoTicket.provideBook(data.number), username );
+                    socket.send('Purchased ticket for user: ' + username);
+                });
+
             });
 
             socket.on('getAllTickets',function(event){
@@ -82,6 +86,15 @@ module.exports = (app, port) => {
                 });
             });
 
+
+            /**
+            * Saving the user session object in the database.
+            * Session format: {"username":"611427411",
+            *                  "password":"abcd",
+            *                  "sessionId":"cc192d25b7cd12470c1a15d7d0295821792ad180fe1e12b6cca19e9a0655c19",
+            *                  "userRole":"user"
+            *                 }
+            **/
             socket.on('storeSession', function(JSONuser) {
                 var userObject = JSON.parse(JSONuser);
                 userObject["userRole"] = 'user';
@@ -93,9 +106,12 @@ module.exports = (app, port) => {
             });
 
 
-            socket.on('removeUserSession', function() {
-                mongoApi.removeUserSession(function (user) {
-                    if (user !== null) {
+            /**
+            * Removes the user sessionId from the database upon successful logout.
+            **/
+            socket.on('removeUserSession', function(sessionId) {
+                mongoApi.removeUserSession(sessionId, function (result) {
+                    if (result !== null) {
                         socket.emit('removedUserSession');
                     }
                 });

@@ -16,10 +16,11 @@ socket.on('disconnect',function() {
 class PurchaseTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
-        this.state = {number: 1, user: "test4Ticks"};
+        var userSession = JSON.parse(localStorage.getItem('userSession'));
+        this.state = {number: 1, user: userSession["sessionID"]};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.authorize = ['admin'];
+        this.authorize = ['user', 'admin'];
     }
 
     handleChange(event) {
@@ -30,7 +31,7 @@ class PurchaseTicketsPage extends RoleAwareComponent {
         let data = {user: this.state.user, number: this.state.number};
         console.log(this.state.number);
         console.log(this.state.user);
-        socket.emit('purchase', data);
+        socket.emit('purchase', data.user);
         event.preventDefault();
     }
 

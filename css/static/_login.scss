@@ -123,8 +123,22 @@ p.errorLogin {
     }
 }
 
+@media screen and (max-width:635px) {
+    #logoutMessage {
+        font-size:1.5em;
+        height:80px;
+    }
+}
+
 @media screen and (max-width:589px) {
     .loginForm {
         width:100%;
+    }
+}
+
+@media screen and (max-width:300px) {
+    #logoutMessage {
+        font-size:1.1em;
+        height:90px;
     }
 }

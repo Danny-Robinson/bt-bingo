@@ -68,8 +68,8 @@ class LoginPage extends Component {
                 socket.on('storedSession', function() {
                     console.log('successfully stored session');
                     localStorage.setItem('userSession', JSON.stringify(session));
+                    window.location="/activeTickets";
                 });
-                window.location="/activeTickets";
             }.bind(this),
             error: function(xhr, status, error) {
                 if (error === 'Unauthorized') {
@@ -87,8 +87,6 @@ class LoginPage extends Component {
     **/
     static getLoginState() {
         return {
-            isLoggedIn: false,
-            group: '',
             sessionID: ''
         };
     }

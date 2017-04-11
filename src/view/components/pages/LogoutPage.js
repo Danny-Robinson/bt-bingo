@@ -13,7 +13,8 @@ class LogoutPage extends RoleAwareComponent {
     }
 
     componentWillMount() {
-        socket.emit('removeUserSession');
+        var userSession = JSON.parse(localStorage.getItem('userSession'));
+        socket.emit('removeUserSession', userSession["sessionID"]);
         socket.on('removedUserSession', function() {
         }.bind(this));
         localStorage.clear();
