@@ -59,15 +59,19 @@ class NumbersCalled extends React.Component {
     render() {
         return (
             <div>
-                <div>Last Number: {this.state.lastNum}</div>
+                <div id="lastNumber">
+                    Last Number: <p>{this.state.lastNum}</p>
+                </div>
                 <div>Called Numbers:</div>
+                <div id="numberList">
+                    <cl>{this.state.numbersList}</cl>
+                </div>
                 <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
                     Reset!
                 </button>
                 <button type="button" className="btn btn-refresh" onClick={this.refreshNumbers}>
                     Update
                 </button>
-                <cl>{this.state.numbersList}</cl>
             </div>
         );
     }

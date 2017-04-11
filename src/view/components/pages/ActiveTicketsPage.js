@@ -60,14 +60,14 @@ class ActiveTicketsPage extends RoleAwareComponent {
             <span>
                 <NavigationBar />
                 <div className="pageContent">
-                    <span style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                    <span id="ticket_container" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
                         <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
                     </span>
                     <span>
                         <WinnersLeaderboard socket={socket} />
                     </span>
                     <span>
-                        <div>
+                        <div id="numbersCalled">
                             <NumbersCalled socket={socket}/>
                         </div>
                         <div>
