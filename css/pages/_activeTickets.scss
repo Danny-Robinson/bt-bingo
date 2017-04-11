@@ -3,11 +3,12 @@
     min-width:446px;
     width:100%;
     height:100%;
-    background-color: white;
-    position:absolute;
-    bottom:0;
-    top:60px;
-    z-index:-5;
+    background: url('../../images/backgroundActive.jpg') no-repeat fixed;
+    background-size: cover;
+
+    span#ticket_container {
+        width:67%;
+    }
 
     @media screen and (max-width:775px) {
         display:block;
@@ -22,15 +23,40 @@
 
     .row {
         width:60%;
-        background:rgba(173,255,47, 0.5);
+        background:rgba(173,255,47, 0.8);
         border-radius:10px;
         box-shadow:0 0 20px black;
         border-style: groove;
         font-style: italic;
         text-decoration:bold;
 
+        &:hover {
+          -moz-animation:bounceOut .4s linear;
+          -webkit-animation:bounceOut .4s linear;
+        }
+
+        @-moz-keyframes bounceOut {
+                0%{ box-shadow: 0 0 0 4px yellow; opacity:1;}
+                25%{ box-shadow: 0 0 0 1px yellow; opacity:1;}
+                50%{ box-shadow: 0 0 0 7px yellow; opacity:1; }
+                75%{ box-shadow: 0 0 0 4px yellow; opacity:1;}
+                100%{ box-shadow: 0 0 0 5px yellow; opacity:1;}
+        }
+
+        @-webkit-keyframes bounceOut {
+                0%{ box-shadow: 0 0 0 4px yellow; opacity:1;}
+                25%{ box-shadow: 0 0 0 1px yellow; opacity:1;}
+                50%{ box-shadow: 0 0 0 7px yellow; opacity:1; }
+                75%{ box-shadow: 0 0 0 4px yellow; opacity:1;}
+                100%{ box-shadow: 0 0 0 5px yellow; opacity:1;}
+        }
+
+        @media screen and (max-width:1045px) {
+            width:85%;
+        }
+
         @media screen and (max-width:775px) {
-            width:100% !important;
+            width:100%;
         }
     }
 
@@ -40,11 +66,12 @@
             width:180px;
             height:60px;
             border-radius:20px;
-            box-shadow:0 0 20px black;
+            box-shadow:0 0 100px yellow;
             background-color:#551a8b;
             background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #551a8b), color-stop(0.6, #551a8b), color-stop(0.61, #551a8b), color-stop(1, #ffffff));
             background-image: -moz-linear-gradient(center bottom, #551a8b 0%, #551a8b 60%, #551a8b 61%, #ffffff 100%);
             background-image: linear-gradient(to top, #551a8b 0%, #551a8b 60%, #551a8b 61%, #ffffff 100%);
+            margin-top:25px;
 
             >h3 {
                 color:yellow;
@@ -57,6 +84,64 @@
             box-shadow:0 0 10px #551a8b;
             background-color:#551a8b;
             background-image:none;
+        }
+
+        @media screen and (max-width:775px) {
+            text-align:center;
+        }
+    }
+
+    #dabColors {
+        background:rgba(85, 26, 139, 0.8);
+        height:138px;
+        border-style:groove;
+        border-top-left-radius:20px;
+        border-bottom-left-radius:20px;
+        box-shadow:0 0 20px black;
+        color:yellow;
+        text-align:center;
+
+        >h1 {
+            font-size:1.5em;
+        }
+
+        @media screen and (max-width:775px) {
+            border-radius:20px;
+        }
+    }
+
+    #numbersCalled {
+        background:rgba(85, 26, 139, 0.8);
+        height:250px;
+        border-style:groove;
+        border-top-left-radius:20px;
+        border-bottom-left-radius:20px;
+        box-shadow:0 0 20px black;
+        color:yellow;
+        font-size:1.5em;
+
+        .btn.btn-reset, .btn.btn-refresh {
+             width:150px;
+             height:50px;
+             border-radius:20px;
+             box-shadow:0 0 20px black;
+             background-color:#551a8b;
+             background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #551a8b), color-stop(0.6, #551a8b), color-stop(0.61, #551a8b), color-stop(1, #ffffff));
+             background-image: -moz-linear-gradient(center bottom, #551a8b 0%, #551a8b 60%, #551a8b 61%, #ffffff 100%);
+             background-image: linear-gradient(to top, #551a8b 0%, #551a8b 60%, #551a8b 61%, #ffffff 100%);
+             color:yellow;
+             font-size:0.7em;
+        }
+
+        .btn.btn-reset:hover, .btn.btn-refresh:hover {
+             box-shadow:0 0 10px yellow;
+             background-color:#551a8b;
+             background-image:none;
+        }
+
+        @media screen and (max-width:775px) {
+            border-radius:20px;
+            text-align:center;
         }
     }
 }
