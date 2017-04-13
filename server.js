@@ -117,6 +117,15 @@ module.exports = (app, port) => {
                 });
             });
 
+            socket.on('retrieveUserType', function(sessionId) {
+                mongoApi.retrieveUserTypeFromSessionId(sessionId, function (userType) {
+                    if (userType !== '' && userType !== null) {
+                        socket.emit('retrievedUserType', userType);
+                    }
+                });
+            });
+
+
             socket.on('getBingo', function(user){
                 mongoApi.getBingo(user, function (bingo) {
                     if (bingo) {

@@ -1,10 +1,12 @@
 #chatContainer {
-    background-color:#08538c;
-    color:white;
+    background:rgba(85, 26, 139, 0.8);
+    color:yellow;
     padding:20px;
     height:600px;
     margin-top:10px;
     border-style:groove;
+    border-radius:20px;
+    font-size:1.5em;
 
     .messages {
         background-color:white;
@@ -13,9 +15,25 @@
         border-radius:10px;
         color:black;
         font-style:italic;
+        font-size:0.7em;
         text-decoration:bold;
-        margin-bottom:10px;
+        margin-bottom:20px;
         max-height:270px;
         overflow-y:scroll;
     }
+
+    .message_form, .change_name_form {
+        >form input {
+            width:95%;
+            height:50px;
+            border-radius:10px;
+            background:black;
+            color:deeppink;
+            margin-left:auto;
+            margin-right:auto;
+            font-size:0.9em;
+            margin-bottom:10px;
+        }
+    }
+
 }

@@ -137,7 +137,7 @@ class MongoApi {
                 let collection = db.collection('users');
                 let deleteEntity = {sessionId: sessionId};
                 collection.deleteOne(deleteEntity, function(err, result) {
-                    if (err !== null) {
+                    if (err === null) {
                         callback(result);
                     }
                     callback("");
@@ -145,6 +145,24 @@ class MongoApi {
             }
         });
         callback("");
+    }
+
+
+    static retrieveUserTypeFromSessionId(sessionId, callback) {
+        MongoClient.connect(url, function(err, db) {
+            if (err === null) {
+                let collection = db.collection('users');
+                let findBySession = {sessionId: sessionId};
+                collection.findOne(findBySession, function(err, result) {
+                    if (err === null) {
+                        callback(result.userRole);
+                    }
+                    callback("");
+                });
+
+            }
+        });
+
     }
 
     /**

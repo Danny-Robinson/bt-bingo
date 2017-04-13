@@ -23,7 +23,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
         };
         this.handleChange = this.handleChange.bind(this);
         this.authorize = ['user'];
-
+        this.userType = "";
         this.setBook = this.setBook.bind(this);
     }
 
@@ -41,6 +41,8 @@ class ActiveTicketsPage extends RoleAwareComponent {
     }
 
     componentWillMount() {
+//        super.retrieveUserType();
+//        console.log("fuckreerrr"+this.userType);
         socket.emit('getAllTickets');  //Can be changed to get ticket by user, eliminates below for loop
         socket.on('deliverTicket', function (book) {
             book = JSON.parse(book);
@@ -54,8 +56,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
     }
 
     render() {
-        var sessionObject = JSON.parse(localStorage.getItem('userSession'));
-
+       // var lll = super.shouldBeVisible();
         return (
             <span>
                 <NavigationBar />

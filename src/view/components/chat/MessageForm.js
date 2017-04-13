@@ -28,11 +28,10 @@ class MessageForm extends Component {
     render() {
         return(
             <div className='message_form'>
-                <h3>Write New Message</h3>
                 <form onSubmit={this.handleSubmit}>
                     <input
                         onChange={this.changeHandler}
-                        value={this.state.text}
+                        value={this.state.text} placeholder="Write new message"
                     />
                 </form>
             </div>

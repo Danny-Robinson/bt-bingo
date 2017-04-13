@@ -25,11 +25,11 @@ class ChangeNameForm extends Component {
     render() {
         return(
             <div className='change_name_form'>
-                <h3> Change Name </h3>
                 <form onSubmit={this.handleSubmit}>
                     <input
                         onChange={this.onKey}
                         value={this.state.newName}
+                        placeholder="Change nickname"
                     />
                 </form>
             </div>
