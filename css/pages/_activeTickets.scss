@@ -9,6 +9,14 @@
     span#ticket_container {
         width:67%;
     }
+    span#leaderboard_AllTime {
+        background-color:#551a8b;
+        color:yellow;
+    }
+    span#leaderboard_RealTime {
+        background-color:#551a8b;
+        color:yellow;
+    }
 
     @media screen and (max-width:775px) {
         display:block;

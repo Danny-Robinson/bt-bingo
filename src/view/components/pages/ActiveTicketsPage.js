@@ -8,6 +8,7 @@ import bingoTicket from '../../../../fakeDB/bingoTicket';
 import RoleAwareComponent from '../RoleAwareComponent';
 import Chat from '../chat/Chat';
 import WinnersLeaderboard from '../leaderboards/WinnersLeaderboard';
+import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
 import LoginPage from '../static/login/LoginPage';
 import styles from '../../../../css/pages/_activeTickets.scss';
 
@@ -64,8 +65,11 @@ class ActiveTicketsPage extends RoleAwareComponent {
                     <span id="ticket_container" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
                         <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
                     </span>
-                    <span>
+                    <span id="leaderboard_AllTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
                         <WinnersLeaderboard socket={socket} />
+                    </span>
+                    <span id="leaderboard_RealTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                        <RealTimeLeaderboard socket={socket} />
                     </span>
                     <span>
                         <div id="numbersCalled">

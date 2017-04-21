@@ -18,40 +18,40 @@ class NumbersCalled extends React.Component {
     }
 
     componentDidMount() {
-        const { socket } = this.props;
+        const {socket} = this.props;
         socket.emit('getInitialCalledNums');
         socket.on('deliverCalledNumbers', function (numbers) {
             console.log("deliverCalledNumbers-componentDidMount");
             this.setState({
-                lastNum : numbers[0],
-                calledNumbers : numbers
+                lastNum: numbers[0],
+                calledNumbers: numbers
             });
             this.setList();
         }.bind(this));
         socket.on('resettedList', function () {
             this.setState({
-                lastNum : "0",
-                calledNumbers : ["0"],
+                lastNum: "0",
+                calledNumbers: ["0"],
             });
             this.setList();
         }.bind(this));
     }
 
-    setList(){
+    setList() {
         listItems = this.state.calledNumbers.map((number) =>
             <ci>{number}</ci>
         );
-        this.setState({ numbersList: listItems});
+        this.setState({numbersList: listItems});
     }
 
-    resetNumbers(){
-        const { socket } = this.props;
+    resetNumbers() {
+        const {socket} = this.props;
         socket.emit('resetCalledNumbers');
         socket.emit('getCalledNumbers');
     }
 
     refreshNumbers() {
-        const { socket } = this.props;
+        const {socket} = this.props;
         socket.emit('callNewNum');
         socket.emit('getCalledNumbers');
     }
@@ -76,5 +76,10 @@ class NumbersCalled extends React.Component {
         );
     }
 }
+
+/*
+<div id="numberList">
+    <NumbersCalledList numbersList={this.state.calledNumbers}/>
+</div>*/
 
 export default NumbersCalled;

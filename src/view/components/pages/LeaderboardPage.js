@@ -1,6 +1,7 @@
 import React from 'react';
 import NavigationBar from '../static/NavigationBar';
 import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
+import WinnersLeaderboard from '../leaderboards/WinnersLeaderboard';
 const socket = io();
 
 const LeaderboardPage = () => (
@@ -8,7 +9,7 @@ const LeaderboardPage = () => (
         <NavigationBar/>
         <div className="pageContent">
             <div>
-                <RealTimeLeaderboard socket={socket} />
+                <WinnersLeaderboard socket={socket} />
             </div>
         </div>
   </span>

@@ -12,58 +12,86 @@ class RealTimeLeaderboard extends React.Component {
         this.state = {
             rt_winners: []
         };
-        this.userNumbersLeft= this.userNumbersLeft.bind(this);
-        this.emitAddRTLeader= this.emitAddRTLeader.bind(this);
+        this._init = this._init.bind(this);
+        this.setUserNumbersLeft= this.setUserNumbersLeft.bind(this);
+        this.addRTLeader= this.addRTLeader.bind(this);
         this.refreshLeaderboard= this.refreshLeaderboard.bind(this);
+        this.calculateLeaders= this.calculateLeaders.bind(this);
     }
 
     componentDidMount() {
         const {socket} = this.props;
-        socket.on('deliverAllUserNumsLeft', this.userNumbersLeft);
+        socket.on('leaderBoardInit_AllTime', this._init);
+        socket.on('deliverLeaders_RealTime', this.setUserNumbersLeft);
         socket.on('deliverAddedRTLeader', this.refreshLeaderboard);
-        socket.emit('getAllBingoNumbersLeft');
+        socket.on('refreshLeaderboard_RealTime', this.refreshLeaderboard);
+        socket.emit('getLeaderboard_RealTime');
     }
+    _init(data){
 
-    /**
-     * @param data - array of {username, numLeft} for every user in the database.
-     */
-    userNumbersLeft(data) {
         let winners = data["winners"];
         this.setState({
             rt_winners: winners
         });
-        console.log("userNumbersLeft:",this.state.rt_winners);
+        console.log("_init_:", this.state.rt_winners);
     }
+
+    /**
+     * @param data - array of every user in the database
+     *  Format: {"winners": [{user: username, numLeft: num}, ...]}
+     */
+    setUserNumbersLeft(data) {
+        let winners = data["winners"];
+        this.setState({
+            rt_winners: winners
+        });
+        console.log("setUserNumbersLeft:",this.state.rt_winners);
+    }
+
     refreshLeaderboard(){
         const { socket } = this.props;
-        socket.emit('getAllBingoNumbersLeft');
+        socket.emit('getLeaderboard_RealTime');
     }
-    emitAddRTLeader(){
+
+    addRTLeader(){
+        /*
+         Calculate current leaders by calculating how close to bingo each player is - Server-side.
+         */
         const { socket } = this.props;
         let min = 99;
         let max = 9999;
         let randomNumber = Math.floor(Math.random() * (max - min + 1)) + min; //Random int between min and max (inclusive)
-        let temp_winners = {"user" : "user"+randomNumber, "numsleft": randomNumber};
+        let temp_winners = {"user" : "user"+randomNumber, "numsLeft": randomNumber};
         socket.emit('addRTLeader', temp_winners);
     }
+    calculateLeaders(){
+        /*
+         Calculate current leaders by calculating how close to bingo each player is - Server-side.
+         */
+        const { socket } = this.props;
+        socket.emit('calculateLeaderboard_RealTime');
+        socket.emit('getLeaderboard_RealTime');
+        //socket.emit('getLeaderboard_AllTime');
+    }
+
+
 
     render() {
         let {rt_winners} = this.state;
         return (
             <div>
                 <span>
-                    <button type="button" className="btn btn-rtadd" onClick={this.emitAddRTLeader}>
-                        Add random RT Leader
-                    </button>
-                </span>
-                <span>
-                    <div>LeaderBoards:</div>
                     <div className='messages'>
-                        <h2> All Time: </h2>
+                        <h2> Real Time: </h2>
+                        <span>
+                            <button type="button" className="btn btn-rtadd" onClick={this.calculateLeaders}>
+                                Calculate Leaders
+                            </button>
+                        </span>
                         {
                             rt_winners.map((winner, i) => {
                                 return (
-                                    <LeaderScore key={i} user={winner.user} score={winner.numsleft}/>
+                                    <LeaderScore key={i} user={winner.user} score={winner.numsLeft}/>
                                 );
                             })
                         }

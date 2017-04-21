@@ -71,7 +71,7 @@ module.exports = (app, port) => {
 
             socket.on('purchase',function(data){
 
-                mongoApi.getUsernameFromSession(data, function (username) {
+                mongoApi.getUsernameFromSessionId(data, function (username) {
                     mongoApi.addTicket(bingoTicket.provideBook(data.number), username );
                     socket.send('Purchased ticket for user: ' + username);
                 });
@@ -118,7 +118,7 @@ module.exports = (app, port) => {
             });
 
             socket.on('retrieveUserType', function(sessionId) {
-                mongoApi.retrieveUserTypeFromSessionId(sessionId, function (userType) {
+                mongoApi.getUserTypeFromSessionId(sessionId, function (userType) {
                     if (userType !== '' && userType !== null) {
                         socket.emit('retrievedUserType', userType);
                     }
@@ -133,6 +133,38 @@ module.exports = (app, port) => {
                     } else {
                         socket.emit('deliverBingo', false);
                     }
+                });
+            });
+
+            /**
+             * When user clicks "Bingo", simulate they have all the correct numbers (for testing Leaderboards).
+             */
+            socket.on('simulateBingoWin_RealTime', function(user){
+                mongoApi.upsertLeader_RealTime({"user" : user["user"], "numsLeft": "2"}, function (winners) {
+                    socket.emit('deliverBingo', true);
+                    socket.emit('deliverAddedRTLeader', winners);
+                });
+            });
+            socket.on('simulateBingoWin_AllTime', function(userSessionId){
+
+                mongoApi.getUsernameFromSessionId(userSessionId, function (username) {
+                    mongoApi.getUsernameWinnings(username, function (prev_winnings) {
+                        if (prev_winnings != 0 && (prev_winnings == null || prev_winnings == "")) {
+                            return;
+                        }
+                        let current_jackpot = 30;
+                        let new_winnings = +prev_winnings + +(current_jackpot / 2);
+
+                        mongoApi.upsertLeader_AllTime({
+                            "user": username,//.user,
+                            "winnings": "£" + new_winnings
+                        }, function (winners) {
+                            socket.emit('refreshLeaderboard_AllTime', winners);
+                            socket.emit('deliverBingo', true);
+                        });
+
+                        mongoApi.updateUsernameWinnings(username, new_winnings);
+                    });
                 });
             });
 
@@ -169,7 +201,7 @@ module.exports = (app, port) => {
 
                             }
                         }
-                        socket.emit('deliverUserNumsLeft', userList);
+                        socket.emit('deliverLeaders_RealTime', userList);
                     }
                 });
             });
@@ -179,14 +211,20 @@ module.exports = (app, port) => {
              * Add new winner when: user clicks "BingoButton" > validate win > then 'insert/ increment' the user's score to the All-time Leaderboard.
              * Add real-time current-game winner: Access all users' tickets in the db > calculate: nums left to win, for each user > order by numsLeft > save to db.
              */
-            socket.on('getWinnersLeaderboard', function () {
+            socket.on('getLeaderboard_AllTime', function () {
                 mongoApi.getAllLeaderBoard(function (winners) {
-                    socket.emit('leaderBoardInit', winners);
+                    socket.emit('leaderBoardInit_AllTime', winners);
+                    socket.emit('deliverLeaders_RealTime',winners);
+                });
+            });
+            socket.on('resetLeaderboard_AllTime', function () {
+                mongoApi.resetLeaderBoard_AllTime(function () {
+                    socket.emit('refreshLeaderboard_AllTime');
                 });
             });
             socket.on('putNewWinner', function (winner) {
-                mongoApi.upsertWinnerToLeaderboard(function (winners) {
-
+                mongoApi.upsertLeader_RealTime({"user" : user["user"], "numsLeft": "2"}, function (winners) {
+                    socket.emit('deliverBingo', true);
                 });
             });
             socket.on('getRTLeaderboard', function () {
@@ -194,13 +232,19 @@ module.exports = (app, port) => {
                     socket.emit('RTleaderBoardInit', winners);
                 });
             });
-            socket.on('getAllBingoNumbersLeft', function(){
-                mongoApi.getAllBingoNumbersLeft(function (data) {
-                        socket.emit('deliverAllUserNumsLeft', data);
+            socket.on('calculateLeaderboard_RealTime', function () {
+                mongoApi.calculateLeaderboard_RealTime(function () {
+                    socket.emit('refreshLeaderboard_RealTime');
+                });
+            });
+            socket.on('getLeaderboard_RealTime', function(){
+                mongoApi.getLeaders_RealTime(function (data) {
+                        socket.emit('leaderBoardInit_AllTime', data);
+                        socket.emit('deliverLeaders_RealTime', data);
                     });
             });
             socket.on('addRTLeader', function(RTLeader){
-                mongoApi.upsertRTLeader(RTLeader, function (winners) {
+                mongoApi.upsertLeader_RealTime(RTLeader, function (winners) {
                     socket.emit('deliverAddedRTLeader', winners);
                 });
             });
