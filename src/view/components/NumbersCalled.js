@@ -19,9 +19,7 @@ class NumbersCalled extends React.Component {
 
     componentDidMount() {
         const {socket} = this.props;
-        socket.emit('getInitialCalledNums');
         socket.on('deliverCalledNumbers', function (numbers) {
-            console.log("deliverCalledNumbers-componentDidMount");
             this.setState({
                 lastNum: numbers[0],
                 calledNumbers: numbers
@@ -30,11 +28,13 @@ class NumbersCalled extends React.Component {
         }.bind(this));
         socket.on('resettedList', function () {
             this.setState({
-                lastNum: "0",
-                calledNumbers: ["0"],
+                lastNum: "",
+                calledNumbers: [],
             });
             this.setList();
+            socket.emit('getCalledNumbers');
         }.bind(this));
+        socket.emit('getCalledNumbers');
     }
 
     setList() {
@@ -47,13 +47,18 @@ class NumbersCalled extends React.Component {
     resetNumbers() {
         const {socket} = this.props;
         socket.emit('resetCalledNumbers');
-        socket.emit('getCalledNumbers');
     }
 
     refreshNumbers() {
         const {socket} = this.props;
         socket.emit('callNewNum');
         socket.emit('getCalledNumbers');
+        //socket.emit('getLeaderboard_RealTime');
+        /*
+         Calculate current leaders by calculating how close to bingo each player is - Server-side.
+         */
+        socket.emit('calculateLeaderboard_RealTime');
+        socket.emit('getLeaderboard_RealTime');
     }
 
     render() {

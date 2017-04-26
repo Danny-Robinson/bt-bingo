@@ -15,20 +15,14 @@ class WinnersLeaderboard extends React.Component {
         };
         this._init = this._init.bind(this);
         this.refreshLeaderboard = this.refreshLeaderboard.bind(this);
-        this.resetLeaderboard= this.resetLeaderboard.bind(this);
-        this.setLeaderboard= this.setLeaderboard.bind(this);
+        this.resetLeaderboard = this.resetLeaderboard.bind(this);
+        this.setLeaderboard = this.setLeaderboard.bind(this);
     }
 
     componentDidMount() {
         const { socket } = this.props;
         socket.on('setLeaderboard_AllTime', this.setLeaderboard);
         socket.on('refreshLeaderboard_AllTime', this.refreshLeaderboard);
-        socket.emit('getLeaderboard_AllTime');
-    }
-
-    refreshLeaderboard() {
-        console.log("refreshLeaderboard_AllTime");
-        const {socket} = this.props;
         socket.emit('getLeaderboard_AllTime');
     }
 
@@ -41,21 +35,27 @@ class WinnersLeaderboard extends React.Component {
         console.log("_init_:", this.state.global_winners);
     }
 
+    refreshLeaderboard() {
+        console.log("refreshLeaderboard_AllTime");
+        const {socket} = this.props;
+        socket.emit('getLeaderboard_AllTime');
+    }
+
     setLeaderboard(data){
 
         let winners = data["winners"];
         this.setState({
             global_winners: winners
         });
-        console.log("setLeaderboard:", this.state.global_winners);
+        console.log("setLeaderboard_AllTime:", this.state.global_winners);
     }
 
     resetLeaderboard(){
         const { socket } = this.props;
-        socket.emit('resetLeaderboard_AllTime');
         this.setState({
             global_winners: {"winners": []}
         });
+        socket.emit('resetLeaderboard_AllTime');
     }
 
     render() {

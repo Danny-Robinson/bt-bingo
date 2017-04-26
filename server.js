@@ -136,38 +136,6 @@ module.exports = (app, port) => {
                 });
             });
 
-            /**
-             * When user clicks "Bingo", simulate they have all the correct numbers (for testing Leaderboards).
-             */
-            socket.on('simulateBingoWin_RealTime', function(user){
-                mongoApi.upsertLeader_RealTime({"user" : user["user"], "numsLeft": "2"}, function (winners) {
-                    socket.emit('deliverBingo', true);
-                    socket.emit('deliverAddedRTLeader', winners);
-                });
-            });
-            socket.on('simulateBingoWin_AllTime', function(userSessionId){
-
-                mongoApi.getUsernameFromSessionId(userSessionId, function (username) {
-                    mongoApi.getUsernameWinnings(username, function (prev_winnings) {
-                        if (prev_winnings != 0 && (prev_winnings == null || prev_winnings == "")) {
-                            return;
-                        }
-                        let current_jackpot = 30;
-                        let new_winnings = +prev_winnings + +(current_jackpot / 2);
-
-                        mongoApi.upsertLeader_AllTime({
-                            "user": username,//.user,
-                            "winnings": "£" + new_winnings
-                        }, function (winners) {
-                            socket.emit('refreshLeaderboard_AllTime', winners);
-                            socket.emit('deliverBingo', true);
-                        });
-
-                        mongoApi.updateUsernameWinnings(username, new_winnings);
-                    });
-                });
-            });
-
             socket.on('disconnect', () => {
                 socket.broadcast.emit('user:left', {
                     name: name
@@ -198,11 +166,43 @@ module.exports = (app, port) => {
                             for (let name in book[i]) {
 
                                 this.setBook(JSON.parse(book[i][name]));
-
                             }
                         }
-                        socket.emit('deliverLeaders_RealTime', userList);
+                        socket.emit('setLeaderboard_RealTime', userList);
                     }
+                });
+            });
+
+            /**
+             * When user clicks "Bingo", simulate they have all the correct numbers (for testing Leaderboards).
+             */
+            socket.on('simulateBingoWin_RealTime', function(user){
+                mongoApi.upsertLeader_RealTime({"user" : user["user"], "numsLeft": "2"}, function (winners) {
+                    socket.emit('deliverBingo', true);
+                    socket.emit('setLeaderboard_RealTime', winners);
+                });
+            });
+            socket.on('simulateBingoWin_AllTime', function(userSessionId){
+
+                mongoApi.getUsernameFromSessionId(userSessionId, function (username) {
+                    mongoApi.getUsernameWinnings(username, function (prev_winnings) {
+                        if (prev_winnings != 0 && (prev_winnings == null || prev_winnings == "")) {
+                            return;
+                        }
+                        let current_jackpot = 30;
+                        let new_winnings = +prev_winnings + +(current_jackpot / 2);
+
+                        mongoApi.upsertLeader_AllTime({
+                            "user": username,//.user,
+                            "winnings": "£" + new_winnings
+                        }, function (winners) {
+                            socket.emit('setLeaderboard_AllTime', winners);
+                            socket.emit('refreshLeaderboard_AllTime', winners);
+                            socket.emit('deliverBingo', true);
+                        });
+
+                        mongoApi.updateUsernameWinnings(username, new_winnings);
+                    });
                 });
             });
 
@@ -212,8 +212,9 @@ module.exports = (app, port) => {
              * Add real-time current-game winner: Access all users' tickets in the db > calculate: nums left to win, for each user > order by numsLeft > save to db.
              */
             socket.on('getLeaderboard_AllTime', function () {
-                mongoApi.getAllLeaderBoard(function (winners) {
+                mongoApi.getLeaderBoard_AllTime(function (winners) {
                     socket.emit('setLeaderboard_AllTime', winners);
+                    socket.broadcast.emit('setLeaderboard_AllTime', winners);
                 });
             });
             socket.on('resetLeaderboard_AllTime', function () {
@@ -229,18 +230,16 @@ module.exports = (app, port) => {
             socket.on('calculateLeaderboard_RealTime', function () {
                 mongoApi.calculateLeaderboard_RealTime(function () {
                     socket.emit('refreshLeaderboard_RealTime');
-                    socket.emit('refreshLeaderboard_RealTime');
                 });
             });
             socket.on('getLeaderboard_RealTime', function(){
                 mongoApi.getLeaderboard_RealTime(function (data) {
                         socket.emit('setLeaderboard_RealTime', data);
-                        socket.emit('refreshLeaderboard_RealTime');
                     });
             });
             socket.on('addLeader_RealTime', function(RTLeader){
                 mongoApi.upsertLeader_RealTime(RTLeader, function (winners) {
-                    socket.emit('deliverAddedRTLeader', winners);
+                    socket.emit('setLeaderboard_RealTime', winners);
                 });
             });
 
@@ -250,6 +249,13 @@ module.exports = (app, port) => {
             socket.on('resetCalledNumbers', function () {
                 mongoApi.resetCalledNumbers();
                 socket.emit('resettedList');
+                socket.broadcast.emit('resettedList');
+            });
+            socket.on('getCalledNumbers', function() {
+                mongoApi.getCalledNumbers(function (numbers) {
+                    socket.emit('deliverCalledNumbers', numbers);
+                    socket.broadcast.emit('deliverCalledNumbers', numbers);
+                });
             });
             socket.on('callNewNum', function () {
                 mongoApi.getCalledNumbers(function (original_numbers) {
@@ -261,21 +267,13 @@ module.exports = (app, port) => {
                             new_numbers.push(randNum);
                             new_numbers.reverse();
                             socket.emit('deliverCalledNumbers', new_numbers);
+                            socket.broadcast.emit('deliverCalledNumbers', new_numbers);
                         });
                     } else {
                         console.log("Error - calledNumber list Full");
                         socket.emit('deliverCalledNumbers', original_numbers);
+                        socket.broadcast.emit('deliverCalledNumbers', original_numbers);
                     }
-                });
-            });
-            socket.on('getInitialCalledNums', function () {
-                mongoApi.getCalledNumbers(function (numbers) {
-                    socket.emit('deliverCalledNumbers', numbers);
-                });
-            });
-            socket.on('getCalledNumbers', function() {
-                mongoApi.getCalledNumbers(function (numbers) {
-                    socket.emit('deliverCalledNumbers', numbers);
                 });
             });
         });

@@ -13,6 +13,7 @@ import LoginPage from '../static/login/LoginPage';
 import styles from '../../../../css/pages/_activeTickets.scss';
 
 const socket = io();
+//var socket = require('socket.io-client');
 
 class ActiveTicketsPage extends RoleAwareComponent {
     constructor(props) {
@@ -49,7 +50,10 @@ class ActiveTicketsPage extends RoleAwareComponent {
             book = JSON.parse(book);
             for (let i=0; i<book.length; i++)
                 for (let name in book[i]) {
-                    if (name == "test4Ticks"){ //if name == user
+                    //let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
+                    console.log("socket.name", socket.name);
+                    if (name == "611218504"){//"test4ticks" //if name == user
+
                         this.setBook(JSON.parse(book[i][name]));
                     }
                 }

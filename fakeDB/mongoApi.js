@@ -267,7 +267,7 @@ class MongoApi {
      * Leaderboard manipulation:
      * @param callback
      */
-    static getAllLeaderBoard(callback) {
+    static getLeaderBoard_AllTime(callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
                 let collection = db.collection('winners');
@@ -332,26 +332,18 @@ class MongoApi {
             if (err === null) {
                 let result = "";
                 MongoApi.getCalledNumbers(function (calledNums) {
-                    console.log("cl_rt:callednums",calledNums);
                     MongoApi.getAllUsernames(function(listOfUsers){
 
                         for (let i = 0; i < listOfUsers.length; i++) {
                             let user = {user: listOfUsers[i][0]};
 
-                            console.log("calculateleaderboard",user);
-
                             MongoApi.getUserTickets(user, function (ticket) {
                                 if (ticket) {
                                     let numsRemaining = CalculateBingo.numsRemaining(calledNums, ticket);
 
-                                    console.log("calclead_rt:numsLeft",numsRemaining);
-
                                     let collection = db.collection('rtwinners');
                                     collection.findOne({"winners": {$exists: true}}, function (err, result) {
                                         let temp_winners = result["winners"].slice();
-
-                                        console.log("tempWins:",temp_winners);
-                                        console.log("user:",user);
 
                                         user["numsLeft"] = numsRemaining;
                                         let userFound = false;
@@ -359,7 +351,6 @@ class MongoApi {
                                         {
                                             if(temp_winners[i].user == user.user){
                                                 temp_winners[i] = user;
-                                                console.log("Already added, changed score:", temp_winners);
                                                 userFound = true;
                                                 break;
                                             }
@@ -427,7 +418,13 @@ class MongoApi {
             if (err === null) {
                 let collection = db.collection('rtwinners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
-                    callback(result);
+
+                    console.log("leaderbaoard_rt:result", result);
+                    let winners = result["winners"].sort(function(a, b) {
+                        return parseFloat(a.numsLeft) - parseFloat(b.numsLeft);
+                    });
+                    console.log("leaderbaoard_rt:winners", winners);
+                    callback(result["winners"] = winners);
                 });
                 //callback format: "winners": [{"user" : "w", "numsLeft" : "x"}, {"user" : "y", "numsLeft" : "z"}]
             }

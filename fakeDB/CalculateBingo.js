@@ -56,7 +56,6 @@ class CalculateBingo {
             }
             if(numsRemaining < lowestNumsRemaining){
                 lowestNumsRemaining = numsRemaining;
-                console.log("lowestticket=",i-1);
             }
         }
         return lowestNumsRemaining;

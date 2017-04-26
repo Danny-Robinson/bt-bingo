@@ -14,18 +14,12 @@ class RealTimeLeaderboard extends React.Component {
         };
         this._init = this._init.bind(this);
         this.setLeaderboard= this.setLeaderboard.bind(this);
-        this.addLeader_RealTime= this.addLeader_RealTime.bind(this);
         this.refreshLeaderboard= this.refreshLeaderboard.bind(this);
         this.resetLeaderboard= this.resetLeaderboard.bind(this);
-        this.calculateLeaders= this.calculateLeaders.bind(this);
-
     }
 
     componentDidMount() {
         const {socket} = this.props;
-        //socket.on('leaderBoardInit_RealTime', this._init);
-        socket.on('deliverLeaders_RealTime', this.setLeaderboard);
-        socket.on('deliverAddedRTLeader', this.refreshLeaderboard);
         socket.on('refreshLeaderboard_RealTime', this.refreshLeaderboard);
         socket.on('setLeaderboard_RealTime', this.setLeaderboard);
         socket.emit('getLeaderboard_RealTime');
@@ -49,8 +43,9 @@ class RealTimeLeaderboard extends React.Component {
         this.setState({
             rt_winners: winners
         });
-        console.log("setLeaderboard:",this.state.rt_winners);
+        console.log("setLeaderboard_RT:", this.state.rt_winners);
     }
+
     resetLeaderboard() {
         const { socket } = this.props;
         socket.emit('resetLeaderboard_RealTime');
@@ -58,7 +53,7 @@ class RealTimeLeaderboard extends React.Component {
             rt_winners: {"winners": []}
         });
 
-        console.log("resetLeaderboard:",this.state.rt_winners);
+        console.log("resetLeaderboard_RT:",this.state.rt_winners);
     }
 
     refreshLeaderboard(){
@@ -77,14 +72,6 @@ class RealTimeLeaderboard extends React.Component {
         let temp_winners = {"user" : "user"+randomNumber, "numsLeft": randomNumber};
         socket.emit('addLeader_RealTime', temp_winners);
     }
-    calculateLeaders(){
-        /*
-         Calculate current leaders by calculating how close to bingo each player is - Server-side.
-         */
-        const { socket } = this.props;
-        socket.emit('calculateLeaderboard_RealTime');
-        socket.emit('getLeaderboard_RealTime');
-    }
 
     render() {
         let {rt_winners} = this.state;
@@ -93,11 +80,6 @@ class RealTimeLeaderboard extends React.Component {
                 <span>
                     <div className='messages'>
                         <h2> Real Time: </h2>
-                        <span>
-                            <button type="button" className="btn btn-rtadd" onClick={this.calculateLeaders}>
-                                Calculate Leaders
-                            </button>
-                        </span>
                         {
                             rt_winners.map((winner, i) => {
                                 return (
@@ -111,5 +93,11 @@ class RealTimeLeaderboard extends React.Component {
         );
     }
 }
-
+/*
+ <span>
+ <button type="button" className="btn btn-rtadd" onClick={this.calculateLeaders}>
+ Calculate Leaders
+ </button>
+ </span>
+ */
 export default RealTimeLeaderboard;
