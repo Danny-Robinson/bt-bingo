@@ -7,7 +7,7 @@ import DabChanger from '../DabChanger';
 import bingoTicket from '../../../../fakeDB/bingoTicket';
 import RoleAwareComponent from '../RoleAwareComponent';
 import Chat from '../chat/Chat';
-import WinnersLeaderboard from '../leaderboards/WinnersLeaderboard';
+import WinnersLeaderboard from '../leaderboards/AllTimeLeaderboard';
 import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
 import LoginPage from '../static/login/LoginPage';
 import styles from '../../../../css/pages/_activeTickets.scss';

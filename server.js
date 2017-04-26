@@ -1,6 +1,6 @@
 const path = require('path');
 const express = require('express');
-const mongoApi = require("./src/fakeDB/mongoApi");
+const mongoApi = require("./fakeDB/mongoApi");
 const bingoTicket = require("./fakeDB/bingoTicket");
 const callNumber = require("./fakeDB/callNumber");
 const ldap = require('ldapjs');
@@ -213,12 +213,11 @@ module.exports = (app, port) => {
              */
             socket.on('getLeaderboard_AllTime', function () {
                 mongoApi.getAllLeaderBoard(function (winners) {
-                    socket.emit('leaderBoardInit_AllTime', winners);
-                    socket.emit('deliverLeaders_RealTime',winners);
+                    socket.emit('setLeaderboard_AllTime', winners);
                 });
             });
             socket.on('resetLeaderboard_AllTime', function () {
-                mongoApi.resetLeaderBoard_AllTime(function () {
+                mongoApi.resetLeaderboard_AllTime(function () {
                     socket.emit('refreshLeaderboard_AllTime');
                 });
             });
@@ -227,23 +226,19 @@ module.exports = (app, port) => {
                     socket.emit('deliverBingo', true);
                 });
             });
-            socket.on('getRTLeaderboard', function () {
-                mongoApi.getRTLeaderboard(function (winners) {
-                    socket.emit('RTleaderBoardInit', winners);
-                });
-            });
             socket.on('calculateLeaderboard_RealTime', function () {
                 mongoApi.calculateLeaderboard_RealTime(function () {
+                    socket.emit('refreshLeaderboard_RealTime');
                     socket.emit('refreshLeaderboard_RealTime');
                 });
             });
             socket.on('getLeaderboard_RealTime', function(){
-                mongoApi.getLeaders_RealTime(function (data) {
-                        socket.emit('leaderBoardInit_AllTime', data);
-                        socket.emit('deliverLeaders_RealTime', data);
+                mongoApi.getLeaderboard_RealTime(function (data) {
+                        socket.emit('setLeaderboard_RealTime', data);
+                        socket.emit('refreshLeaderboard_RealTime');
                     });
             });
-            socket.on('addRTLeader', function(RTLeader){
+            socket.on('addLeader_RealTime', function(RTLeader){
                 mongoApi.upsertLeader_RealTime(RTLeader, function (winners) {
                     socket.emit('deliverAddedRTLeader', winners);
                 });

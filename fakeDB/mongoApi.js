@@ -3,7 +3,7 @@ let MongoClient = require('mongodb').MongoClient
     , assert = require('assert');
 
 let url = 'mongodb://localhost:27017/bingo';
-const CalculateBingo = require("../../fakeDB/CalculateBingo");
+const CalculateBingo = require("./CalculateBingo");
 
 
 class MongoApi {
@@ -28,6 +28,16 @@ class MongoApi {
             }
         });
         callback("");
+    }
+
+    static getNumberOfTickets(callback){
+        
+        let tickets= MongoApi.getAllTickets();
+        if(tickets == "" || tickets == null){
+            callback(0);
+        }else{
+            callback(length(tickets));
+        }
     }
 
     static getUserTickets(user, callback) {
@@ -397,7 +407,7 @@ class MongoApi {
             }
         });
     }
-    static resetLeaderBoard_AllTime() {
+    static resetLeaderboard_AllTime() {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
                 let collection = db.collection('winners');
@@ -412,7 +422,7 @@ class MongoApi {
         });
     }
 
-    static getLeaders_RealTime(callback) {
+    static getLeaderboard_RealTime(callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
                 let collection = db.collection('rtwinners');
