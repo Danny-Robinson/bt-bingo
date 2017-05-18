@@ -18,10 +18,9 @@ class BingoButton extends Component {
 
     checkForBingo() {
         const { socket } = this.props;
-        let user = {user: "test4Ticks"} ;
-        //socket.emit('getBingo', user);
         let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
-        socket.emit('simulateBingoWin_AllTime', userSessionId);
+        socket.emit('getBingo', userSessionId);
+        //socket.emit('simulateBingoWin_AllTime', userSessionId);
     }
 
     render() {

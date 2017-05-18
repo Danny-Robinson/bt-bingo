@@ -1,8 +1,8 @@
 const path = require('path');
 const express = require('express');
-const mongoApi = require("./fakeDB/mongoApi");
-const bingoTicket = require("./fakeDB/bingoTicket");
-const callNumber = require("./fakeDB/callNumber");
+const mongoApi = require("./databaseAPI/mongoApi");
+const bingoTicket = require("./databaseAPI/bingoTicket");
+const callNumber = require("./databaseAPI/callNumber");
 const ldap = require('ldapjs');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
@@ -141,14 +141,17 @@ module.exports = (app, port) => {
             });
 
 
-            socket.on('getBingo', function(user){
-                mongoApi.getBingo(user, function (bingo) {
-                    if (bingo) {
-                        socket.emit('deliverBingo', bingo);
-                    } else {
-                        socket.emit('deliverBingo', false);
-                    }
+            socket.on('getBingo', function(sessionID){
+                mongoApi.getUsernameFromSessionId(sessionID, function(user){
+                    mongoApi.getBingo(user, function (bingo) {
+                        if (bingo) {
+                            socket.emit('deliverBingo', bingo);
+                        } else {
+                            socket.emit('deliverBingo', false);
+                        }
+                    });
                 });
+
             });
 
             /**

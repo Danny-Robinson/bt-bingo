@@ -2,7 +2,7 @@
 class CalculateBingo {
 
     static isItBingo(calledNums, ticketBook) {
-        let key = Object.keys(ticketBook[0])[1];
+        let key = Object.keys(ticketBook[0])[0];
         return CalculateBingo.calculate(calledNums, ticketBook[0][key]);
     }
 
