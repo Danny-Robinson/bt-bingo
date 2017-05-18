@@ -71,7 +71,8 @@ module.exports = (app, port) => {
 
             socket.on('purchase',function(data){
 
-                mongoApi.getUsernameFromSessionId(data, function (username) {
+                mongoApi.getUsernameFromSessionId(data.user, function (username) {
+                    console.log("Printing" + data);
                     mongoApi.addTicket(bingoTicket.provideBook(data.number), username );
                     socket.send('Purchased ticket for user: ' + username);
                 });

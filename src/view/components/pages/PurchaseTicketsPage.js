@@ -31,7 +31,7 @@ class PurchaseTicketsPage extends RoleAwareComponent {
         let data = {user: this.state.user, number: this.state.number};
         console.log(this.state.number);
         console.log(this.state.user);
-        socket.emit('purchase', data.user);
+        socket.emit('purchase', data);
         event.preventDefault();
     }
 
