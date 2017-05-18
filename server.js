@@ -74,6 +74,7 @@ module.exports = (app, port) => {
                 mongoApi.getUsernameFromSessionId(data.user, function (username) {
                     console.log("Printing" + data);
                     mongoApi.addTicket(bingoTicket.provideBook(data.number), username );
+                    mongoApi.addNumTickets(username, data.number);
                     socket.send('Purchased ticket for user: ' + username);
                 });
 
@@ -84,6 +85,19 @@ module.exports = (app, port) => {
                     if (ticket != "") {
                         socket.emit('deliverTicket', JSON.stringify(ticket));
                     }
+                });
+            });
+
+            socket.on('getUserTickets',function(user){
+                console.log("GETTING USER TICKETS");
+                mongoApi.getUsernameFromSessionId(user, function (username) {
+                    console.log("SessionID: " + user + " Username: " + username);
+                    mongoApi.getUserTickets(username, function (ticket) {
+                        if (ticket != "") {
+                            console.log("Ticket: "+ ticket);
+                            socket.emit('deliverTicket', JSON.stringify(ticket[0][username]));
+                        }
+                    });
                 });
             });
 

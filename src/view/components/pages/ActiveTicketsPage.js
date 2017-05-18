@@ -44,15 +44,14 @@ class ActiveTicketsPage extends RoleAwareComponent {
     componentWillMount() {
 //        super.retrieveUserType();
 //        console.log("fuckreerrr"+this.userType);
-        socket.emit('getAllTickets');  //Can be changed to get ticket by user, eliminates below for loop
+        let userSession = JSON.parse(localStorage.getItem('userSession'));
+        let user = userSession["sessionID"];
+        socket.emit('getUserTickets', user);  //Can be changed to get ticket by user, eliminates below for loop
         socket.on('deliverTicket', function (book) {
+            console.log(book);
             book = JSON.parse(book);
-            for (let i=0; i<book.length; i++)
-                for (let name in book[i]) {
-                    if (name == "611176835"){ //if name == user
-                        this.setBook(JSON.parse(book[i][name]));
-                    }
-                }
+            console.log(book);
+            this.setBook(JSON.parse(book));
          }.bind(this));
     }
 

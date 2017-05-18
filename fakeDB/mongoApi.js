@@ -41,9 +41,11 @@ class MongoApi {
     }
 
     static getUserTickets(user, callback) {
+        console.log("MongoAPI ticket get");
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
                 MongoApi.findTicket(user, db, function (result) {
+                    console.log("Got ticket: " +result);
                     callback(result);
                 });
             }
@@ -457,8 +459,8 @@ class MongoApi {
         });
     }
     static findTicket(user, db, callback) {
-        console.log(user.user);
-        var key = user.user;
+        console.log(user);
+        var key = user;
         var userObject = {};
         userObject[key] = {$exists: true};
         let collection = db.collection('tickets');
@@ -555,6 +557,28 @@ class MongoApi {
             }
         );
     };
+
+
+    static insertNumTickets(db, user, number, callback) {
+        let collection = db.collection('numTicketsPurchased');
+        let doc = {};
+        doc[user] = number;
+        collection.insert(doc, function (err, result) {
+            console.log("Inserted number of tickets purchased");
+            console.log(result);
+            callback(result);
+        });
+    }
+
+    static addNumTickets(username, number) {
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                MongoApi.insertNumTickets(db, username, number, function () {
+                    db.close();
+                });
+            }
+        });
+    }
 }
 
 module.exports = MongoApi;
