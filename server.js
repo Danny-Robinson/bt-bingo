@@ -21,6 +21,11 @@ module.exports = (app, port) => {
 
         const io = require('socket.io')(server);
 
+        app.get('*', (req, res) => {
+            res.sendFile(path.join(__dirname, '/public', 'index.html'));
+        });
+
+        console.log(`Server running at http://localhost: ${port}`);
 
         io.on('connection', (socket) => {
 
@@ -297,17 +302,6 @@ module.exports = (app, port) => {
                 });
             });
         });
-
-
-
-  app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '/public', 'index.html'));
-  });
-
-
-
-
-    console.log(`Server running at http://localhost: ${port}`);
   });
 
 

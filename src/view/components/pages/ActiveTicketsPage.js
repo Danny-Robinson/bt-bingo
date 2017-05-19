@@ -11,8 +11,8 @@ import WinnersLeaderboard from '../leaderboards/AllTimeLeaderboard';
 import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
 import LoginPage from '../static/login/LoginPage';
 import styles from '../../../../css/pages/_activeTickets.scss';
+import socket from '../static/socket';
 
-const socket = io();
 
 class ActiveTicketsPage extends RoleAwareComponent {
     constructor(props) {
@@ -54,6 +54,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
             this.setBook(JSON.parse(book));
          }.bind(this));
     }
+
 
     render() {
        // var lll = super.shouldBeVisible();

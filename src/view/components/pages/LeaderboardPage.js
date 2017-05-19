@@ -2,7 +2,7 @@ import React from 'react';
 import NavigationBar from '../static/NavigationBar';
 import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
 import WinnersLeaderboard from '../leaderboards/AllTimeLeaderboard';
-const socket = io();
+import socket from '../static/socket';
 
 const LeaderboardPage = () => (
     <span>

@@ -3,8 +3,7 @@ import NavigationBar from '../static/NavigationBar';
 import LoginPage from '../static/login/LoginPage';
 import LoginFormError from '../static/login/LoginFormError';
 import RoleAwareComponent from '../RoleAwareComponent';
-
-const socket = io();
+import socket from '../static/socket';
 
 class LogoutPage extends RoleAwareComponent {
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import NavigationBar from '../static/NavigationBar';
 import RoleAwareComponent from '../RoleAwareComponent';
-const socket = io();
+import socket from '../static/socket';
 
 socket.on('connect',function() {
     console.log('Client has connected to the server!');

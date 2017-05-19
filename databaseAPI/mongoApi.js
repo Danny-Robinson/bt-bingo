@@ -155,7 +155,6 @@ class MongoApi {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
                 let collection = db.collection('users');
-
                 /*
                  * Edited to allow Update of Session ID in Mongo (and new inserts)
                  */
@@ -175,7 +174,6 @@ class MongoApi {
             }
         });
     }
-
 
     /**
      * Removes the user sessionId from the database.
