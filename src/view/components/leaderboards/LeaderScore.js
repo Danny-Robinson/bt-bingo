@@ -10,7 +10,7 @@ class LeaderScore extends Component {
     render() {
         return (
             <div className="leaderInfo">
-                <strong>{this.props.user}:</strong>
+                <strong>{this.props.user}: </strong>
                 <span>{this.props.score}</span>
             </div>
         );

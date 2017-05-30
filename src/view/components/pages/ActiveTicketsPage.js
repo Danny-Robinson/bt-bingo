@@ -4,10 +4,10 @@ import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
 import DabChanger from '../DabChanger';
-import bingoTicket from '../../../../fakeDB/bingoTicket';
+import bingoTicket from '../../../fakeDB/bingoTicket';
 import RoleAwareComponent from '../RoleAwareComponent';
 import Chat from '../chat/Chat';
-import WinnersLeaderboard from '../leaderboards/AllTimeLeaderboard';
+import AllTimeLeaderboard from '../leaderboards/AllTimeLeaderboard';
 import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
 import LoginPage from '../static/login/LoginPage';
 import styles from '../../../../css/pages/_activeTickets.scss';
@@ -43,8 +43,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
     }
 
     componentWillMount() {
-//        super.retrieveUserType();
-//        console.log("fuckreerrr"+this.userType);
+
         socket.emit('getAllTickets');  //Can be changed to get ticket by user, eliminates below for loop
         socket.on('deliverTicket', function (book) {
             book = JSON.parse(book);
@@ -70,7 +69,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
                         <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
                     </span>
                     <span id="leaderboard_AllTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
-                        <WinnersLeaderboard socket={socket} />
+                        <AllTimeLeaderboard socket={socket} />
                     </span>
                     <span id="leaderboard_RealTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
                         <RealTimeLeaderboard socket={socket} />

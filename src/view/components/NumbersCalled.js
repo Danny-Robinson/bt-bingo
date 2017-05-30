@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { Component } from 'react';
+import NumbersCalledItem from './NumbersCalledItem'
+import NumbersCalledList from './NumbersCalledList'
 
-var listItems;
 
-class NumbersCalled extends React.Component {
+class NumbersCalled extends Component {
 
     constructor(props) {
         super(props);
@@ -11,10 +12,9 @@ class NumbersCalled extends React.Component {
             calledNumbers: ["0"],
             numbersList: ''
         };
-        this.setList = this.setList.bind(this);
         this.refreshNumbers = this.refreshNumbers.bind(this);
         this.resetNumbers = this.resetNumbers.bind(this);
-        this.setList();
+        this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
     }
 
     componentDidMount() {
@@ -24,53 +24,52 @@ class NumbersCalled extends React.Component {
                 lastNum: numbers[0],
                 calledNumbers: numbers
             });
-            this.setList();
         }.bind(this));
         socket.on('resettedList', function () {
             this.setState({
                 lastNum: "",
                 calledNumbers: [],
             });
-            this.setList();
             socket.emit('getCalledNumbers');
         }.bind(this));
         socket.emit('getCalledNumbers');
+        socket.emit('calculateLeaderboard_RealTime');
+        socket.emit('getLeaderboard_RealTime');
     }
 
-    setList() {
-        listItems = this.state.calledNumbers.map((number) =>
-            <ci>{number}</ci>
-        );
-        this.setState({numbersList: listItems});
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            nextProps
+        });
     }
 
     resetNumbers() {
         const {socket} = this.props;
         socket.emit('resetCalledNumbers');
+        socket.emit('getCalledNumbers');
+        socket.emit('calculateLeaderboard_RealTime');
+        socket.emit('getLeaderboard_RealTime');
     }
 
     refreshNumbers() {
         const {socket} = this.props;
         socket.emit('callNewNum');
         socket.emit('getCalledNumbers');
-        //socket.emit('getLeaderboard_RealTime');
-        /*
-         Calculate current leaders by calculating how close to bingo each player is - Server-side.
-         */
         socket.emit('calculateLeaderboard_RealTime');
         socket.emit('getLeaderboard_RealTime');
+        //socket.emit('reRenderAllComponents');
     }
 
     render() {
+        let { calledNumbers } = this.state;
         return (
             <div>
                 <div id="lastNumber">
                     Last Number: <p>{this.state.lastNum}</p>
                 </div>
-                <div>Called Numbers:</div>
-                <div id="numberList">
-                    <cl>{this.state.numbersList}</cl>
-                </div>
+
+                <NumbersCalledList numbersList={calledNumbers} />
+
                 <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
                     Reset!
                 </button>
@@ -81,10 +80,5 @@ class NumbersCalled extends React.Component {
         );
     }
 }
-
-/*
-<div id="numberList">
-    <NumbersCalledList numbersList={this.state.calledNumbers}/>
-</div>*/
 
 export default NumbersCalled;

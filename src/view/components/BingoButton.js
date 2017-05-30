@@ -4,6 +4,7 @@ class BingoButton extends Component {
     constructor(props) {
         super(props);
         this.checkForBingo = this.checkForBingo.bind(this);
+        this.resetGame = this.resetGame.bind(this);
     }
     componentDidMount() {
         const { socket } = this.props;
@@ -14,14 +15,24 @@ class BingoButton extends Component {
                 alert("No Dice")
             }
         }.bind(this));
+        socket.on('resetGame', this.resetGame);
+    }
+
+    resetGame() {
+        const {socket} = this.props;
+        console.log("resetting Game...");
+        //socket.emit('resetCalledNumbers');
+        socket.emit('getCalledNumbers');
+        //socket.emit('resetTickets');
+        socket.emit('calculateLeaderboard_RealTime');
+        socket.emit('getLeaderboard_RealTime');
     }
 
     checkForBingo() {
         const { socket } = this.props;
-        let user = {user: "test4Ticks"} ;
-        //socket.emit('getBingo', user);
         let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
-        socket.emit('simulateBingoWin_AllTime', userSessionId);
+        //socket.emit('simulateBingoWin_AllTime', userSessionId);
+        socket.emit('getBingo', userSessionId);
     }
 
     render() {

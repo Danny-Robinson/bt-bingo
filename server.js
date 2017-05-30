@@ -1,8 +1,8 @@
 const path = require('path');
 const express = require('express');
-const mongoApi = require("./fakeDB/mongoApi");
-const bingoTicket = require("./fakeDB/bingoTicket");
-const callNumber = require("./fakeDB/callNumber");
+const mongoApi = require("./src/fakeDB/mongoApi");
+const bingoTicket = require("./src/fakeDB/bingoTicket");
+const callNumber = require("./src/fakeDB/callNumber");
 const ldap = require('ldapjs');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
@@ -126,13 +126,39 @@ module.exports = (app, port) => {
             });
 
 
-            socket.on('getBingo', function(user){
-                mongoApi.getBingo(user, function (bingo) {
-                    if (bingo) {
+            socket.on('getBingo', function(userSessionId){
+                mongoApi.getUsernameFromSessionId(userSessionId, function (username) {
+                    mongoApi.getBingo(username, function (bingo) {
                         socket.emit('deliverBingo', bingo);
-                    } else {
-                        socket.emit('deliverBingo', false);
-                    }
+
+                        if (bingo) {
+                            mongoApi.getUsernameWinnings(username, function (prev_winnings) {
+                                if (prev_winnings != 0 && (prev_winnings == null || prev_winnings == "")) {
+                                    return;
+                                }
+
+                                mongoApi.getCurrentJackpot(function (current_jackpot) {
+                                    if (current_jackpot!= 0 && (current_jackpot== null || current_jackpot == "")) {
+                                        return;
+                                    }
+                                    console.log("curr_j:",current_jackpot);
+                                    let new_winnings = +prev_winnings + +(current_jackpot);
+                                    console.log("new_w:",new_winnings);
+                                    mongoApi.upsertLeader_AllTime({
+                                        "user": username,//.user,
+                                        "winnings": "£" + new_winnings
+                                    }, function (winners) {
+                                        socket.emit('setLeaderboard_AllTime', winners);
+                                        socket.emit('refreshLeaderboard_AllTime', winners);
+                                    });
+
+                                    mongoApi.updateUsernameWinnings(username, new_winnings);
+                                });
+                            });
+
+                            socket.emit('resetGame');
+                        }
+                    });
                 });
             });
 
@@ -171,6 +197,15 @@ module.exports = (app, port) => {
                         socket.emit('setLeaderboard_RealTime', userList);
                     }
                 });
+            });
+
+            socket.on('getJackpot',function(){
+               mongoApi.getNumTicketsPurchased(function(numTicketsPurchased){
+                   console.log("numsPurchased",numTicketsPurchased);
+                    let jackpot = numTicketsPurchased/2;
+                    socket.emit('gotJackpot',jackpot);
+                    socket.emit('setJackpot',jackpot);
+               });
             });
 
             /**
@@ -222,20 +257,25 @@ module.exports = (app, port) => {
                     socket.emit('refreshLeaderboard_AllTime');
                 });
             });
-            socket.on('putNewWinner', function (winner) {
+            /*socket.on('putNewWinner', function (winner) {
                 mongoApi.upsertLeader_RealTime({"user" : user["user"], "numsLeft": "2"}, function (winners) {
                     socket.emit('deliverBingo', true);
                 });
-            });
+            });*/
             socket.on('calculateLeaderboard_RealTime', function () {
                 mongoApi.calculateLeaderboard_RealTime(function () {
-                    socket.emit('refreshLeaderboard_RealTime');
+                    mongoApi.getLeaderboard_RealTime(function (data) {
+                        socket.emit('setLeaderboard_RealTime', data);
+                    });
                 });
             });
             socket.on('getLeaderboard_RealTime', function(){
                 mongoApi.getLeaderboard_RealTime(function (data) {
                         socket.emit('setLeaderboard_RealTime', data);
                     });
+            });
+            socket.on('resetLeaderboard_RealTime', function(){
+                socket.emit('resettedLeaderboard_RealTime', data);
             });
             socket.on('addLeader_RealTime', function(RTLeader){
                 mongoApi.upsertLeader_RealTime(RTLeader, function (winners) {
@@ -253,6 +293,9 @@ module.exports = (app, port) => {
             });
             socket.on('getCalledNumbers', function() {
                 mongoApi.getCalledNumbers(function (numbers) {
+                    if(numbers == [] || numbers.length == 0){
+                        numbers = ["0"]; //set last num and called numbers to 0, to show no numbers called yet.
+                    }
                     socket.emit('deliverCalledNumbers', numbers);
                     socket.broadcast.emit('deliverCalledNumbers', numbers);
                 });

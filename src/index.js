@@ -13,29 +13,29 @@ let render = () => {
 };
 
 if (module.hot) {
-  // Support hot reloading of components
-  const renderApp = render;
+    // Support hot reloading of components
+    const renderApp = render;
 
-  // and display an overlay for runtime errors
-  const renderError = (error) => {
-    const RedBox = require('redbox-react');
-    ReactDOM.render(
-      <RedBox error={error} />,
-      rootElement
-    );
-  };
+    // and display an overlay for runtime errors
+    const renderError = (error) => {
+        const RedBox = require('redbox-react').default;
+        ReactDOM.render(
+            <RedBox error={error}/>,
+            rootElement
+        );
+    };
+    render = () => {
+        try {
+            renderApp();
+        } catch (error) {
+            console.log("index.js-renderError-App");
+            renderError(error);
+        }
+    };
 
-  render = () => {
-    try {
-      renderApp();
-    } catch (error) {
-      renderError(error);
-    }
-  };
-
-  module.hot.accept('./view/components/App', () => {
-    setTimeout(render);
-  });
+    module.hot.accept('./view/components/App', () => {
+        setTimeout(render);
+    });
 }
 
 render();

@@ -97,13 +97,13 @@ class LoginPage extends Component {
     **/
     render()
     {
-        var errorList = '';
+        let errorList = '';
 
         if (this.state.formErrors.length !== 0) {
 
-            errorList = this.state.formErrors.map(function(item) {
+            errorList = this.state.formErrors.map(function(item, i) {
                 return (
-                    <LoginFormError errorMsg={item} />
+                    <LoginFormError key={i} errorMsg={item} />
                 )});
 
         }

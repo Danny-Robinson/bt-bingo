@@ -3,7 +3,6 @@ import { Router, Route, browserHistory } from 'react-router'
 import PurchaseTicketsPage from './pages/PurchaseTicketsPage';
 import ExpiredTicketsPage from './pages/ExpiredTicketsPage';
 import LeaderboardPage from './pages/LeaderboardPage';
-import Chat from './chat/Chat';
 import ActiveTicketsPage from './pages/ActiveTicketsPage';
 import LoginPage from './static/login/LoginPage';
 import LogoutPage from './pages/LogoutPage';

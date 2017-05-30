@@ -16,12 +16,14 @@ class RealTimeLeaderboard extends React.Component {
         this.setLeaderboard= this.setLeaderboard.bind(this);
         this.refreshLeaderboard= this.refreshLeaderboard.bind(this);
         this.resetLeaderboard= this.resetLeaderboard.bind(this);
+        this.componentWillReceiveProps= this.componentWillReceiveProps.bind(this);
     }
 
     componentDidMount() {
         const {socket} = this.props;
         socket.on('refreshLeaderboard_RealTime', this.refreshLeaderboard);
         socket.on('setLeaderboard_RealTime', this.setLeaderboard);
+        socket.on('resettedLeaderboard_RealTime', this.resetLeaderboard);
         socket.emit('getLeaderboard_RealTime');
     }
 
@@ -34,6 +36,12 @@ class RealTimeLeaderboard extends React.Component {
         console.log("_init_:", this.state.rt_winners);
     }
 
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            nextProps
+        });
+    }
+
     /**
      * @param data - array of every user in the database
      *  Format: {"winners": [{user: username, numLeft: num}, ...]}
@@ -44,21 +52,29 @@ class RealTimeLeaderboard extends React.Component {
             rt_winners: winners
         });
         console.log("setLeaderboard_RT:", this.state.rt_winners);
+        for(let x = 0; x < winners.length; x++){
+            let winner = winners[x];
+            if (winner['numsLeft'] == 0){
+                console.log("Found winner!!: ", winner['user'])
+                //const { socket } = this.props;
+                //let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
+                //socket.emit('simulateBingoWin_AllTime', userSessionId);
+            }
+        }
     }
 
     resetLeaderboard() {
         const { socket } = this.props;
-        socket.emit('resetLeaderboard_RealTime');
         this.setState({
             rt_winners: {"winners": []}
         });
-
-        console.log("resetLeaderboard_RT:",this.state.rt_winners);
+        socket.emit('resetLeaderboard_RealTime');
     }
 
-    refreshLeaderboard(){
-        const { socket } = this.props;
-        socket.emit('getLeaderboard_RealTime');
+    refreshLeaderboard() {
+        const {socket} = this.props;
+        socket.emit('calculateLeaderboard_RealTime');
+        //socket.emit('getLeaderboard_RealTime');
     }
 
     addLeader_RealTime(){

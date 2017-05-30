@@ -1,5 +1,5 @@
-@import "node_modules/bootstrap/scss/variables";
-@import "node_modules/bootstrap/scss/mixinss";
+@import "../node_modules/bootstrap/scss/_variables";
+@import "../node_modules/bootstrap/scss/_mixins";
 
 @import './mixins/_mixins.scss';
 
@@ -7,6 +7,5 @@
 @import './static/_login.scss';
 @import './static/_navigationBar.scss';
 @import './pages/_activeTickets.scss';
-@import './pages/_chat.scss';
 
 @import '_app.scss';

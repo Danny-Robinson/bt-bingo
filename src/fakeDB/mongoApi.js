@@ -111,11 +111,12 @@ class MongoApi {
             if (err == null) {
                 let collection = db.collection('users');
                 let findBySession = {sessionId: sessionId};
+
                 collection.findOne(findBySession, function (err, result) {
                     if(err == null) {
                         callback(result.username);
                     }else{
-
+                        console.log("username not found FromSessionID: ",sessionId);
                     }
                 });
             }
@@ -214,7 +215,6 @@ class MongoApi {
 
             }
         });
-
     }
 
     /**
@@ -227,15 +227,14 @@ class MongoApi {
             if (err === null) {
                 let collection = db.collection('users');
 
-                //let findByUsername = {username: "611218504"};
                 let findByUsername = {username: user};
 
                 collection.findOne(findByUsername, function (err, result) {
                     if (err === null) {
-                        callback(result.userWinnings);
-                    }
-                    if(result.userWinnings == null){
-                        callback(0);
+                        let userWinnings = result.userWinnings;
+                        if ((userWinnings).toString() != "NaN") {
+                            callback(userWinnings);
+                        }
                     }
                     callback(null);
                 });
@@ -303,6 +302,24 @@ class MongoApi {
         });
     }
 
+    static getLeaderboard_RealTime(callback) {
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('rtwinners');
+                collection.findOne({"winners": {$exists: true}}, function (err, result) {
+
+                    let winners = result["winners"].sort(function (a, b) {
+                        return parseFloat(a.numsLeft) - parseFloat(b.numsLeft);
+                    });
+                    console.log("leaderbaoard_rt:winners", winners);
+                    result["winners"] = winners;
+                    callback(result);
+                });
+                //callback format: "winners": [{"user" : "w", "numsLeft" : "x"}, {"user" : "y", "numsLeft" : "z"}]
+            }
+        });
+    }
+
     /**
      * update/ insert RTLeader to RTWinners collection.
      * @param leader_RealTime - format: {"user": "x", "numsLeft": "Y"}
@@ -330,16 +347,17 @@ class MongoApi {
     static calculateLeaderboard_RealTime() {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
-                let result = "";
                 MongoApi.getCalledNumbers(function (calledNums) {
                     MongoApi.getAllUsernames(function(listOfUsers){
 
                         for (let i = 0; i < listOfUsers.length; i++) {
-                            let user = {user: listOfUsers[i][0]};
 
-                            MongoApi.getUserTickets(user, function (ticket) {
-                                if (ticket) {
-                                    let numsRemaining = CalculateBingo.numsRemaining(calledNums, ticket);
+                            let username = listOfUsers[i][0];
+                            let user = {user: username};
+
+                            MongoApi.getUserTickets(username, function (ticketBook) {
+                                if (ticketBook) {
+                                    let numsRemaining = CalculateBingo.numsRemaining(calledNums, ticketBook);
 
                                     let collection = db.collection('rtwinners');
                                     collection.findOne({"winners": {$exists: true}}, function (err, result) {
@@ -349,7 +367,7 @@ class MongoApi {
                                         let userFound = false;
                                         for(let i =0; i< temp_winners.length; i++)
                                         {
-                                            if(temp_winners[i].user == user.user){
+                                            if (temp_winners[i].user == user.user) {
                                                 temp_winners[i] = user;
                                                 userFound = true;
                                                 break;
@@ -365,6 +383,17 @@ class MongoApi {
                         }
                     });
                 });
+            }
+        });
+    }
+    static resetLeaderboard_RealTime() {
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('rtwinners');
+                collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
+
+                //MongoApi.resetUserWinnings();
+
             }
         });
     }
@@ -406,43 +435,21 @@ class MongoApi {
                  collection.updateOne(result, {$set: {"winners": []}});
                  });*/
                 collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
-
                 //MongoApi.resetUserWinnings() resets the users' winnings in 'users' db.
                 MongoApi.resetUserWinnings();
             }
         });
     }
 
-    static getLeaderboard_RealTime(callback) {
-        MongoClient.connect(url, function (err, db) {
-            if (err === null) {
-                let collection = db.collection('rtwinners');
-                collection.findOne({"winners": {$exists: true}}, function (err, result) {
-
-                    console.log("leaderbaoard_rt:result", result);
-                    let winners = result["winners"].sort(function(a, b) {
-                        return parseFloat(a.numsLeft) - parseFloat(b.numsLeft);
-                    });
-                    console.log("leaderbaoard_rt:winners", winners);
-                    callback(result["winners"] = winners);
-                });
-                //callback format: "winners": [{"user" : "w", "numsLeft" : "x"}, {"user" : "y", "numsLeft" : "z"}]
-            }
-        });
-    }
-
     static getBingo(user, callback) {
-        console.log(user);
-        let result = "";
         MongoApi.getCalledNumbers(function (calledNums) {
             MongoApi.getUserTickets(user, function (ticket) {
                 if (ticket) {
-                    result = CalculateBingo.isItBingo(calledNums, ticket);
-                    callback(result);
+                    let isItBingo = CalculateBingo.numsRemaining(calledNums, ticket) == 0;
+                    callback(isItBingo);
                 }
             });
         });
-
     }
 
     static findTicket(db, callback) {
@@ -453,14 +460,16 @@ class MongoApi {
             callback(result);
         });
     }
-    static findTicket(user, db, callback) {
-        console.log(user.user);
-        var key = user.user;
-        var userObject = {};
-        userObject[key] = {$exists: true};
+    static findTicket(username, db, callback) {
+        //console.log("user.user",username.user);
+        //var key = username.user;
+        let userObject = {};
+        userObject[username] = {$exists: true};
         let collection = db.collection('tickets');
         collection.find(userObject).toArray(function (err, docs) {
-            callback(docs);
+            if(docs!= null) {
+                callback(docs);
+            }
         });
     }
 
@@ -472,6 +481,31 @@ class MongoApi {
             console.log("Inserted ticket");
             console.log(result);
             callback(result);
+        });
+    }
+
+    static getCurrentJackpot(callback) {
+        MongoApi.getNumTicketsPurchased(function (totalTicketsNum) {
+            console.log("Cjack:totalTickNum:",totalTicketsNum);
+            callback(totalTicketsNum / 2);
+        });
+    }
+
+    static getNumTicketsPurchased(callback){
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                let collection = db.collection('numTicketsPurchased');
+                collection.find().toArray(function (err, numTicketsPurchasedList) {
+                    if (err == null) {
+                        let totalTicketsNum = 0;
+                        for (let i = 0; i < numTicketsPurchasedList.length; i++) {
+                            let ticketsPurchased = numTicketsPurchasedList[i]['numTickets'];
+                            totalTicketsNum += parseInt((ticketsPurchased).toString());
+                        }
+                        callback(totalTicketsNum);
+                    }
+                });
+            }
         });
     }
 

@@ -6,7 +6,7 @@ export default ({ name, rows, cursor, colour }) => (
         <br/>
         <div className="row">
             <div className="col">
-                {rows.map(row => <Row cells={row} cursor={cursor} colour={colour}/>)}
+                {rows.map((row, i) => <Row key={i} cells={row} cursor={cursor} colour={colour}/>)}
             </div>
             <div className="col">
                 <h5>{name}</h5>

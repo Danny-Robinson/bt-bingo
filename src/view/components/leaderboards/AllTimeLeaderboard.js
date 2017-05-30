@@ -4,7 +4,7 @@
 import React from 'react';
 import LeaderScore from './LeaderScore';
 
-class WinnersLeaderboard extends React.Component {
+class AllTimeLeaderboard extends React.Component {
 
     constructor(props) {
         super(props);
@@ -13,17 +13,22 @@ class WinnersLeaderboard extends React.Component {
             global_winners: [],
             jackpot: "£15!"
         };
+
         this._init = this._init.bind(this);
         this.refreshLeaderboard = this.refreshLeaderboard.bind(this);
         this.resetLeaderboard = this.resetLeaderboard.bind(this);
         this.setLeaderboard = this.setLeaderboard.bind(this);
+        this.componentWillReceiveProps= this.componentWillReceiveProps.bind(this);
+        this.gotJackpot = this.gotJackpot.bind(this);
     }
 
     componentDidMount() {
         const { socket } = this.props;
         socket.on('setLeaderboard_AllTime', this.setLeaderboard);
         socket.on('refreshLeaderboard_AllTime', this.refreshLeaderboard);
+        socket.on('gotJackpot', this.gotJackpot);
         socket.emit('getLeaderboard_AllTime');
+
     }
 
     _init(data){
@@ -34,11 +39,24 @@ class WinnersLeaderboard extends React.Component {
         });
         console.log("_init_:", this.state.global_winners);
     }
+    componentWillReceiveProps(nextProps){
+        this.setState({
+            nextProps
+        });
+    }
+
+    gotJackpot(gameJackpot){
+        this.setState({
+            jackpot: "£"+gameJackpot
+        });
+        console.log("gotjackpot:", this.state.jackpot);
+    }
 
     refreshLeaderboard() {
         console.log("refreshLeaderboard_AllTime");
         const {socket} = this.props;
         socket.emit('getLeaderboard_AllTime');
+        socket.emit('getJackpot');
     }
 
     setLeaderboard(data){
@@ -75,7 +93,11 @@ class WinnersLeaderboard extends React.Component {
                     {
                         global_winners.map((winner, i) => {
                             return (
-                                <LeaderScore key={i} user={winner.user} score={winner.winnings}/>
+                                <LeaderScore
+                                    key={i}
+                                    user={winner.user}
+                                    score={winner.winnings}
+                                />
                             );
                         })
                     }
@@ -85,6 +107,6 @@ class WinnersLeaderboard extends React.Component {
     }
 }
 
-export default WinnersLeaderboard;
+export default AllTimeLeaderboard;
 
 
