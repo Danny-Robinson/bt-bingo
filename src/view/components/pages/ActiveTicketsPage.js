@@ -4,16 +4,15 @@ import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
 import DabChanger from '../DabChanger';
-import bingoTicket from '../../../fakeDB/bingoTicket';
+import bingoTicket from '../../../../databaseAPI/bingoTicket';
 import RoleAwareComponent from '../RoleAwareComponent';
 import Chat from '../chat/Chat';
 import AllTimeLeaderboard from '../leaderboards/AllTimeLeaderboard';
 import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
 import LoginPage from '../static/login/LoginPage';
 import styles from '../../../../css/pages/_activeTickets.scss';
+import socket from '../static/socket';
 
-const socket = io();
-//var socket = require('socket.io-client');
 
 class ActiveTicketsPage extends RoleAwareComponent {
     constructor(props) {
@@ -43,21 +42,19 @@ class ActiveTicketsPage extends RoleAwareComponent {
     }
 
     componentWillMount() {
-
-        socket.emit('getAllTickets');  //Can be changed to get ticket by user, eliminates below for loop
+//        super.retrieveUserType();
+//        console.log("fuckreerrr"+this.userType);
+        let userSession = JSON.parse(localStorage.getItem('userSession'));
+        let user = userSession["sessionID"];
+        socket.emit('getUserTickets', user);  //Can be changed to get ticket by user, eliminates below for loop
         socket.on('deliverTicket', function (book) {
+            console.log(book);
             book = JSON.parse(book);
-            for (let i=0; i<book.length; i++)
-                for (let name in book[i]) {
-                    //let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
-                    console.log("socket.name", socket.name);
-                    if (name == "611218504"){//"test4ticks" //if name == user
-
-                        this.setBook(JSON.parse(book[i][name]));
-                    }
-                }
+            console.log(book);
+            this.setBook(JSON.parse(book));
          }.bind(this));
     }
+
 
     render() {
        // var lll = super.shouldBeVisible();
