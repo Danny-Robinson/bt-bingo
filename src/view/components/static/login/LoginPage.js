@@ -5,8 +5,7 @@ import LoginFormError from './LoginFormError';
 import User from '../../../../model/User';
 import cookie from "react-cookie";
 import styles from '../../../../../css/_app.scss'
-
-const socket = io();
+import socket from '../socket';
 
 class LoginPage extends Component {
 

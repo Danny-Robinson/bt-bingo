@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
-
-const socket = io();
+import socket from './static/socket';
 
 class RoleAwareComponent extends Component {
 
