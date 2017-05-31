@@ -42,8 +42,6 @@ class ActiveTicketsPage extends RoleAwareComponent {
     }
 
     componentWillMount() {
-//        super.retrieveUserType();
-//        console.log("fuckreerrr"+this.userType);
         let userSession = JSON.parse(localStorage.getItem('userSession'));
         let user = userSession["sessionID"];
         socket.emit('getUserTickets', user);  //Can be changed to get ticket by user, eliminates below for loop
@@ -56,7 +54,6 @@ class ActiveTicketsPage extends RoleAwareComponent {
 
 
     render() {
-       // var lll = super.shouldBeVisible();
         return (
             <span>
                 <NavigationBar />
@@ -71,9 +68,9 @@ class ActiveTicketsPage extends RoleAwareComponent {
                         <RealTimeLeaderboard socket={socket} />
                     </span>
                     <span>
-                        <div id="numbersCalled">
-                            <NumbersCalled socket={socket}/>
-                        </div>
+
+                        <NumbersCalled socket={socket}/>
+
                         <div>
                             <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
                             <BingoButton socket={socket}/>
