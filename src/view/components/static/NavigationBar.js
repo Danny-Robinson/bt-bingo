@@ -7,7 +7,7 @@ const NavigationBar = () => (
     <nav>
        <ul>
             <li >
-                <Link to="/activeTickets" activeClassName="active">Active Tickets</Link>
+                <Link to="/activeTickets" refresh="true" activeClassName="active">Active Tickets</Link>
             </li>
             <li>
                 <Link to="/purchaseTickets" activeClassName="active">Purchase Tickets</Link>
