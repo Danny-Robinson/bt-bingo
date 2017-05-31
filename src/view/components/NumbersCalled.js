@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import NumbersCalledItem from './NumbersCalledItem'
 import NumbersCalledList from './NumbersCalledList'
 
 

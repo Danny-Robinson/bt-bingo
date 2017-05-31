@@ -48,7 +48,6 @@ class ActiveTicketsPage extends RoleAwareComponent {
         let user = userSession["sessionID"];
         socket.emit('getUserTickets', user);  //Can be changed to get ticket by user, eliminates below for loop
         socket.on('deliverTicket', function (book) {
-            console.log(book);
             book = JSON.parse(book);
             console.log(book);
             this.setBook(JSON.parse(book));
