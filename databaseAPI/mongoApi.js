@@ -41,9 +41,11 @@ class MongoApi {
     }
 
     static getUserTickets(user, callback) {
+        console.log("MongoAPI ticket get");
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
                 MongoApi.findTicket(user, db, function (result) {
+                    console.log("Got ticket: " +result);
                     callback(result);
                 });
             }
@@ -111,7 +113,6 @@ class MongoApi {
             if (err == null) {
                 let collection = db.collection('users');
                 let findBySession = {sessionId: sessionId};
-
                 collection.findOne(findBySession, function (err, result) {
                     if(err == null) {
                         callback(result.username);
@@ -154,7 +155,6 @@ class MongoApi {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
                 let collection = db.collection('users');
-
                 /*
                  * Edited to allow Update of Session ID in Mongo (and new inserts)
                  */
@@ -174,7 +174,6 @@ class MongoApi {
             }
         });
     }
-
 
     /**
      * Removes the user sessionId from the database.
@@ -231,10 +230,10 @@ class MongoApi {
 
                 collection.findOne(findByUsername, function (err, result) {
                     if (err === null) {
-                        let userWinnings = result.userWinnings;
-                        if ((userWinnings).toString() != "NaN") {
-                            callback(userWinnings);
-                        }
+                        callback(result.userWinnings);
+                    }
+                    if(result.userWinnings == null){
+                        callback(0);
                     }
                     callback(null);
                 });
@@ -586,6 +585,26 @@ class MongoApi {
             }
         );
     };
+    static insertNumTickets(db, user, number, callback) {
+        let collection = db.collection('numTicketsPurchased');
+        let doc = {};
+        doc[user] = number;
+        collection.insert(doc, function (err, result) {
+            console.log("Inserted number of tickets purchased");
+            console.log(result);
+            callback(result);
+        });
+    }
+
+    static addNumTickets(username, number) {
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                MongoApi.insertNumTickets(db, username, number, function () {
+                    db.close();
+                });
+            }
+        });
+    }
 }
 
 module.exports = MongoApi;

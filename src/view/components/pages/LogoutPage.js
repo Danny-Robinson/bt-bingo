@@ -1,10 +1,8 @@
 import React from 'react';
-import NavigationBar from '../static/NavigationBar';
 import LoginPage from '../static/login/LoginPage';
 import LoginFormError from '../static/login/LoginFormError';
 import RoleAwareComponent from '../RoleAwareComponent';
-
-const socket = io();
+import socket from '../static/socket';
 
 class LogoutPage extends RoleAwareComponent {
 
@@ -13,7 +11,7 @@ class LogoutPage extends RoleAwareComponent {
     }
 
     componentWillMount() {
-        var userSession = JSON.parse(localStorage.getItem('userSession'));
+        let userSession = JSON.parse(localStorage.getItem('userSession'));
         socket.emit('removeUserSession', userSession["sessionID"]);
         socket.on('removedUserSession', function() {
         }.bind(this));

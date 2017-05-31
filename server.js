@@ -1,8 +1,8 @@
 const path = require('path');
 const express = require('express');
-const mongoApi = require("./src/fakeDB/mongoApi");
-const bingoTicket = require("./src/fakeDB/bingoTicket");
-const callNumber = require("./src/fakeDB/callNumber");
+const mongoApi = require("./databaseAPI/mongoApi");
+const bingoTicket = require("./databaseAPI/bingoTicket");
+const callNumber = require("./databaseAPI/callNumber");
 const ldap = require('ldapjs');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
@@ -70,12 +70,12 @@ module.exports = (app, port) => {
             });
 
             socket.on('purchase',function(data){
-
-                mongoApi.getUsernameFromSessionId(data, function (username) {
+                mongoApi.getUsernameFromSessionId(data.user, function (username) {
+                    console.log("Printing" + data);
                     mongoApi.addTicket(bingoTicket.provideBook(data.number), username );
+                    mongoApi.addNumTickets(username, data.number);
                     socket.send('Purchased ticket for user: ' + username);
                 });
-
             });
 
             socket.on('getAllTickets',function(event){
@@ -83,6 +83,18 @@ module.exports = (app, port) => {
                     if (ticket != "") {
                         socket.emit('deliverTicket', JSON.stringify(ticket));
                     }
+                });
+            });
+            socket.on('getUserTickets',function(user){
+                console.log("GETTING USER TICKETS");
+                mongoApi.getUsernameFromSessionId(user, function (username) {
+                    console.log("SessionID: " + user + " Username: " + username);
+                    mongoApi.getUserTickets(username, function (ticket) {
+                        if (ticket != "") {
+                            console.log("Ticket: "+ ticket);
+                            socket.emit('deliverTicket', JSON.stringify(ticket[0][username]));
+                        }
+                    });
                 });
             });
 

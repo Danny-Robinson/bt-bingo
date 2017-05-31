@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import NavigationBar from '../static/NavigationBar';
 import RoleAwareComponent from '../RoleAwareComponent';
-const socket = io();
+import socket from '../static/socket';
 
 socket.on('connect',function() {
     console.log('Client has connected to the server!');
@@ -16,7 +16,7 @@ socket.on('disconnect',function() {
 class PurchaseTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
-        var userSession = JSON.parse(localStorage.getItem('userSession'));
+        let userSession = JSON.parse(localStorage.getItem('userSession'));
         this.state = {number: 1, user: userSession["sessionID"]};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -31,26 +31,33 @@ class PurchaseTicketsPage extends RoleAwareComponent {
         let data = {user: this.state.user, number: this.state.number};
         console.log(this.state.number);
         console.log(this.state.user);
-        socket.emit('purchase', data.user);
+        socket.emit('purchase', data);
         event.preventDefault();
     }
 
     render()
     {
         return (
-            <span>
-                <NavigationBar/>
-                <form onSubmit={this.handleSubmit}>
-                    <fieldset>
-                        <legend>Purchase a ticket</legend>
-                        <label>
-                            Name:
-                            <input type="number" value={this.state.number} min="1" max="6" onChange={e => { this.setState({number: e.target.value}) }} />
-                        </label>
-                        <input type="submit" value="Purchase" />
-                    </fieldset>
-                </form>
-            </span>
+            <div>
+                <span>
+                    <NavigationBar/>
+                    <form onSubmit={this.handleSubmit}>
+                        <fieldset>
+                            <legend color="white">Purchase a ticket</legend>
+                            <label>
+                                Name:
+                                <input type="number" value={this.state.number} min="1" max="6" onChange={e => { this.setState({number: e.target.value}) }} />
+                            </label>
+                            <input type="submit" value="Purchase" />
+                        </fieldset>
+                    </form>
+                </span>
+                <span>
+                    <form onSubmit={this.handleSubmit2}>
+                        <legend color="white">Amend tickets purchased</legend>
+                    </form>
+                </span>
+            </div>
         );
     }
 }
