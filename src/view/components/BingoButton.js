@@ -1,24 +1,25 @@
 import React, { Component } from 'react';
 
 class BingoButton extends Component {
-    constructor(props) {
-        super(props);
-        this.checkForBingo = this.checkForBingo.bind(this);
-        this.resetGame = this.resetGame.bind(this);
-    }
     componentDidMount() {
         const { socket } = this.props;
-        socket.on('deliverBingo', function (bingo) {
+        console.log('>>>>>>>', socket.listeners('deliverBingo'));
+        debugger;
+        socket.on('deliverBingo', (bingo) => {
             if (bingo){
                 alert("Bingo! You win")
             } else {
                 alert("No Dice")
             }
-        }.bind(this));
+        });
         socket.on('resetGame', this.resetGame);
     }
 
-    resetGame() {
+    componentWillUnmount() {
+        this.props.socket.off('deliverBingo');
+    }
+
+    resetGame = () => {
         const {socket} = this.props;
         console.log("resetting Game...");
         //socket.emit('resetCalledNumbers');
@@ -28,7 +29,7 @@ class BingoButton extends Component {
         socket.emit('getLeaderboard_RealTime');
     }
 
-    checkForBingo() {
+    checkForBingo = () => {
         const { socket } = this.props;
         let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
         //socket.emit('simulateBingoWin_AllTime', userSessionId);
