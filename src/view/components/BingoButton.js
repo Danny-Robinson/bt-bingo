@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 class BingoButton extends Component {
     componentDidMount() {
         const { socket } = this.props;
-        console.log('>>>>>>>', socket.listeners('deliverBingo'));
-        debugger;
         socket.on('deliverBingo', (bingo) => {
             if (bingo){
                 alert("Bingo! You win")
@@ -17,6 +15,7 @@ class BingoButton extends Component {
 
     componentWillUnmount() {
         this.props.socket.off('deliverBingo');
+        this.props.socket.off('resetGame');
     }
 
     resetGame = () => {

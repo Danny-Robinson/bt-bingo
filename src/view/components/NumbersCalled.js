@@ -42,6 +42,11 @@ class NumbersCalled extends Component {
         });
     }
 
+    componentWillUnmount() {
+        this.props.socket.off('deliverCalledNumbers');
+        this.props.socket.off('resettedList');
+    }
+
     resetNumbers() {
         const {socket} = this.props;
         socket.emit('resetCalledNumbers');

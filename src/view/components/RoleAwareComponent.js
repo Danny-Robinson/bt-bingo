@@ -9,6 +9,11 @@ class RoleAwareComponent extends Component {
         this.userType = "";
     }
 
+    componentWillUnmount() {
+        socket.off('deliverCalledNumbers');
+        socket.off('resettedList');
+    }
+
     shouldBeVisible() {
         console.log("parentre" + JSON.stringify(this.userType));
 

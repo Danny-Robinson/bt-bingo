@@ -51,6 +51,10 @@ class ActiveTicketsPage extends RoleAwareComponent {
          }.bind(this));
     }
 
+    componentWillUnmount(){
+        socket.off('deliverTicket');
+    }
+
 
     render() {
         return (

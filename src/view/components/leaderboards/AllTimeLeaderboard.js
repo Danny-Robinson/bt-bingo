@@ -31,6 +31,12 @@ class AllTimeLeaderboard extends React.Component {
 
     }
 
+    componentWillUnmount() {
+        this.props.socket.on('setLeaderboard_AllTime');
+        this.props.socket.on('refreshLeaderboard_AllTime');
+        this.props.socket.on('gotJackpot');
+    }
+
     _init(data){
 
         let winners = data["winners"];

@@ -32,6 +32,15 @@ class Chat extends Component {
         socket.on('user:left', this._userLeft);
     }
 
+    componentWillUnmount() {
+        this.props.socket.off('init');
+        this.props.socket.off('send:message');
+        this.props.socket.off('change:name');
+        this.props.socket.off('user:join');
+        this.props.socket.off('user:left');
+    }
+
+
     _initialize(data) {
         let {users, name} = data;
         this.setState({users, user: name});
@@ -99,6 +108,7 @@ class Chat extends Component {
             this.setState({users, user: newName});
         });
     }
+
 
     render() {
         return (

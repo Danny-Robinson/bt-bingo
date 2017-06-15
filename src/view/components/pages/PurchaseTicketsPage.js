@@ -3,16 +3,6 @@ import NavigationBar from '../static/NavigationBar';
 import RoleAwareComponent from '../RoleAwareComponent';
 import socket from '../static/socket';
 
-socket.on('connect',function() {
-    console.log('Client has connected to the server!');
-});
-socket.on('message',function(data) {
-    alert(data);
-});
-socket.on('disconnect',function() {
-    console.log('The client has disconnected!');
-});
-
 class PurchaseTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
@@ -21,6 +11,26 @@ class PurchaseTicketsPage extends RoleAwareComponent {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.authorize = ['user', 'admin'];
+    }
+
+    componentDidMount(){
+        socket.on('connect',function() {
+            console.log('Client has connected to the server!');
+        });
+        socket.on('message',function(data) {
+            alert(data);
+        });
+        socket.on('disconnect',function() {
+            console.log('The client has disconnected!');
+        });
+        console.log("PTP mounted");
+    }
+
+    componentWillUnmount(){
+        socket.off('connect');
+        socket.off('message');
+        socket.off('disconnect');
+        console.log("PTP unmounted");
     }
 
     handleChange(event) {

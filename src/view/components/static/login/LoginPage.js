@@ -90,6 +90,9 @@ class LoginPage extends Component {
         };
     }
 
+    componentWillUnmount(){
+        socket.off('storedSession');
+    }
 
     /**
     * Renders the login page component.

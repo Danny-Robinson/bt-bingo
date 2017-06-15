@@ -27,6 +27,12 @@ class RealTimeLeaderboard extends React.Component {
         socket.emit('getLeaderboard_RealTime');
     }
 
+    componentWillUnmount() {
+        this.props.socket.off('refreshLeaderboard_RealTime' );
+        this.props.socket.off('setLeaderboard_RealTime');
+        this.props.socket.off('resettedLeaderboard_RealTime');
+    }
+
     _init(data){
 
         let winners = data["winners"];

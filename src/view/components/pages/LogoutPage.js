@@ -18,6 +18,10 @@ class LogoutPage extends RoleAwareComponent {
         localStorage.clear();
     }
 
+    componentWillUnmount(){
+        socket.off('removedUserSession');
+    }
+
     render() {
        const logoutMsg = 'You have been successfully logged out!';
        return (
