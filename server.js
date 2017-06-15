@@ -142,6 +142,10 @@ module.exports = (app, port) => {
                 });
             });
 
+            socket.on('startNewGame',function(){
+                console.log("Starting new game...")
+            });
+
 
             socket.on('getBingo', function(userSessionId){
                 mongoApi.getUsernameFromSessionId(userSessionId, function (username) {

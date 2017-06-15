@@ -75,10 +75,10 @@ class NumbersCalled extends Component {
                 <NumbersCalledList numbersList={calledNumbers} />
 
                 <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
-                    Reset!
+                    Reset
                 </button>
                 <button type="button" className="btn btn-refresh" onClick={this.refreshNumbers}>
-                    Update
+                    New Num
                 </button>
             </div>
         );
