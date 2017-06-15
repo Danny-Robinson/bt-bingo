@@ -6,6 +6,7 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import ActiveTicketsPage from './pages/ActiveTicketsPage';
 import LoginPage from './static/login/LoginPage';
 import LogoutPage from './pages/LogoutPage';
+import NotFoundPage from './pages/NotFoundPage';
 
 class App extends Component {
 
@@ -23,6 +24,7 @@ class App extends Component {
                     <Route path='/expiredTickets' component={ExpiredTicketsPage} authorize={['user']}/>
                     <Route path='/leaderboard' component={LeaderboardPage} authorize={['user']}/>
                     <Route path='/logout' component={LogoutPage}/>
+                    <Route path='*' component={NotFoundPage}/>
                 </Router>
             );
     }

@@ -267,6 +267,12 @@ module.exports = (app, port) => {
                 mongoApi.getLeaderBoard_AllTime(function (winners) {
                     socket.emit('setLeaderboard_AllTime', winners);
                     socket.broadcast.emit('setLeaderboard_AllTime', winners);
+
+                    mongoApi.getNumTicketsPurchased(function(numTicketsPurchased){
+                        let jackpot = numTicketsPurchased/2;
+                        socket.emit('gotJackpot',jackpot);
+                        socket.broadcast.emit('gotJackpot',jackpot);
+                    });
                 });
             });
             socket.on('resetLeaderboard_AllTime', function () {
