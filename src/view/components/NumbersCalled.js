@@ -11,8 +11,6 @@ class NumbersCalled extends Component {
             calledNumbers: ["0"],
             numbersList: ''
         };
-        this.refreshNumbers = this.refreshNumbers.bind(this);
-        this.resetNumbers = this.resetNumbers.bind(this);
         this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
     }
 
@@ -47,39 +45,15 @@ class NumbersCalled extends Component {
         this.props.socket.off('resettedList');
     }
 
-    resetNumbers() {
-        const {socket} = this.props;
-        socket.emit('resetCalledNumbers');
-        socket.emit('getCalledNumbers');
-        socket.emit('calculateLeaderboard_RealTime');
-        socket.emit('getLeaderboard_RealTime');
-    }
-
-    refreshNumbers() {
-        const {socket} = this.props;
-        socket.emit('callNewNum');
-        socket.emit('getCalledNumbers');
-        socket.emit('calculateLeaderboard_RealTime');
-        socket.emit('getLeaderboard_RealTime');
-        //socket.emit('reRenderAllComponents');
-    }
-
     render() {
         let { calledNumbers } = this.state;
         return (
             <div id="numbersCalled">
                 <div id="lastNumber">
-                    Last Number: <p>{this.state.lastNum}</p>
+                    <font color="white">Last Number: <p>{this.state.lastNum}</p></font>
                 </div>
 
                 <NumbersCalledList numbersList={calledNumbers} />
-
-                <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
-                    Reset
-                </button>
-                <button type="button" className="btn btn-refresh" onClick={this.refreshNumbers}>
-                    New Num
-                </button>
             </div>
         );
     }

@@ -143,7 +143,14 @@ module.exports = (app, port) => {
             });
 
             socket.on('startNewGame',function(){
-                console.log("Starting new game...")
+                console.log("Starting new game...");
+            });
+            socket.on('resetGame',function(){
+                console.log("Resetting game...");
+            });
+            socket.on('callNumSetSize',function(setsize){
+                let data = setsize.callNumSetSize;
+                console.log("Call Num set size", data);
             });
 
 

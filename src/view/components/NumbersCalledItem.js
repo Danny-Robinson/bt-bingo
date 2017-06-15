@@ -6,7 +6,7 @@ class NumbersCalledItem extends Component {
     }
     render() {
         return (
-            <span className="numberItem">{this.props.number}</span>
+            <span className="numberItem"> <font color="white">{this.props.number}</font></span>
         );
     }
 }

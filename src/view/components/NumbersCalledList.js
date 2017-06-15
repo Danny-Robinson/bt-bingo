@@ -11,7 +11,7 @@ class NumbersCalledList extends React.Component {
         const {numbersList} = this.props;
         return (
             <div className='messages'>
-                <div>Called Numbers:</div>
+                <div> <font color="white">Called Numbers:</font></div>
                 <div id="numberList">
                     {
                         numbersList.map((item, i) => {

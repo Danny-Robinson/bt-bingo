@@ -10,7 +10,7 @@ class AdminPage extends RoleAwareComponent {
 
     constructor(props) {
         super(props);
-        this.startGame = this.startGame.bind(this);
+        this.state = {callNumSetSize: 8}
     }
 
     startGame = () => {
@@ -28,6 +28,30 @@ class AdminPage extends RoleAwareComponent {
         socket.emit('getLeaderboard_RealTime');
     };
 
+    callSetOfNums = () => {
+        console.log("callSetOfNums");
+        for(let x = 0; x < this.state.callNumSetSize; x++){
+            this.callNewNum();
+            //console.log("this.callNewNum()");
+            //socket.emit('callNumSetSize', setSize);
+        }
+    };
+    resetNumbers = () => {
+        console.log("resetNums");
+        socket.emit('resetCalledNumbers');
+        socket.emit('getCalledNumbers');
+        socket.emit('calculateLeaderboard_RealTime');
+        socket.emit('getLeaderboard_RealTime');
+    };
+
+    refreshNumbers = () => {
+        console.log("refreshNums");
+        socket.emit('callNewNum');
+        socket.emit('getCalledNumbers');
+        socket.emit('calculateLeaderboard_RealTime');
+        socket.emit('getLeaderboard_RealTime');
+        //socket.emit('reRenderAllComponents');
+    };
 
     render() {
         return (
@@ -42,7 +66,22 @@ class AdminPage extends RoleAwareComponent {
                         <h3>ResetGame</h3>
                     </button>
                     <p></p>
+
                     <NumbersCalled socket={socket}/>
+                     <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
+                        Reset
+                    </button>
+                    <button type="button" className="btn btn-refresh" onClick={this.refreshNumbers}>
+                        New Num
+                    </button>
+                    <p></p>
+
+                    <font color="white">Size of set of Nums to add:</font>
+                    <input type="number" value={this.state.callNumSetSize} min="1" max="8" onChange={e => { this.setState({callNumSetSize: e.target.value}) }} />
+                    <p></p>
+                    <button type="button" className="btn btn-resetgame" onClick={this.callSetOfNums}>
+                        <h3>Call Set Of Nums</h3>
+                    </button>
 
                 </span>
             </div>
