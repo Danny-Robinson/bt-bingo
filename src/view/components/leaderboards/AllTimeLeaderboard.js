@@ -16,7 +16,6 @@ class AllTimeLeaderboard extends React.Component {
 
         this._init = this._init.bind(this);
         this.refreshLeaderboard = this.refreshLeaderboard.bind(this);
-        this.resetLeaderboard = this.resetLeaderboard.bind(this);
         this.setLeaderboard = this.setLeaderboard.bind(this);
         this.componentWillReceiveProps= this.componentWillReceiveProps.bind(this);
         this.gotJackpot = this.gotJackpot.bind(this);
@@ -74,14 +73,6 @@ class AllTimeLeaderboard extends React.Component {
         console.log("setLeaderboard_AllTime:", this.state.global_winners);
     }
 
-    resetLeaderboard(){
-        const { socket } = this.props;
-        this.setState({
-            global_winners: {"winners": []}
-        });
-        socket.emit('resetLeaderboard_AllTime');
-    }
-
     render() {
         let { global_winners } = this.state;
         return (
@@ -90,11 +81,7 @@ class AllTimeLeaderboard extends React.Component {
                     <div>
                         Current Jackpot: {this.state.jackpot}
                     </div>
-                    <span>
-                        <button type="button" className="btn btn-resetalltime-leaders" onClick={this.resetLeaderboard}>
-                            Reset
-                        </button>
-                    </span>
+
                     <h2> All Time: </h2>
                     {
                         global_winners.map((winner, i) => {

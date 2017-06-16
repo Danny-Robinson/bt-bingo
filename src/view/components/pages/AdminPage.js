@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import RoleAwareComponent from '../RoleAwareComponent';
 import socket from '../static/socket';
 import NumbersCalled from '../NumbersCalled';
+import styles from '../../../../css/pages/_admin.scss';
 
 class AdminPage extends RoleAwareComponent {
 
@@ -52,22 +53,29 @@ class AdminPage extends RoleAwareComponent {
         socket.emit('getLeaderboard_RealTime');
         //socket.emit('reRenderAllComponents');
     };
+    resetLeaderboard_AllTime = () => {
+        this.setState({
+            global_winners: {"winners": []}
+        });
+        socket.emit('resetLeaderboard_AllTime');
+    }
 
     render() {
         return (
             <div className="admin">
                 <h3><font color="white">Admin Page</font></h3>
                 <span>
-                    <button type="button" className="btn btn-startgame" onClick={this.startGame}>
-                        <h3>Start Game</h3>
-                    </button>
-                    <p></p>
-                    <button type="button" className="btn btn-resetgame" onClick={this.resetGame}>
-                        <h3>ResetGame</h3>
-                    </button>
-                    <p></p>
-
-                    <NumbersCalled socket={socket}/>
+                    <div class="btn-group">
+                        <button type="button" className="btn btn-startgame" onClick={this.startGame}>
+                            <h3>Start Game</h3>
+                        </button>
+                        <button type="button" className="btn btn-resetgame" onClick={this.resetGame}>
+                            <h3>ResetGame</h3>
+                        </button>
+                    </div>
+                    <span id="numscalledComponent">
+                        <NumbersCalled socket={socket}/>
+                    </span>
                      <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
                         Reset
                     </button>
@@ -82,6 +90,12 @@ class AdminPage extends RoleAwareComponent {
                     <button type="button" className="btn btn-resetgame" onClick={this.callSetOfNums}>
                         <h3>Call Set Of Nums</h3>
                     </button>
+                    <p></p>
+                    <span>
+                        <button type="button" className="btn btn-resetalltime-leaders" onClick={this.resetLeaderboard_AllTime}>
+                            Reset All Time Leaderboard
+                        </button>
+                    </span>
 
                 </span>
             </div>

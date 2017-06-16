@@ -148,14 +148,14 @@
         }
 
         #numberList {
-            width:239px;
-            height: 183px;
+            width:250px;
+            height: 300px;
             border-radius:20px;
             background:black;
             color:deeppink;
             margin-left:auto;
             margin-right:auto;
-            word-break:break-all;
+            overflow-y: auto;
 
             .numberItem{
                 padding:7px;

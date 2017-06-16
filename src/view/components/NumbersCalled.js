@@ -50,7 +50,7 @@ class NumbersCalled extends Component {
         return (
             <div id="numbersCalled">
                 <div id="lastNumber">
-                    <font color="white">Last Number: <p>{this.state.lastNum}</p></font>
+                    Last Number: <p>{this.state.lastNum}</p>
                 </div>
 
                 <NumbersCalledList numbersList={calledNumbers} />

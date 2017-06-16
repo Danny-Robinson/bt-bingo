@@ -144,6 +144,8 @@ module.exports = (app, port) => {
 
             socket.on('startNewGame',function(){
                 console.log("Starting new game...");
+                console.log("Stop new tickets, block more users");
+                console.log("");
             });
             socket.on('resetGame',function(){
                 console.log("Resetting game...");
