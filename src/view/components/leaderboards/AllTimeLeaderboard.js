@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import LeaderScore from './LeaderScore';
+import JackpotComponent from '../JackpotComponent';
 
 class AllTimeLeaderboard extends React.Component {
 
@@ -10,30 +11,25 @@ class AllTimeLeaderboard extends React.Component {
         super(props);
 
         this.state = {
-            global_winners: [],
-            jackpot: "£15!"
+            global_winners: []
         };
 
         this._init = this._init.bind(this);
         this.refreshLeaderboard = this.refreshLeaderboard.bind(this);
         this.setLeaderboard = this.setLeaderboard.bind(this);
         this.componentWillReceiveProps= this.componentWillReceiveProps.bind(this);
-        this.gotJackpot = this.gotJackpot.bind(this);
     }
 
     componentDidMount() {
         const { socket } = this.props;
         socket.on('setLeaderboard_AllTime', this.setLeaderboard);
         socket.on('refreshLeaderboard_AllTime', this.refreshLeaderboard);
-        socket.on('gotJackpot', this.gotJackpot);
         socket.emit('getLeaderboard_AllTime');
-
     }
 
     componentWillUnmount() {
         this.props.socket.on('setLeaderboard_AllTime');
         this.props.socket.on('refreshLeaderboard_AllTime');
-        this.props.socket.on('gotJackpot');
     }
 
     _init(data){
@@ -50,18 +46,10 @@ class AllTimeLeaderboard extends React.Component {
         });
     }
 
-    gotJackpot(gameJackpot){
-        this.setState({
-            jackpot: "£"+gameJackpot
-        });
-        console.log("gotjackpot:", this.state.jackpot);
-    }
-
     refreshLeaderboard() {
         console.log("refreshLeaderboard_AllTime");
         const {socket} = this.props;
         socket.emit('getLeaderboard_AllTime');
-        socket.emit('getJackpot');
     }
 
     setLeaderboard(data){
@@ -75,12 +63,13 @@ class AllTimeLeaderboard extends React.Component {
 
     render() {
         let { global_winners } = this.state;
+        const {socket} = this.props;
         return (
             <div>
                 <div className='messages'>
-                    <div>
-                        Current Jackpot: {this.state.jackpot}
-                    </div>
+
+                    <JackpotComponent socket={socket}/>
+
 
                     <h2> All Time: </h2>
                     {

@@ -11,6 +11,7 @@ class NumbersCalled extends Component {
             calledNumbers: ["0"],
             numbersList: ''
         };
+        this.componentDidMount = this.componentDidMount.bind(this);
         this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
     }
 

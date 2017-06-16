@@ -26,14 +26,14 @@ class BingoButton extends Component {
         //socket.emit('resetTickets');
         socket.emit('calculateLeaderboard_RealTime');
         socket.emit('getLeaderboard_RealTime');
-    }
+    };
 
     checkForBingo = () => {
         const { socket } = this.props;
         let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
         //socket.emit('simulateBingoWin_AllTime', userSessionId);
         socket.emit('getBingo', userSessionId);
-    }
+    };
 
     render() {
         return (
