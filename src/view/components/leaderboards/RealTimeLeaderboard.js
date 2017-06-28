@@ -57,7 +57,6 @@ class RealTimeLeaderboard extends React.Component {
         this.setState({
             rt_winners: winners
         });
-        console.log("setLeaderboard_RT:", this.state.rt_winners);
         for(let x = 0; x < winners.length; x++){
             let winner = winners[x];
             if (winner['numsLeft'] == 0){

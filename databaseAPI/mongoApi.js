@@ -41,11 +41,9 @@ class MongoApi {
     }
 
     static getUserTickets(user, callback) {
-        console.log("MongoAPI ticket get");
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
                 MongoApi.findTicket(user, db, function (result) {
-                    console.log("Got ticket: " +result);
                     callback(result);
                 });
             }
@@ -57,23 +55,27 @@ class MongoApi {
      * List of numbers called manipulation
      * @param number
      */
-    static pushCalledNumber(number) {
+    static pushCalledNumSet(randomNums) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
                 MongoApi.getCalledNumbers(function (numbers) {
-                    if (numbers.indexOf(number) === -1) {
-                        numbers.reverse();
-                        numbers.push(number);
-                        numbers.reverse();
-                        MongoApi.setNumbers(numbers, db);
-                        console.log("pushedNum Success: ", number, ", now: ", numbers);
-                    } else {
-                        console.log("MongoApi Error - Num already in list - ", number);
+                    for (let y = 0; y < randomNums.length; y++) {
+                        let randomNum = randomNums[y];
+                        if (numbers.indexOf(randomNum) == -1) {
+                            numbers.reverse();
+                            numbers.push(randomNum);
+                            numbers.reverse();
+                            console.log("pushedNum Success: ", randomNum);
+                        } else {
+                            console.log("MongoApi Error - Num already in list - ", randomNum);
+                        }
                     }
+                    MongoApi.setNumbers(numbers, db);
                 });
             }
         });
     }
+
     static getCalledNumbers(callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -310,11 +312,10 @@ class MongoApi {
                     let winners = result["winners"].sort(function (a, b) {
                         return parseFloat(a.numsLeft) - parseFloat(b.numsLeft);
                     });
-                    console.log("leaderbaoard_rt:winners", winners);
                     result["winners"] = winners;
+                    //callback format: "winners": [{"user" : "w", "numsLeft" : "x"}, {"user" : "y", "numsLeft" : "z"}]
                     callback(result);
                 });
-                //callback format: "winners": [{"user" : "w", "numsLeft" : "x"}, {"user" : "y", "numsLeft" : "z"}]
             }
         });
     }

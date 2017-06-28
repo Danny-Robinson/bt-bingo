@@ -70,7 +70,6 @@ class AllTimeLeaderboard extends React.Component {
 
                     <JackpotComponent socket={socket}/>
 
-
                     <h2> All Time: </h2>
                     {
                         global_winners.map((winner, i) => {
@@ -78,7 +77,7 @@ class AllTimeLeaderboard extends React.Component {
                                 <LeaderScore
                                     key={i}
                                     user={winner.user}
-                                    score={winner.winnings}
+                                    score={"£"+winner.winnings.toFixed(2)}
                                 />
                             );
                         })

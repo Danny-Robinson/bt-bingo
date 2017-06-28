@@ -23,6 +23,9 @@ class NumbersCalled extends Component {
                 calledNumbers: numbers
             });
         }.bind(this));
+        socket.on('calledNumsFull', function () {
+
+        }.bind(this));
         socket.on('resettedList', function () {
             this.setState({
                 lastNum: "",
@@ -43,6 +46,7 @@ class NumbersCalled extends Component {
 
     componentWillUnmount() {
         this.props.socket.off('deliverCalledNumbers');
+        this.props.socket.off('calledNumsFull');
         this.props.socket.off('resettedList');
     }
 
@@ -51,7 +55,7 @@ class NumbersCalled extends Component {
         return (
             <div id="numbersCalled">
                 <div id="lastNumber">
-                    Last Number: <p>{this.state.lastNum}</p>
+                    Last Number(s): <p>{this.state.lastNum}</p>
                 </div>
 
                 <NumbersCalledList numbersList={calledNumbers} />

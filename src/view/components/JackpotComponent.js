@@ -43,7 +43,7 @@ class JackpotComponent extends Component {
         return (
             <div id="jackpot">
                 <h3>Jackpot:</h3>
-                <div id="jackpotNum">£{this.state.jackpot}!!</div>
+                <div id="jackpotNum">£{ this.state.jackpot.toFixed(2) }!!</div>
             </div>
         );
     }

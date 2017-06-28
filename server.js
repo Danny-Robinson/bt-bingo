@@ -144,8 +144,21 @@ module.exports = (app, port) => {
 
             socket.on('startNewGame',function(){
                 console.log("Starting new game...");
-                console.log("Stop new tickets, block more users");
-                console.log("");
+                console.log("Stop new tickets");
+                mongoApi.blockNewTickets(function (success) {
+                    //Notify all clients that new users are blocked (in a nice way)
+                    socket.emit('blockedTickets');
+                    socket.broadcast.emit('blockedTickets');
+                });
+                console.log("Block more users");
+                mongoApi.blockNewUsers(function (success) {
+                    //Notify all clients that new users are blocked (in a nice way)
+                    socket.emit('blockedUsers');
+                    socket.broadcast.emit('blockedUsers');
+                });
+                //Notify all clients that game is about to start
+                socket.emit('newGameReady');
+                socket.broadcast.emit('newGameReady');
             });
             socket.on('resetGame',function(){
                 console.log("Resetting game...");
@@ -176,7 +189,7 @@ module.exports = (app, port) => {
                                     console.log("new_w:",new_winnings);
                                     mongoApi.upsertLeader_AllTime({
                                         "user": username,//.user,
-                                        "winnings": "£" + new_winnings
+                                        "winnings": new_winnings
                                     }, function (winners) {
                                         socket.emit('setLeaderboard_AllTime', winners);
                                         socket.emit('refreshLeaderboard_AllTime', winners);
@@ -259,7 +272,7 @@ module.exports = (app, port) => {
 
                         mongoApi.upsertLeader_AllTime({
                             "user": username,//.user,
-                            "winnings": "£" + new_winnings
+                            "winnings": new_winnings
                         }, function (winners) {
                             socket.emit('setLeaderboard_AllTime', winners);
                             socket.emit('refreshLeaderboard_AllTime', winners);
@@ -320,7 +333,7 @@ module.exports = (app, port) => {
             });
 
             /**
-             * Call Number script integration: get, reset, callNewNum,
+             * Call Number script integration: get, reset, callNewNumSet
              */
             socket.on('resetCalledNumbers', function () {
                 mongoApi.resetCalledNumbers();
@@ -336,24 +349,49 @@ module.exports = (app, port) => {
                     socket.broadcast.emit('deliverCalledNumbers', numbers);
                 });
             });
-            socket.on('callNewNum', function () {
-                mongoApi.getCalledNumbers(function (original_numbers) {
-                    let randNum = callNumber.getValidRandomNumber(original_numbers);
-                    if (randNum !== -1) {
-                        mongoApi.pushCalledNumber(randNum);
-                        mongoApi.getCalledNumbers(function (new_numbers) {
-                            new_numbers.reverse();
-                            new_numbers.push(randNum);
-                            new_numbers.reverse();
-                            socket.emit('deliverCalledNumbers', new_numbers);
-                            socket.broadcast.emit('deliverCalledNumbers', new_numbers);
-                        });
-                    } else {
-                        console.log("Error - calledNumber list Full");
+
+            //Call new set of Nums:
+            socket.on('callNewNumSet',function (sizeOfNumSet) {
+                let calledNumSuccess = true;
+                let randomNums = [];
+                for (let x = 0; x < sizeOfNumSet; x++) {
+                    console.log("iteration:", x);
+                    mongoApi.getCalledNumbers(function (original_numbers) {
+                        let randNum = callNumber.getValidRandomNumber(original_numbers);
+                        if (randNum == -1 || randNum == 0) {
+                            console.log("Error - randNum error");
+                            socket.emit('calledNumsFull');
+                            socket.broadcast.emit('calledNumsFull');
+                            return;
+                        }
+                        if (randomNums.indexOf(randNum) == -1) {
+                            randomNums.push(randNum);
+                        }else{
+                            x++;
+                        }
+                    });
+                }
+                if (randomNums != []) {
+                    mongoApi.pushCalledNumSet(randomNums);
+                    console.log("randomNums:", randomNums);
+                } else {
+                    console.log("Error - calledNumber list error");
+                    calledNumSuccess = false;
+                }
+
+                console.log("calledNum success:", calledNumSuccess);
+                if (calledNumSuccess) {
+                    mongoApi.getCalledNumbers(function (new_numbers) {
+                        socket.emit('deliverCalledNumbers', new_numbers);
+                        socket.broadcast.emit('deliverCalledNumbers', new_numbers);
+                    });
+                } else {
+                    mongoApi.getCalledNumbers(function (original_numbers) {
                         socket.emit('deliverCalledNumbers', original_numbers);
                         socket.broadcast.emit('deliverCalledNumbers', original_numbers);
-                    }
-                });
+                    });
+
+                }
             });
         });
   });

@@ -7,14 +7,14 @@ class LeaderScore extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         return (
             <div className="leaderInfo">
-                <strong>{this.props.user}: </strong>
-                <span>{this.props.score}</span>
+                <strong>{ this.props.user }: </strong>
+                <span>{ this.props.score }</span>
             </div>
         );
     }
 }
-
 export default LeaderScore;

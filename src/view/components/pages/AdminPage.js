@@ -11,31 +11,26 @@ class AdminPage extends RoleAwareComponent {
 
     constructor(props) {
         super(props);
-        this.state = {callNumSetSize: 8}
+        this.state = {callNumSetSize: 4}
     }
 
     startGame = () => {
         socket.emit('startNewGame');
     };
-
+    endGame = () => {
+        socket.emit('endGame');
+    };
     resetGame = () => {
         socket.emit('resetGame');
     };
 
-    callNewNum = () => {
-        socket.emit('callNewNum');
+    callSetOfNums = () => {
+        console.log("callSetOfNums:",this.state.callNumSetSize);
+        socket.emit('callNewNumSet',this.state.callNumSetSize);
         socket.emit('getCalledNumbers');
         socket.emit('calculateLeaderboard_RealTime');
         socket.emit('getLeaderboard_RealTime');
-    };
-
-    callSetOfNums = () => {
-        console.log("callSetOfNums");
-        for(let x = 0; x < this.state.callNumSetSize; x++){
-            this.callNewNum();
-            //console.log("this.callNewNum()");
-            //socket.emit('callNumSetSize', setSize);
-        }
+        //socket.emit('reRenderAllComponents');
     };
     resetNumbers = () => {
         console.log("resetNums");
@@ -45,30 +40,27 @@ class AdminPage extends RoleAwareComponent {
         socket.emit('getLeaderboard_RealTime');
     };
 
-    refreshNumbers = () => {
-        console.log("refreshNums");
-        socket.emit('callNewNum');
-        socket.emit('getCalledNumbers');
-        socket.emit('calculateLeaderboard_RealTime');
-        socket.emit('getLeaderboard_RealTime');
-        //socket.emit('reRenderAllComponents');
-    };
     resetLeaderboard_AllTime = () => {
         this.setState({
             global_winners: {"winners": []}
         });
         socket.emit('resetLeaderboard_AllTime');
-    }
+    };
 
     render() {
         return (
             <div className="admin">
-                <h3><font color="white">Admin Page</font></h3>
+                <h3><font>Admin Page</font></h3>
                 <span>
                     <div class="btn-group">
                         <button type="button" className="btn btn-startgame" onClick={this.startGame}>
                             <h3>Start Game</h3>
                         </button>
+                        <p></p>
+                        <button type="button" className="btn btn-endgame" onClick={this.endGame}>
+                            <h3>End Game</h3>
+                        </button>
+                        <p></p>
                         <button type="button" className="btn btn-resetgame" onClick={this.resetGame}>
                             <h3>ResetGame</h3>
                         </button>
@@ -79,12 +71,12 @@ class AdminPage extends RoleAwareComponent {
                      <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
                         Reset
                     </button>
-                    <button type="button" className="btn btn-refresh" onClick={this.refreshNumbers}>
+                    <button type="button" className="btn btn-refresh" onClick={this.callSetOfNums}>
                         New Num
                     </button>
                     <p></p>
 
-                    <font color="white">Size of set of Nums to add:</font>
+                    <font>Size of set of Nums to add:</font>
                     <input type="number" value={this.state.callNumSetSize} min="1" max="8" onChange={e => { this.setState({callNumSetSize: e.target.value}) }} />
                     <p></p>
                     <button type="button" className="btn btn-resetgame" onClick={this.callSetOfNums}>
