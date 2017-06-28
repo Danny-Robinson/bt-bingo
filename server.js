@@ -304,6 +304,7 @@ module.exports = (app, port) => {
             socket.on('resetLeaderboard_AllTime', function () {
                 mongoApi.resetLeaderboard_AllTime(function () {
                     socket.emit('refreshLeaderboard_AllTime');
+                    socket.broadcast.emit('refreshLeaderboard_AllTime');
                 });
             });
             /*socket.on('putNewWinner', function (winner) {
@@ -315,20 +316,24 @@ module.exports = (app, port) => {
                 mongoApi.calculateLeaderboard_RealTime(function () {
                     mongoApi.getLeaderboard_RealTime(function (data) {
                         socket.emit('setLeaderboard_RealTime', data);
+                        socket.broadcast.emit('setLeaderboard_RealTime', data);
                     });
                 });
             });
             socket.on('getLeaderboard_RealTime', function(){
                 mongoApi.getLeaderboard_RealTime(function (data) {
                         socket.emit('setLeaderboard_RealTime', data);
+                        socket.broadcast.emit('setLeaderboard_RealTime', data);
                     });
             });
             socket.on('resetLeaderboard_RealTime', function(){
                 socket.emit('resettedLeaderboard_RealTime', data);
+                socket.broadcast.emit('resettedLeaderboard_RealTime', data);
             });
             socket.on('addLeader_RealTime', function(RTLeader){
                 mongoApi.upsertLeader_RealTime(RTLeader, function (winners) {
                     socket.emit('setLeaderboard_RealTime', winners);
+                    socket.broadcast.emit('setLeaderboard_RealTime', winners);
                 });
             });
 
@@ -390,7 +395,6 @@ module.exports = (app, port) => {
                         socket.emit('deliverCalledNumbers', original_numbers);
                         socket.broadcast.emit('deliverCalledNumbers', original_numbers);
                     });
-
                 }
             });
         });
