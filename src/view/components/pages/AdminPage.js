@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import RoleAwareComponent from '../RoleAwareComponent';
 import socket from '../static/socket';
 import NumbersCalled from '../NumbersCalled';
-import styles from '../../../../css/pages/_admin.scss';
+import * as styles from '../../../../css/pages/_admin.scss';
 
 class AdminPage extends RoleAwareComponent {
 
@@ -49,7 +49,7 @@ class AdminPage extends RoleAwareComponent {
 
     render() {
         return (
-            <div className="admin">
+            <div style={styles} className="admin">
                 <h3><font>Admin Page</font></h3>
                 <span>
                     <div class="btn-group">

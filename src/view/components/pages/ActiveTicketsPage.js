@@ -8,8 +8,7 @@ import RoleAwareComponent from '../RoleAwareComponent';
 import Chat from '../chat/Chat';
 import AllTimeLeaderboard from '../leaderboards/AllTimeLeaderboard';
 import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
-import LoginPage from '../static/login/LoginPage';
-import styles from '../../../../css/pages/_activeTickets.scss';
+import * as styles from '../../../../css/pages/_activeTickets.scss';
 import socket from '../static/socket';
 
 
@@ -58,7 +57,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
 
     render() {
         return (
-            <span>
+            <span style={styles}>
                 <NavigationBar />
                 <div className="pageContent">
                     <span id="ticket_container" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
