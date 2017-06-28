@@ -10,10 +10,6 @@ class RealTimeLeaderboard extends React.Component {
             rt_winners: []
         };
         this._init = this._init.bind(this);
-        //this.setLeaderboard= this.setLeaderboard.bind(this);
-        //this.refreshLeaderboard= this.refreshLeaderboard.bind(this);
-        //this.resetLeaderboard= this.resetLeaderboard.bind(this);
-        //this.componentWillReceiveProps= this.componentWillReceiveProps.bind(this);
         this.componentWillUnmount= this.componentWillUnmount.bind(this);
         this.componentDidMount= this.componentDidMount.bind(this);
     }

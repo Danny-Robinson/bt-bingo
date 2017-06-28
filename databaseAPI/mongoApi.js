@@ -8,6 +8,14 @@ const CalculateBingo = require("./CalculateBingo");
 
 class MongoApi {
 
+    /**
+     * Tickets control
+     *
+     *
+     *
+     * @param ticket
+     * @param user
+     */
     static addTicket(ticket, user) {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
@@ -18,7 +26,6 @@ class MongoApi {
             }
         });
     }
-
     static getAllTickets(callback) {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
@@ -29,7 +36,6 @@ class MongoApi {
         });
         callback("");
     }
-
     static getNumberOfTickets(callback){
         
         let tickets= MongoApi.getAllTickets();
@@ -39,7 +45,6 @@ class MongoApi {
             callback(length(tickets));
         }
     }
-
     static getUserTickets(user, callback) {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
@@ -51,9 +56,14 @@ class MongoApi {
         callback("");
     }
 
+
     /**
-     * List of numbers called manipulation
-     * @param number
+     *
+     * Called Numbers manipulation
+     *
+     *
+     *
+     *  @param randomNums
      */
     static pushCalledNumSet(randomNums) {
         MongoClient.connect(url, function (err, db) {
@@ -75,7 +85,6 @@ class MongoApi {
             }
         });
     }
-
     static getCalledNumbers(callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -108,6 +117,11 @@ class MongoApi {
 
 
     /**
+     *
+     * User Management
+     *
+     *
+     *
      * Gets the username from the existing sessionId value.
      **/
     static getUsernameFromSessionId(sessionId, callback) {
@@ -176,9 +190,8 @@ class MongoApi {
             }
         });
     }
-
     /**
-     * Removes the user sessionId from the database.
+     * Removes user sessionId from the database.
      **/
     static removeUserSession(sessionId, callback) {
         MongoClient.connect(url, function (err, db) {
@@ -201,7 +214,6 @@ class MongoApi {
         });
         callback("");
     }
-
     static getUserTypeFromSessionId(sessionId, callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -219,7 +231,7 @@ class MongoApi {
     }
 
     /**
-     * Manipulation of the user's Winnings in the user database
+     * Manipulation of DB: each user's "winnings" in the "users" DB
      * @param user
      * @param callback
      */
@@ -264,7 +276,11 @@ class MongoApi {
     }
 
     /**
-     * Leaderboard manipulation:
+     * All-Time Leaderboard manipulation:
+     *
+     *
+     *
+     *
      * @param callback
      */
     static getLeaderBoard_AllTime(callback) {
@@ -277,11 +293,10 @@ class MongoApi {
             }
         });
     }
-
-    /**
+    /*/**
      * Update/insert winner - All Time Leaderboard.
      * @param winner of type: (user, score).
-     */
+     /
     static upsertWinnerToLeaderboard(winner) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -301,8 +316,58 @@ class MongoApi {
                 });
             }
         });
+    }*/
+    /**
+     * update/ insert All Time Leader to Winners collection.
+     * @param leader_AllTime - format: {"user": "x", "numsleft": "Y"}
+     */
+    static upsertLeader_AllTime(leader_AllTime, callback) {
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+
+                let collection = db.collection('winners');
+                collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    if (err === null) {
+                        let temp_winners = result["winners"].slice();
+
+                        for (let i = 0; i < temp_winners.length; i++) {
+                            if (temp_winners[i].user == leader_AllTime.user) {
+                                temp_winners[i] = leader_AllTime;
+                                collection.updateOne(result, {$set: {"winners": temp_winners}});
+                                callback(temp_winners);
+                                return;
+                            }
+                        }
+                        temp_winners.push(leader_AllTime);
+                        collection.updateOne(result, {$set: {"winners": temp_winners}});
+                        callback(temp_winners);
+                    }
+                });
+            }
+        });
+    }
+    static resetLeaderboard_AllTime() {
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('winners');
+                /*collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                 collection.updateOne(result, {$set: {"winners": []}});
+                 });*/
+                collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
+                //MongoApi.resetUserWinnings() resets the users' winnings in 'users' db.
+                MongoApi.resetUserWinnings();
+            }
+        });
     }
 
+    /**
+     * Real-Time Leaderboard manipulation:
+     *
+     *
+     *
+     *
+     * @param callback
+     */
     static getLeaderboard_RealTime(callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -319,7 +384,6 @@ class MongoApi {
             }
         });
     }
-
     /**
      * update/ insert RTLeader to RTWinners collection.
      * @param leader_RealTime - format: {"user": "x", "numsLeft": "Y"}
@@ -343,7 +407,6 @@ class MongoApi {
             }
         });
     }
-
     static calculateLeaderboard_RealTime() {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -398,49 +461,15 @@ class MongoApi {
         });
     }
 
+
     /**
-     * update/ insert All Time Leader to Winners collection.
-     * @param leader_AllTime - format: {"user": "x", "numsleft": "Y"}
+     * BINGO, Tickets, Jackpot, etc.:
+     *
+     *
+     *
+     * @param user
+     * @param callback
      */
-    static upsertLeader_AllTime(leader_AllTime, callback) {
-        MongoClient.connect(url, function (err, db) {
-            if (err === null) {
-
-                let collection = db.collection('winners');
-                collection.findOne({"winners": {$exists: true}}, function (err, result) {
-                    if (err === null) {
-                        let temp_winners = result["winners"].slice();
-
-                        for (let i = 0; i < temp_winners.length; i++) {
-                            if (temp_winners[i].user == leader_AllTime.user) {
-                                temp_winners[i] = leader_AllTime;
-                                collection.updateOne(result, {$set: {"winners": temp_winners}});
-                                callback(temp_winners);
-                                return;
-                            }
-                        }
-                        temp_winners.push(leader_AllTime);
-                        collection.updateOne(result, {$set: {"winners": temp_winners}});
-                        callback(temp_winners);
-                    }
-                });
-            }
-        });
-    }
-    static resetLeaderboard_AllTime() {
-        MongoClient.connect(url, function (err, db) {
-            if (err === null) {
-                let collection = db.collection('winners');
-                /*collection.findOne({"winners": {$exists: true}}, function (err, result) {
-                 collection.updateOne(result, {$set: {"winners": []}});
-                 });*/
-                collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
-                //MongoApi.resetUserWinnings() resets the users' winnings in 'users' db.
-                MongoApi.resetUserWinnings();
-            }
-        });
-    }
-
     static getBingo(user, callback) {
         MongoApi.getCalledNumbers(function (calledNums) {
             MongoApi.getUserTickets(user, function (ticket) {

@@ -12,6 +12,7 @@ class NumbersCalled extends Component {
             numbersList: ''
         };
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.componentWillUnmount= this.componentWillUnmount.bind(this);
         this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
     }
 
