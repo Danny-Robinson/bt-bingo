@@ -9,7 +9,7 @@ DEV - npm run dev | PROD - npm start <br />
  <br />
 Kanban board at https://drive.google.com/file/d/0B8sUXLkW28t2dm9GdVY0ZW1rVXc/view?usp=sharing
 
-![alt text](screenshots/Homepage.PNG "Home Page")
+![alt text](screenshots/Home.PNG "Home Page")
 ![alt text](screenshots/Admin.PNG "Admin Page")
 ![alt text](screenshots/ChatNDab.PNG "Chat and cursor change functionality Page")
 
