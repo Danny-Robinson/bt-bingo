@@ -10,3 +10,13 @@ DEV - npm run dev | PROD - npm start <br />
 Kanban board at https://drive.google.com/file/d/0B8sUXLkW28t2dm9GdVY0ZW1rVXc/view?usp=sharing
 
 ![alt text](screenshots/ActiveTickets.PNG "Active Tickets Page")
+![alt text](screenshots/Admin.PNG "Admin Page")
+![alt text](screenshots/ChatNDab.PNG "Chat and cursor change functionality Page")
+
+
+
+**TODO :**
+   * Split mongoAPI into seperate concerns, login, tickets, calculations etc.
+   * Gracefully fail queries concerning users with no tickets
+      
+      
