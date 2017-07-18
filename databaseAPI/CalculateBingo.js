@@ -2,9 +2,16 @@
 class CalculateBingo {
 
     //ticketBook[0])[0] may need to be changed, depending on format of ticketBook
+    static isItBingo(calledNums, ticketBook) {
+        let key = Object.keys(ticketBook[0])[0]; //user's latest set of tickets bought, ticketbook should only contains the user's latest ticket. Create mongo table "expired tickets" for old tickets.
+        return CalculateBingo.calculateRemaining(calledNums, ticketBook[0][key]) == 0;
+    }
+
     static numsRemaining(calledNums, ticketBook) {
-        let key = Object.keys(ticketBook[0])[0];
-        return CalculateBingo.calculateRemaining(calledNums, ticketBook[0][key]);
+        if (ticketBook != null && ticketBook) {
+            let key = Object.keys(ticketBook[0])[0];
+            return CalculateBingo.calculateRemaining(calledNums, ticketBook[0][key]);
+        }
     }
 
     static calculateRemaining(calledNums, ticketBook){

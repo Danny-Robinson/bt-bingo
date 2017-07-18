@@ -96,13 +96,13 @@ module.exports = (app, port) => {
                     console.log("SessionID: " + user + " Username: " + username);
                     mongoApi.getUserTickets(username, function (ticket) {
                         if (ticket != "") {
-                            console.log("Ticket: "+ ticket);
                             socket.emit('deliverTicket', JSON.stringify(ticket[0][username]));
+                        }else{
+                            socket.emit('deliverTicket', "");
                         }
                     });
                 });
             });
-
 
             /**
             * Saving the user session object in the database.
@@ -145,7 +145,7 @@ module.exports = (app, port) => {
             socket.on('startNewGame',function(){
                 console.log("Starting new game...");
                 console.log("Stop new tickets");
-                mongoApi.blockNewTickets(function (success) {
+                this.blockPurchaseTickets(function (success) {
                     //Notify all clients that new users are blocked (in a nice way)
                     socket.emit('blockedTickets');
                     socket.broadcast.emit('blockedTickets');
@@ -160,9 +160,13 @@ module.exports = (app, port) => {
                 socket.emit('newGameReady');
                 socket.broadcast.emit('newGameReady');
             });
+            socket.on('endGame',function(){
+                console.log("Ending game...");
+            });
             socket.on('resetGame',function(){
                 console.log("Resetting game...");
             });
+
             socket.on('callNumSetSize',function(setsize){
                 let data = setsize.callNumSetSize;
                 console.log("Call Num set size", data);
@@ -172,34 +176,34 @@ module.exports = (app, port) => {
             socket.on('getBingo', function(userSessionId){
                 mongoApi.getUsernameFromSessionId(userSessionId, function (username) {
                     mongoApi.getBingo(username, function (bingo) {
-                        socket.emit('deliverBingo', bingo);
 
+                        socket.emit('deliverBingo', bingo);
                         if (bingo) {
-                            mongoApi.getUsernameWinnings(username, function (prev_winnings) {
-                                if (prev_winnings != 0 && (prev_winnings == null || prev_winnings == "")) {
+                            mongoApi.getUserWinnings(username, function (prev_winnings) {
+                                if (prev_winnings != 0 && (prev_winnings == null || prev_winnings == "" || prev_winnings == "NaN")) {
                                     return;
                                 }
-
                                 mongoApi.getCurrentJackpot(function (current_jackpot) {
                                     if (current_jackpot!= 0 && (current_jackpot== null || current_jackpot == "")) {
                                         return;
                                     }
-                                    console.log("curr_j:",current_jackpot);
-                                    let new_winnings = +prev_winnings + +(current_jackpot);
-                                    console.log("new_w:",new_winnings);
-                                    mongoApi.upsertLeader_AllTime({
-                                        "user": username,//.user,
-                                        "winnings": new_winnings
-                                    }, function (winners) {
-                                        socket.emit('setLeaderboard_AllTime', winners);
-                                        socket.emit('refreshLeaderboard_AllTime', winners);
-                                    });
+                                    if (prev_winnings != "NaN" || prev_winnings != null) {
 
-                                    mongoApi.updateUsernameWinnings(username, new_winnings);
+                                        let new_winnings = +prev_winnings + +(current_jackpot);
+
+                                        mongoApi.upsertLeader_AllTime({
+                                            "user": username,
+                                            "winnings": new_winnings
+                                        }, function (userWinnings) {
+                                            socket.emit('setLeaderboard_AllTime', userWinnings);
+                                            socket.emit('refreshLeaderboard_AllTime', userWinnings);
+                                        });
+                                        mongoApi.updateUserWinnings(username, new_winnings);
+                                    }else{
+                                        mongoApi.updateUserWinnings(username, 0);
+                                    }
                                 });
                             });
-
-                            socket.emit('resetGame');
                         }
                     });
                 });
@@ -252,39 +256,6 @@ module.exports = (app, port) => {
             });
 
             /**
-             * When user clicks "Bingo", simulate they have all the correct numbers (for testing Leaderboards).
-             */
-            socket.on('simulateBingoWin_RealTime', function(user){
-                mongoApi.upsertLeader_RealTime({"user" : user["user"], "numsLeft": "2"}, function (winners) {
-                    socket.emit('deliverBingo', true);
-                    socket.emit('setLeaderboard_RealTime', winners);
-                });
-            });
-            socket.on('simulateBingoWin_AllTime', function(userSessionId){
-
-                mongoApi.getUsernameFromSessionId(userSessionId, function (username) {
-                    mongoApi.getUsernameWinnings(username, function (prev_winnings) {
-                        if (prev_winnings != 0 && (prev_winnings == null || prev_winnings == "")) {
-                            return;
-                        }
-                        let current_jackpot = 30;
-                        let new_winnings = +prev_winnings + +(current_jackpot / 2);
-
-                        mongoApi.upsertLeader_AllTime({
-                            "user": username,//.user,
-                            "winnings": new_winnings
-                        }, function (winners) {
-                            socket.emit('setLeaderboard_AllTime', winners);
-                            socket.emit('refreshLeaderboard_AllTime', winners);
-                            socket.emit('deliverBingo', true);
-                        });
-
-                        mongoApi.updateUsernameWinnings(username, new_winnings);
-                    });
-                });
-            });
-
-            /**
              * Leaderboard functionality:
              * Add new winner when: user clicks "BingoButton" > validate win > then 'insert/ increment' the user's score to the All-time Leaderboard.
              * Add real-time current-game winner: Access all users' tickets in the db > calculate: nums left to win, for each user > order by numsLeft > save to db.
@@ -307,11 +278,6 @@ module.exports = (app, port) => {
                     socket.broadcast.emit('refreshLeaderboard_AllTime');
                 });
             });
-            /*socket.on('putNewWinner', function (winner) {
-                mongoApi.upsertLeader_RealTime({"user" : user["user"], "numsLeft": "2"}, function (winners) {
-                    socket.emit('deliverBingo', true);
-                });
-            });*/
             socket.on('calculateLeaderboard_RealTime', function () {
                 mongoApi.calculateLeaderboard_RealTime(function () {
                     mongoApi.getLeaderboard_RealTime(function (data) {

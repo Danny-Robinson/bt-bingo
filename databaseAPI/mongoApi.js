@@ -36,25 +36,39 @@ class MongoApi {
         });
         callback("");
     }
-    static getNumberOfTickets(callback){
-        
-        let tickets= MongoApi.getAllTickets();
-        if(tickets == "" || tickets == null){
-            callback(0);
-        }else{
-            callback(length(tickets));
-        }
-    }
     static getUserTickets(user, callback) {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
-                MongoApi.findTicket(user, db, function (result) {
-                    callback(result);
+                let userObject = {};
+                userObject[user] = {$exists: true};
+                let collection = db.collection('tickets');
+                collection.find(userObject).toArray(function (err, docs) {
+                    if(docs != null && docs) {
+                        callback(docs);
+                    }
                 });
             }
+            callback("");
         });
-        callback("");
     }
+    /*static findTicket(db, callback) {
+     let collection = db.collection('tickets');
+     collection.findOne(function (err, result) {
+     console.log("Found ticket");
+     console.log("0", result);
+     callback(result);
+     });
+     }*/
+    /*static findUserTickets(username, db, callback) {
+     let userObject = {};
+     userObject[username] = {$exists: true};
+     let collection = db.collection('tickets');
+     collection.find(userObject).toArray(function (err, docs) {
+     if(docs!= null) {
+     callback(docs);
+     }
+     });
+     }*/
 
 
     /**
@@ -235,33 +249,39 @@ class MongoApi {
      * @param user
      * @param callback
      */
-    static getUsernameWinnings(user, callback) {
+    static getUserWinnings(user, callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
-                let collection = db.collection('users');
-
-                let findByUsername = {username: user};
-
-                collection.findOne(findByUsername, function (err, result) {
-                    if (err === null) {
-                        callback(result.userWinnings);
+                let collection = db.collection('winners');
+                collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    let winners = result.winners;
+                    for (let i = 0; i < winners.length; i++) {
+                        if (winners[i].user == user) {
+                            console.log("winner found",winners[i]);
+                            callback(winners[i].winnings);
+                        }
                     }
-                    if(result.userWinnings == null){
+                    /*let userWinnings = result.winners[0].winnings;
+                    if (result != null || userWinnings != null) {
+                        callback(result.winners[0].winnings);//.winnings
+                    }else {
                         callback(0);
-                    }
-                    callback(null);
+                    }*/
+                    callback(0);
                 });
             }
         });
     }
-    static updateUsernameWinnings(username, winnings) {
+    static updateUserWinnings(username, winnings) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
-                let collection = db.collection('users');
-
-                //let findByUsername = {username: "611218504"};
                 let findByUsername = {username: username};
-                collection.findOneAndUpdate(findByUsername, {$set: {"userWinnings": winnings}});
+                let collection = db.collection('users');
+                if (winnings != null || winnings == "NaN") {
+                    collection.findOneAndUpdate(findByUsername, {$set: {"userWinnings": winnings}});
+                }else {
+                    collection.findOneAndUpdate(findByUsername, {$set: {"userWinnings": 0}});
+                }
             }
         });
     }
@@ -293,30 +313,6 @@ class MongoApi {
             }
         });
     }
-    /*/**
-     * Update/insert winner - All Time Leaderboard.
-     * @param winner of type: (user, score).
-     /
-    static upsertWinnerToLeaderboard(winner) {
-        MongoClient.connect(url, function (err, db) {
-            if (err === null) {
-                let collection = db.collection('winners');
-                collection.findOne({"winners": {$exists: true}}, function (err, result) {
-                    result = JSON.parse(result);
-                    console.log("result:", result);
-                    if (result.get(winner.user) !== null) {
-                        result.push(winner);
-                        console.log("result:", result);
-                    }
-                    let resultArray = result.toArray();
-                    console.log("result:", resultArray);
-                    resultArray.push(winner);
-                    console.log("result:", resultArray);
-                    //collection.updateOne({"winners": {$exists: true}}, {$set: {"winners": [result]}});
-                });
-            }
-        });
-    }*/
     /**
      * update/ insert All Time Leader to Winners collection.
      * @param leader_AllTime - format: {"user": "x", "numsleft": "Y"}
@@ -328,19 +324,19 @@ class MongoApi {
                 let collection = db.collection('winners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
                     if (err === null) {
-                        let temp_winners = result["winners"].slice();
+                        let winners = result["winners"].slice();
 
-                        for (let i = 0; i < temp_winners.length; i++) {
-                            if (temp_winners[i].user == leader_AllTime.user) {
-                                temp_winners[i] = leader_AllTime;
-                                collection.updateOne(result, {$set: {"winners": temp_winners}});
-                                callback(temp_winners);
+                        for (let i = 0; i < winners.length; i++) {
+                            if (winners[i].user == leader_AllTime.user) {
+                                winners[i] = leader_AllTime;
+                                collection.updateOne(result, {$set: {"winners": winners}});
+                                callback(winners);
                                 return;
                             }
                         }
-                        temp_winners.push(leader_AllTime);
-                        collection.updateOne(result, {$set: {"winners": temp_winners}});
-                        callback(temp_winners);
+                        winners.push(leader_AllTime);
+                        collection.updateOne(result, {$set: {"winners": winners}});
+                        callback(winners);
                     }
                 });
             }
@@ -350,9 +346,6 @@ class MongoApi {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
                 let collection = db.collection('winners');
-                /*collection.findOne({"winners": {$exists: true}}, function (err, result) {
-                 collection.updateOne(result, {$set: {"winners": []}});
-                 });*/
                 collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
                 //MongoApi.resetUserWinnings() resets the users' winnings in 'users' db.
                 MongoApi.resetUserWinnings();
@@ -385,24 +378,24 @@ class MongoApi {
         });
     }
     /**
-     * update/ insert RTLeader to RTWinners collection.
-     * @param leader_RealTime - format: {"user": "x", "numsLeft": "Y"}
+     * update/ insert RTLeader to RTWinners table.
+     * @param leader_RealTime - format: {"user": "x", "numsLeft": Y}
      */
     static upsertLeader_RealTime(leader_RealTime, callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
                 let collection = db.collection('rtwinners');
+
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
-                    let temp_winners = result["winners"].slice();
-                    let index = temp_winners.indexOf(leader_RealTime);
+                    let winners = result["winners"].slice();
+                    let index = winners.indexOf(leader_RealTime);
                     if (index === -1) {
-                        temp_winners.push(leader_RealTime);
+                        winners.push(leader_RealTime);
                     } else {
-                        temp_winners[index] = leader_RealTime;
-                        console.log("Already added, changed score:", temp_winners);
+                        winners[index] = leader_RealTime; //Already added, change score
                     }
-                    collection.updateOne(result, {$set: {"winners": temp_winners}});
-                    callback(temp_winners);
+                    collection.updateOne(result, {$set: {"winners": winners}});
+                    callback(winners);
                 });
             }
         });
@@ -410,37 +403,37 @@ class MongoApi {
     static calculateLeaderboard_RealTime() {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
-                MongoApi.getCalledNumbers(function (calledNums) {
-                    MongoApi.getAllUsernames(function(listOfUsers){
 
+                MongoApi.getAllUsernames(function (listOfUsers) {
+                    MongoApi.getCalledNumbers(function (calledNums) {
+
+                        //For every user in rtwinners: get userTickets and calledNumbers to calculate real-time scores.
                         for (let i = 0; i < listOfUsers.length; i++) {
-
                             let username = listOfUsers[i][0];
-                            let user = {user: username};
 
+                            //Get nums remaining and calculate real-time scores, then update collection.
                             MongoApi.getUserTickets(username, function (ticketBook) {
-                                if (ticketBook) {
-                                    let numsRemaining = CalculateBingo.numsRemaining(calledNums, ticketBook);
-
+                                if ((ticketBook != null || ticketBook != "") && ticketBook) {
+                                    let user = {user: username};
+                                    user["numsLeft"] = CalculateBingo.numsRemaining(calledNums, ticketBook);
+                                    let userFound = false;
                                     let collection = db.collection('rtwinners');
                                     collection.findOne({"winners": {$exists: true}}, function (err, result) {
-                                        let temp_winners = result["winners"].slice();
-
-                                        user["numsLeft"] = numsRemaining;
-                                        let userFound = false;
-                                        for(let i =0; i< temp_winners.length; i++)
-                                        {
-                                            if (temp_winners[i].user == user.user) {
-                                                temp_winners[i] = user;
+                                        let winners = result["winners"].slice();
+                                        for (let i = 0; i < winners.length; i++) {
+                                            if (winners[i].user == user.user) {
+                                                winners[i] = user;
                                                 userFound = true;
                                                 break;
                                             }
                                         }
-                                        if(!userFound){
-                                            temp_winners.push(user);
+                                        if (!userFound) {
+                                            winners.push(user); //add new user to winners
                                         }
-                                        collection.updateOne(result, {$set: {"winners": temp_winners}});
+                                        collection.updateOne(result, {$set: {"winners": winners}});
                                     });
+                                } else {
+                                    console.log("error getting User's tickets", username);
                                 }
                             });
                         }
@@ -454,9 +447,7 @@ class MongoApi {
             if (err === null) {
                 let collection = db.collection('rtwinners');
                 collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
-
                 //MongoApi.resetUserWinnings();
-
             }
         });
     }
@@ -472,33 +463,13 @@ class MongoApi {
      */
     static getBingo(user, callback) {
         MongoApi.getCalledNumbers(function (calledNums) {
-            MongoApi.getUserTickets(user, function (ticket) {
-                if (ticket) {
-                    let isItBingo = CalculateBingo.numsRemaining(calledNums, ticket) == 0;
+            MongoApi.getUserTickets(user, function (tickets) {
+                if (tickets != null && tickets) {
+                    let isItBingo = CalculateBingo.isItBingo(calledNums, tickets); //abstracted isItBingo calculation back in Calculatebingo.js
                     callback(isItBingo);
                 }
+                callback(false);
             });
-        });
-    }
-
-    static findTicket(db, callback) {
-        let collection = db.collection('tickets');
-        collection.findOne(function (err, result) {
-            console.log("Found ticket");
-            console.log("0", result);
-            callback(result);
-        });
-    }
-    static findTicket(username, db, callback) {
-        //console.log("user.user",username.user);
-        //var key = username.user;
-        let userObject = {};
-        userObject[username] = {$exists: true};
-        let collection = db.collection('tickets');
-        collection.find(userObject).toArray(function (err, docs) {
-            if(docs!= null) {
-                callback(docs);
-            }
         });
     }
 

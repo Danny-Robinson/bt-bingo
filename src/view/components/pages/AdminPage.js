@@ -24,6 +24,14 @@ class AdminPage extends RoleAwareComponent {
         socket.emit('resetGame');
     };
 
+    callNewNum = () => {
+        console.log("callSetOfNums:",1);
+        socket.emit('callNewNumSet',1);
+        socket.emit('getCalledNumbers');
+        socket.emit('calculateLeaderboard_RealTime');
+        socket.emit('getLeaderboard_RealTime');
+        //socket.emit('reRenderAllComponents');
+    };
     callSetOfNums = () => {
         console.log("callSetOfNums:",this.state.callNumSetSize);
         socket.emit('callNewNumSet',this.state.callNumSetSize);
@@ -32,6 +40,7 @@ class AdminPage extends RoleAwareComponent {
         socket.emit('getLeaderboard_RealTime');
         //socket.emit('reRenderAllComponents');
     };
+
     resetNumbers = () => {
         console.log("resetNums");
         socket.emit('resetCalledNumbers');
@@ -71,7 +80,7 @@ class AdminPage extends RoleAwareComponent {
                      <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
                         Reset
                     </button>
-                    <button type="button" className="btn btn-refresh" onClick={this.callSetOfNums}>
+                    <button type="button" className="btn btn-refresh" onClick={this.callNewNum}>
                         New Num
                     </button>
                     <p></p>
