@@ -600,17 +600,12 @@ class MongoApi {
             }
         );
     };
-    static insertNumTickets(db, user, number, callback) {
-        let collection = db.collection('numTicketsPurchased');
-        let doc = {};
-        doc[user] = number;
-        collection.insert(doc, function (err, result) {
-            console.log("Inserted number of tickets purchased");
-            console.log(result);
-            callback(result);
-        });
-    }
 
+    /**
+     * Num Tickets format: "user" : "username", "numTickets": x
+     * @param username
+     * @param number
+     */
     static addNumTickets(username, number) {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
@@ -618,6 +613,17 @@ class MongoApi {
                     db.close();
                 });
             }
+        });
+    }
+    static insertNumTickets(db, user, number, callback) {
+        let collection = db.collection('numTicketsPurchased');
+        let doc = {"user": user, "numTickets": parseInt(number)};
+        //let doc = {};
+        //doc[user] = number;
+        collection.insert(doc, function (err, result) {
+            console.log("Inserted number of tickets purchased");
+            console.log(result);
+            callback(result);
         });
     }
 }
