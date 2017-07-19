@@ -76,6 +76,10 @@ class ActiveTicketsPage extends RoleAwareComponent {
                         <div>
                             <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
                             <BingoButton socket={socket}/>
+                        </div>
+                    </span>
+                    <span>
+                        <div>
                             <Chat socket={socket} />
                         </div>
                     </span>
