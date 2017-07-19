@@ -92,9 +92,9 @@ module.exports = (app, port) => {
                 });
             });
             socket.on('getUserTickets',function(user){
-                console.log("GETTING USER TICKETS");
                 mongoApi.getUsernameFromSessionId(user, function (username) {
-                    console.log("SessionID: " + user + " Username: " + username);
+                    //console.log("GETTING USER TICKETS");
+                    //console.log("SessionID: " + user + " Username: " + username);
                     mongoApi.getUserTickets(username, function (ticket) {
                         if (ticket != "") {
                             socket.emit('deliverTicket', JSON.stringify(ticket[0][username]));
@@ -360,11 +360,9 @@ module.exports = (app, port) => {
                 let calledNumSuccess = true;
                 let randomNums = [];
                 for (let x = 0; x < sizeOfNumSet; x++) {
-                    console.log("iteration:", x);
                     mongoApi.getCalledNumbers(function (original_numbers) {
                         let randNum = callNumber.getValidRandomNumber(original_numbers);
                         if (randNum == -1 || randNum == 0) {
-                            console.log("Error - randNum error");
                             socket.emit('calledNumsFull');
                             socket.broadcast.emit('calledNumsFull');
                             return;
@@ -378,19 +376,18 @@ module.exports = (app, port) => {
                 }
                 if (randomNums != []) {
                     mongoApi.pushCalledNumSet(randomNums);
-                    console.log("randomNums:", randomNums);
                 } else {
                     console.log("Error - calledNumber list error");
                     calledNumSuccess = false;
                 }
 
-                console.log("calledNum success:", calledNumSuccess);
                 if (calledNumSuccess) {
                     mongoApi.getCalledNumbers(function (new_numbers) {
                         socket.emit('deliverCalledNumbers', new_numbers);
                         socket.broadcast.emit('deliverCalledNumbers', new_numbers);
                     });
                 } else {
+                    console.log("calledNum failure");
                     mongoApi.getCalledNumbers(function (original_numbers) {
                         socket.emit('deliverCalledNumbers', original_numbers);
                         socket.broadcast.emit('deliverCalledNumbers', original_numbers);

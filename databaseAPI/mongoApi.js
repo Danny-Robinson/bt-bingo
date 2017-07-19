@@ -88,7 +88,6 @@ class MongoApi {
                             numbers.reverse();
                             numbers.push(randomNum);
                             numbers.reverse();
-                            console.log("pushedNum Success: ", randomNum);
                         } else {
                             console.log("MongoApi Error - Num already in list - ", randomNum);
                         }
@@ -501,7 +500,6 @@ class MongoApi {
 
     static getCurrentJackpot(callback) {
         MongoApi.getNumTicketsPurchased(function (totalTicketsNum) {
-            console.log("Cjack:totalTickNum:",totalTicketsNum);
             callback(totalTicketsNum / 2);
         });
     }
@@ -515,7 +513,16 @@ class MongoApi {
                         let totalTicketsNum = 0;
                         for (let i = 0; i < numTicketsPurchasedList.length; i++) {
                             let ticketsPurchased = numTicketsPurchasedList[i]['numTickets'];
-                            totalTicketsNum += parseInt((ticketsPurchased).toString());
+                            try{
+                                totalTicketsNum += parseInt((ticketsPurchased).toString());
+                            }catch (e){
+                                try {
+                                    console.log("Incorrect numTicketsPurchased format");
+                                    totalTicketsNum += parseInt((ticketsPurchased))
+                                }finally {
+                                    console.log("Incorrect numTicketsPurchased type");
+                                }
+                            }
                         }
                         callback(totalTicketsNum);
                     }
