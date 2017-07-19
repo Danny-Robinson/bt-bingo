@@ -10,8 +10,9 @@ class RoleAwareComponent extends Component {
     }
 
     componentWillUnmount() {
-        socket.off('deliverCalledNumbers');
-        socket.off('resettedList');
+        socket.off('retrievedUserType');
+        //socket.off('deliverCalledNumbers');
+        //socket.off('resettedList');
     }
 
     shouldBeVisible() {

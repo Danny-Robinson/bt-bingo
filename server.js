@@ -3,6 +3,7 @@ const express = require('express');
 const mongoApi = require("./databaseAPI/mongoApi");
 const bingoTicket = require("./databaseAPI/bingoTicket");
 const callNumber = require("./databaseAPI/callNumber");
+const CalculateBingo = require("./databaseAPI/CalculateBingo");
 const ldap = require('ldapjs');
 const bodyParser = require('body-parser');
 const crypto = require('crypto');
@@ -278,11 +279,45 @@ module.exports = (app, port) => {
                 });
             });
             socket.on('calculateLeaderboard_RealTime', function () {
-                mongoApi.calculateLeaderboard_RealTime(function () {
-                    mongoApi.getLeaderboard_RealTime(function (data) {
-                        socket.emit('setLeaderboard_RealTime', data);
-                        socket.broadcast.emit('setLeaderboard_RealTime', data);
+
+                mongoApi.getAllUsernames(function (listOfUsers) {
+                    mongoApi.getCalledNumbers(function (calledNums) {
+
+                        for (let i = 0; i < listOfUsers.length; i++) {
+                            let username = listOfUsers[i][0];
+
+                            mongoApi.getUserTickets(username, function (ticketBook) {
+                                if ((ticketBook != null || ticketBook != "") && ticketBook) {
+                                    let user = {user: username};
+                                    user["numsLeft"] = CalculateBingo.numsRemaining(calledNums, ticketBook);
+                                    let userFound = false;
+
+                                    mongoApi.getWinners_RealTime(function (winners) {
+
+                                        for (let i = 0; i < winners.length; i++) {
+                                            if (winners[i].user == user.user) {
+                                                winners[i] = user;
+                                                userFound = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!userFound) {
+                                            winners.push(user); //add new user to winners
+                                        }
+
+                                        mongoApi.updateWinners_RealTime(winners);
+                                    });
+                                } else {
+                                    console.log("error getting User's tickets", username);
+                                }
+                            });
+                        }
                     });
+                });
+
+                mongoApi.getLeaderboard_RealTime(function (data) {
+                    socket.emit('setLeaderboard_RealTime', data);
+                    socket.broadcast.emit('setLeaderboard_RealTime', data);
                 });
             });
             socket.on('getLeaderboard_RealTime', function(){

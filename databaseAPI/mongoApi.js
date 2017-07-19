@@ -402,7 +402,7 @@ class MongoApi {
     }
     //For every user in rtwinners: get userTickets and calledNumbers to calculate real-time scores.
     //Get nums remaining and calculate real-time scores, then update collection.
-    static calculateLeaderboard_RealTime() {
+    /*static calculateLeaderboard_RealTime() {
         MongoApi.getAllUsernames(function (listOfUsers) {
             MongoApi.getCalledNumbers(function (calledNums) {
 
@@ -414,7 +414,7 @@ class MongoApi {
                             let user = {user: username};
                             user["numsLeft"] = CalculateBingo.numsRemaining(calledNums, ticketBook);
                             let userFound = false;
-                            let winners = this.getWinners_RealTime();
+                            let winners = MongoApi.getWinners_RealTime();
 
                             for (let i = 0; i < winners.length; i++) {
                                 if (winners[i].user == user.user) {
@@ -426,7 +426,7 @@ class MongoApi {
                             if (!userFound) {
                                 winners.push(user); //add new user to winners
                             }
-                            this.updateWinners_RealTime(winners);
+                            MongoApi.updateWinners_RealTime(winners);
                         } else {
                             console.log("error getting User's tickets", username);
                         }
@@ -434,7 +434,7 @@ class MongoApi {
                 }
             });
         });
-    }
+    }*/
     static getWinners_RealTime(callback){
         MongoClient.connect(url, function (err, db) {
             if (err === null) {

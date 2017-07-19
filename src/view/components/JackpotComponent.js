@@ -29,7 +29,8 @@ class JackpotComponent extends Component {
     }
 
     componentWillUnmount() {
-        this.props.socket.on('gotJackpot');
+        //this.props.socket.on('gotJackpot');
+        this.props.socket.off('gotJackpot');
     }
 
     gotJackpot(gameJackpot) {
