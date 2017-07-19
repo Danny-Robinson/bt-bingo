@@ -43,12 +43,11 @@ class MongoApi {
                 userObject[user] = {$exists: true};
                 let collection = db.collection('tickets');
                 collection.find(userObject).toArray(function (err, docs) {
-                    if(docs != null && docs) {
+                    if(docs != null){
                         callback(docs);
                     }
                 });
             }
-            callback("");
         });
     }
     /*static findTicket(db, callback) {
@@ -482,7 +481,9 @@ class MongoApi {
                     let isItBingo = CalculateBingo.isItBingo(calledNums, tickets); //abstracted isItBingo calculation back in Calculatebingo.js
                     callback(isItBingo);
                 }
-                callback(false);
+                //getUserTickets returns multiple instances, cannot callback here, probably socket issues.
+                //console.log("Not bingo");
+                //callback(false);
             });
         });
     }
