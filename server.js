@@ -180,7 +180,7 @@ module.exports = (app, port) => {
                         socket.emit('deliverBingo', bingo);
                         if (bingo) {
                             mongoApi.getUserWinnings(username, function (prev_winnings) {
-                                if (prev_winnings != 0 && (prev_winnings == null || prev_winnings == "" || prev_winnings == "NaN")) {
+                                if (prev_winnings == null || prev_winnings == "" || prev_winnings == "NaN") {
                                     return;
                                 }
                                 mongoApi.getCurrentJackpot(function (current_jackpot) {
@@ -248,7 +248,6 @@ module.exports = (app, port) => {
 
             socket.on('getJackpot',function(){
                mongoApi.getNumTicketsPurchased(function(numTicketsPurchased){
-                   console.log("numsPurchased",numTicketsPurchased);
                     let jackpot = numTicketsPurchased/2;
                     socket.emit('gotJackpot',jackpot);
                     socket.emit('setJackpot',jackpot);

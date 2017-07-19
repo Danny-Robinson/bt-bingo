@@ -400,44 +400,58 @@ class MongoApi {
             }
         });
     }
+    //For every user in rtwinners: get userTickets and calledNumbers to calculate real-time scores.
+    //Get nums remaining and calculate real-time scores, then update collection.
     static calculateLeaderboard_RealTime() {
-        MongoClient.connect(url, function (err, db) {
-            if (err === null) {
+        MongoApi.getAllUsernames(function (listOfUsers) {
+            MongoApi.getCalledNumbers(function (calledNums) {
 
-                MongoApi.getAllUsernames(function (listOfUsers) {
-                    MongoApi.getCalledNumbers(function (calledNums) {
+                for (let i = 0; i < listOfUsers.length; i++) {
+                    let username = listOfUsers[i][0];
 
-                        //For every user in rtwinners: get userTickets and calledNumbers to calculate real-time scores.
-                        for (let i = 0; i < listOfUsers.length; i++) {
-                            let username = listOfUsers[i][0];
+                    MongoApi.getUserTickets(username, function (ticketBook) {
+                        if ((ticketBook != null || ticketBook != "") && ticketBook) {
+                            let user = {user: username};
+                            user["numsLeft"] = CalculateBingo.numsRemaining(calledNums, ticketBook);
+                            let userFound = false;
+                            let winners = this.getWinners_RealTime();
 
-                            //Get nums remaining and calculate real-time scores, then update collection.
-                            MongoApi.getUserTickets(username, function (ticketBook) {
-                                if ((ticketBook != null || ticketBook != "") && ticketBook) {
-                                    let user = {user: username};
-                                    user["numsLeft"] = CalculateBingo.numsRemaining(calledNums, ticketBook);
-                                    let userFound = false;
-                                    let collection = db.collection('rtwinners');
-                                    collection.findOne({"winners": {$exists: true}}, function (err, result) {
-                                        let winners = result["winners"].slice();
-                                        for (let i = 0; i < winners.length; i++) {
-                                            if (winners[i].user == user.user) {
-                                                winners[i] = user;
-                                                userFound = true;
-                                                break;
-                                            }
-                                        }
-                                        if (!userFound) {
-                                            winners.push(user); //add new user to winners
-                                        }
-                                        collection.updateOne(result, {$set: {"winners": winners}});
-                                    });
-                                } else {
-                                    console.log("error getting User's tickets", username);
+                            for (let i = 0; i < winners.length; i++) {
+                                if (winners[i].user == user.user) {
+                                    winners[i] = user;
+                                    userFound = true;
+                                    break;
                                 }
-                            });
+                            }
+                            if (!userFound) {
+                                winners.push(user); //add new user to winners
+                            }
+                            this.updateWinners_RealTime(winners);
+                        } else {
+                            console.log("error getting User's tickets", username);
                         }
                     });
+                }
+            });
+        });
+    }
+    static getWinners_RealTime(callback){
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('rtwinners');
+                collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    let winners = result["winners"].slice();
+                    callback(winners);
+                });
+            }
+        });
+    }
+    static updateWinners_RealTime(winners){
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('rtwinners');
+                collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    collection.updateOne(result, {$set: {"winners": winners}});
                 });
             }
         });
