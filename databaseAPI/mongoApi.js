@@ -82,10 +82,15 @@ class MongoApi {
                 let collection = db.collection('calledNumbers');
                 collection.findOne({"numbers": {$exists: true}}, function (err, result) {
                     if (!result) {
-                        MongoApi.firstNumInsert(db, function () {
-                        });
+                        //Initialise calledNumbers table
+                        MongoApi.firstNumInsert(db, function () { });
                     } else {
-                        callback(result["numbers"]);
+                        let numbers = result["numbers"];
+                        if(numbers == null) {
+                            console.log("Incorrect Mongo format: calledNumbers");
+                            return;
+                        }
+                        callback(numbers);
                     }
                 });
             }
@@ -504,16 +509,11 @@ class MongoApi {
                         let totalTicketsNum = 0;
                         for (let i = 0; i < numTicketsPurchasedList.length; i++) {
                             let ticketsPurchased = numTicketsPurchasedList[i]['numTickets'];
-                            try{
-                                totalTicketsNum += parseInt((ticketsPurchased).toString());
-                            }catch (e){
-                                try {
-                                    console.log("Incorrect numTicketsPurchased format");
-                                    totalTicketsNum += parseInt((ticketsPurchased))
-                                }finally {
-                                    console.log("Incorrect numTicketsPurchased type");
-                                }
+                            if(ticketsPurchased == null) {
+                                console.log("Incorrect Mongo format: numTicketsPurchased");
+                                return;
                             }
+                            totalTicketsNum += parseInt((ticketsPurchased).toString());
                         }
                         callback(totalTicketsNum);
                     }
