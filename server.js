@@ -84,6 +84,9 @@ module.exports = (app, port) => {
                 });
             });
 
+            /**
+             * Get Tickets from DB
+             */
             socket.on('getAllTickets',function(event){
                 mongoApi.getAllTickets(function (ticket) {
                     if (ticket != "") {
@@ -93,8 +96,6 @@ module.exports = (app, port) => {
             });
             socket.on('getUserTickets',function(user){
                 mongoApi.getUsernameFromSessionId(user, function (username) {
-                    //console.log("GETTING USER TICKETS");
-                    //console.log("SessionID: " + user + " Username: " + username);
                     mongoApi.getUserTickets(username, function (ticket) {
                         if (ticket != "") {
                             socket.emit('deliverTicket', JSON.stringify(ticket[0][username]));
@@ -279,7 +280,6 @@ module.exports = (app, port) => {
                 });
             });
             socket.on('calculateLeaderboard_RealTime', function () {
-
                 mongoApi.getAllUsernames(function (listOfUsers) {
                     mongoApi.getCalledNumbers(function (calledNums) {
 
@@ -304,7 +304,6 @@ module.exports = (app, port) => {
                                         if (!userFound) {
                                             winners.push(user); //add new user to winners
                                         }
-
                                         mongoApi.updateWinners_RealTime(winners);
                                     });
                                 } else {
@@ -354,8 +353,6 @@ module.exports = (app, port) => {
                     socket.broadcast.emit('deliverCalledNumbers', numbers);
                 });
             });
-
-            //Call new set of Nums:
             socket.on('callNewNumSet',function (sizeOfNumSet) {
                 let calledNumSuccess = true;
                 let randomNums = [];

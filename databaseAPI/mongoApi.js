@@ -9,9 +9,7 @@ const CalculateBingo = require("./CalculateBingo");
 class MongoApi {
 
     /**
-     * Tickets control
-     *
-     *
+     * Ticket control
      *
      * @param ticket
      * @param user
@@ -50,25 +48,6 @@ class MongoApi {
             }
         });
     }
-    /*static findTicket(db, callback) {
-     let collection = db.collection('tickets');
-     collection.findOne(function (err, result) {
-     console.log("Found ticket");
-     console.log("0", result);
-     callback(result);
-     });
-     }*/
-    /*static findUserTickets(username, db, callback) {
-     let userObject = {};
-     userObject[username] = {$exists: true};
-     let collection = db.collection('tickets');
-     collection.find(userObject).toArray(function (err, docs) {
-     if(docs!= null) {
-     callback(docs);
-     }
-     });
-     }*/
-
 
     /**
      *
@@ -127,7 +106,6 @@ class MongoApi {
         });
     }
 
-
     /**
      *
      * User Management
@@ -157,7 +135,6 @@ class MongoApi {
                 let collection = db.collection('users');
                 collection.find().toArray(function (err, listOfUsers) {
                     if (err == null) {
-
                         let listOfUsernames = [];
                         for (let i = 0; i < listOfUsers.length; i++)
                         {
@@ -189,13 +166,13 @@ class MongoApi {
                 let findByUsername = {username: user.username};
                 collection.findOneAndUpdate(findByUsername, {$set: {"sessionId": user.sessionId}}, function (err, result) {
                     if(result.value == null || err != null){
-                        console.log("storeSession-inserted db");
                         user["userWinnings"] = "0";
                         collection.insert(user, function (err, result) {
+                            console.log("storeSession-inserted db");
                             callback(result);
                         });
                     }else if (err == null) {
-                        console.log("storeSession-updated db", result);
+                        console.log("storeSession-updated db", user.sessionId);
                         callback(result);
                     }
                 });
@@ -213,7 +190,6 @@ class MongoApi {
 
                 collection.findOneAndUpdate(deleteEntity, {$set: {"sessionId": ""}}, function (err, result) {
                     console.log("removeSession-updated db", result);
-
                     callback(result);
                 });
                 /*collection.deleteOne(deleteEntity, function (err, result) {
@@ -252,6 +228,10 @@ class MongoApi {
             if (err === null) {
                 let collection = db.collection('winners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    if(result.winners == null) {
+                        console.log("Incorrect Mongo format: winners");
+                        return;
+                    }
                     let winners = result.winners;
                     for (let i = 0; i < winners.length; i++) {
                         if (winners[i].user == user) {
@@ -259,12 +239,6 @@ class MongoApi {
                             callback(winners[i].winnings);
                         }
                     }
-                    /*let userWinnings = result.winners[0].winnings;
-                    if (result != null || userWinnings != null) {
-                        callback(result.winners[0].winnings);//.winnings
-                    }else {
-                        callback(0);
-                    }*/
                     callback(0);
                 });
             }
@@ -322,6 +296,10 @@ class MongoApi {
                 let collection = db.collection('winners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
                     if (err === null) {
+                        if(result["winners"] == null) {
+                            console.log("Incorrect Mongo format: winners");
+                            return;
+                        }
                         let winners = result["winners"].slice();
 
                         for (let i = 0; i < winners.length; i++) {
@@ -345,7 +323,7 @@ class MongoApi {
             if (err === null) {
                 let collection = db.collection('winners');
                 collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
-                //MongoApi.resetUserWinnings() resets the users' winnings in 'users' db.
+                // resets the users' winnings in 'users' db.
                 MongoApi.resetUserWinnings();
             }
         });
@@ -356,7 +334,6 @@ class MongoApi {
      *
      *
      *
-     *
      * @param callback
      */
     static getLeaderboard_RealTime(callback) {
@@ -364,12 +341,14 @@ class MongoApi {
             if (err === null) {
                 let collection = db.collection('rtwinners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
-
+                    if(result["winners"] == null) {
+                        console.log("Incorrect Mongo format: rtwinners");
+                        return;
+                    }
                     let winners = result["winners"].sort(function (a, b) {
                         return parseFloat(a.numsLeft) - parseFloat(b.numsLeft);
                     });
                     result["winners"] = winners;
-                    //callback format: "winners": [{"user" : "w", "numsLeft" : "x"}, {"user" : "y", "numsLeft" : "z"}]
                     callback(result);
                 });
             }
@@ -385,6 +364,10 @@ class MongoApi {
                 let collection = db.collection('rtwinners');
 
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    if(result["winners"] == null) {
+                        console.log("Incorrect Mongo format: rtwinners");
+                        return;
+                    }
                     let winners = result["winners"].slice();
                     let index = winners.indexOf(leader_RealTime);
                     if (index === -1) {
@@ -438,6 +421,10 @@ class MongoApi {
             if (err === null) {
                 let collection = db.collection('rtwinners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    if(result["winners"] == null) {
+                        console.log("Incorrect Mongo format: rtwinners");
+                        return;
+                    }
                     let winners = result["winners"].slice();
                     callback(winners);
                 });
@@ -449,6 +436,10 @@ class MongoApi {
             if (err === null) {
                 let collection = db.collection('rtwinners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
+                    if(result["winners"] == null) {
+                        console.log("Incorrect Mongo format: rtwinners");
+                        return;
+                    }
                     collection.updateOne(result, {$set: {"winners": winners}});
                 });
             }
