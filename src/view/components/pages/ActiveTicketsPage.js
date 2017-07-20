@@ -5,6 +5,7 @@ import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
 import DabChanger from '../DabChanger';
 import RoleAwareComponent from '../RoleAwareComponent';
+import JackpotComponent from '../JackpotComponent';
 import Chat from '../chat/Chat';
 import AllTimeLeaderboard from '../leaderboards/AllTimeLeaderboard';
 import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
@@ -64,6 +65,7 @@ class ActiveTicketsPage extends RoleAwareComponent {
                         <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
                     </span>
                     <span id="leaderboard_AllTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                        <JackpotComponent socket={socket}/>
                         <AllTimeLeaderboard socket={socket} />
                     </span>
                     <span id="leaderboard_RealTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>

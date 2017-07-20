@@ -67,9 +67,6 @@ class AllTimeLeaderboard extends React.Component {
         return (
             <div>
                 <div className='messages'>
-
-                    <JackpotComponent socket={socket}/>
-
                     <h2> All Time: </h2>
                     {
                         global_winners.map((winner, i) => {
