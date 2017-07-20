@@ -76,6 +76,14 @@ class MongoApi {
             }
         });
     }
+
+    /**
+     * calledNumbers table format:
+     * { "_id" : ObjectId("58e7582fdb445e29e4ee0686"), "numbers" : [ 11, 49, 23, 87, 6, 4, 75, 43 ] }
+     *
+     * @param callback
+     */
+
     static getCalledNumbers(callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -115,6 +123,8 @@ class MongoApi {
      *
      * User Management
      *
+     * Format:
+     * { "_id" : ObjectId("58fa21cd35cafb180805a394"), "username" : "611218504", "password" : "password1", "sessionId" : "5d39bab174d1dc8b0ae82f1ace5cdcc5d64e7f40baf481fa54e61798cdc980f5", "userRole" : "user", "userWinnings" : 1056 }
      *
      *
      * Gets the username from the existing sessionId value.
@@ -275,7 +285,8 @@ class MongoApi {
     /**
      * All-Time Leaderboard manipulation:
      *
-     *
+     * Format:
+     * { "_id" : ObjectId("58f8d4a90e4ab368464bb058"), "winners" : [ { "user" : "611218504", "winnings" : 1056 } ] }
      *
      *
      * @param callback
@@ -337,7 +348,8 @@ class MongoApi {
     /**
      * Real-Time Leaderboard manipulation:
      *
-     *
+     * Format:
+     * { "_id" : ObjectId("596dd8799e7de2f803bad51d"), "winners" : [ { "user" : "611218504", "numsLeft" : 12 }, { "user" : "611176835", "numsLeft" : 13 } ] }
      *
      * @param callback
      */
@@ -500,6 +512,13 @@ class MongoApi {
         });
     }
 
+    /**
+     * numTicketsPurchased format:
+     * { "_id" : ObjectId("5970bc3723174d23ace78a78"), "user" : "611218504", "numTickets" : 3 }
+     * { "_id" : ObjectId("5970c69f6aa0c23f50a6befd"), "user" : "611176835", "numTickets" : 6 }
+     *
+     * @param callback
+     */
     static getNumTicketsPurchased(callback){
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
