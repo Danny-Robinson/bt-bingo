@@ -55,10 +55,7 @@ class RealTimeLeaderboard extends React.Component {
         for(let x = 0; x < winners.length; x++){
             let winner = winners[x];
             if (winner['numsLeft'] == 0){
-                console.log("Found winner!!: ", winner['user'])
-                //const { socket } = this.props;
-                //let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
-                //socket.emit('simulateBingoWin_AllTime', userSessionId);
+                console.log("Winner: ", winner['user'])
             }
         }
     };
@@ -74,7 +71,6 @@ class RealTimeLeaderboard extends React.Component {
     refreshLeaderboard = () => {
         const {socket} = this.props;
         socket.emit('calculateLeaderboard_RealTime');
-        //socket.emit('getLeaderboard_RealTime');
     };
 
     addLeader_RealTime = () => {
@@ -109,11 +105,4 @@ class RealTimeLeaderboard extends React.Component {
         );
     }
 }
-/*
- <span>
- <button type="button" className="btn btn-rtadd" onClick={this.calculateLeaders}>
- Calculate Leaders
- </button>
- </span>
- */
 export default RealTimeLeaderboard;

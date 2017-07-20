@@ -13,6 +13,8 @@ module.exports = (app, port) => {
   app.use('/bootstrap', express.static(
     path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css')
   ));
+    let purchasingBlocked = false;
+    let newUsersBlocked = false;
 
     const server = app.listen(port, (err) => {
         if (err) {
@@ -76,8 +78,11 @@ module.exports = (app, port) => {
             });
 
             socket.on('purchase',function(data){
+                if (purchasingBlocked){
+                    console.log("Purchasing Tickets currently blocked.");
+                    return;
+                }
                 mongoApi.getUsernameFromSessionId(data.user, function (username) {
-                    console.log("Printing" + data);
                     mongoApi.addTicket(bingoTicket.provideBook(data.number), username );
                     mongoApi.addNumTickets(username, data.number);
                     socket.send('Purchased ticket for user: ' + username);
@@ -115,6 +120,12 @@ module.exports = (app, port) => {
             *                 }
             **/
             socket.on('storeSession', function(JSONuser) {
+                if(newUsersBlocked){
+                    // TODO: check if user already logged in current game allow re-connect (store users' "playing" state in users table?)
+                    console.log("New users blocked from connecting.");
+                    socket.emit('newSessionBlocked');
+                    return;
+                }
                 var userObject = JSON.parse(JSONuser);
                 userObject["userRole"] = 'user';
                 mongoApi.storeUserSession(userObject, function (result) {
@@ -146,24 +157,39 @@ module.exports = (app, port) => {
 
             socket.on('startNewGame',function(){
                 console.log("Starting new game...");
-                console.log("Stop new tickets");
-                this.blockPurchaseTickets(function (success) {
-                    //Notify all clients that new users are blocked (in a nice way)
-                    socket.emit('blockedTickets');
-                    socket.broadcast.emit('blockedTickets');
-                });
-                console.log("Block more users");
-                mongoApi.blockNewUsers(function (success) {
-                    //Notify all clients that new users are blocked (in a nice way)
-                    socket.emit('blockedUsers');
-                    socket.broadcast.emit('blockedUsers');
-                });
+
+                purchasingBlocked = true;
+                socket.emit('blockedTickets');
+                socket.broadcast.emit('blockedTickets');
+                console.log("Blocked new tickets being bought");
+
+                newUsersBlocked = true;
+                socket.emit('blockedUsers');
+                socket.broadcast.emit('blockedUsers');
+                console.log("Blocked new users connecting");
+
                 //Notify all clients that game is about to start
                 socket.emit('newGameReady');
                 socket.broadcast.emit('newGameReady');
             });
             socket.on('endGame',function(){
                 console.log("Ending game...");
+
+                purchasingBlocked = false;
+                socket.emit('unBlockedTickets');
+                socket.broadcast.emit('unBlockedTickets');
+                console.log("New tickets can now be bought");
+
+                newUsersBlocked = false;
+                socket.emit('unBlockedUsers');
+                socket.broadcast.emit('unBlockedUsers');
+                console.log("New users can now connect");
+
+                console.log("Ending game...");
+
+                //Notify all clients that game finished
+                socket.emit('gameEnded');
+                socket.broadcast.emit('gameEnded');
             });
             socket.on('resetGame',function(){
                 console.log("Resetting game...");
@@ -233,20 +259,6 @@ module.exports = (app, port) => {
                     }
                 });
             });
-            socket.on('getUserNumsLeft', function () {
-                mongoApi.getAllTickets(function (book) {
-                    if (book != "") {
-                        book = JSON.parse(book);
-                        for (let i = 0; i < book.length; i++) {
-                            for (let name in book[i]) {
-
-                                this.setBook(JSON.parse(book[i][name]));
-                            }
-                        }
-                        socket.emit('setLeaderboard_RealTime', userList);
-                    }
-                });
-            });
 
             socket.on('getJackpot',function(){
                mongoApi.getNumTicketsPurchased(function(numTicketsPurchased){
@@ -265,12 +277,6 @@ module.exports = (app, port) => {
                 mongoApi.getLeaderBoard_AllTime(function (winners) {
                     socket.emit('setLeaderboard_AllTime', winners);
                     socket.broadcast.emit('setLeaderboard_AllTime', winners);
-
-                    mongoApi.getNumTicketsPurchased(function(numTicketsPurchased){
-                        let jackpot = numTicketsPurchased/2;
-                        socket.emit('gotJackpot',jackpot);
-                        socket.broadcast.emit('gotJackpot',jackpot);
-                    });
                 });
             });
             socket.on('resetLeaderboard_AllTime', function () {

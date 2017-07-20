@@ -69,6 +69,15 @@ class LoginPage extends Component {
                     localStorage.setItem('userSession', JSON.stringify(session));
                     window.location="/activeTickets";
                 });
+                socket.on('newSessionBlocked', function() {
+                    console.log('New users blocked from connecting');
+                    alert('New users blocked from connecting');
+                    let error = "New users blocked from connecting";
+                    errors.push(error);
+                    socket.off('newSessionBlocked');
+                    //localStorage.setItem('userSession', JSON.stringify(session));
+                    //window.location="/activeTickets";
+                });
             }.bind(this),
             error: function(xhr, status, error) {
                 if (error === 'Unauthorized') {

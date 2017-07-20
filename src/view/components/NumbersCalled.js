@@ -36,7 +36,7 @@ class NumbersCalled extends Component {
         }.bind(this));
         socket.emit('getCalledNumbers');
         socket.emit('calculateLeaderboard_RealTime');
-        socket.emit('getLeaderboard_RealTime');
+        //socket.emit('getLeaderboard_RealTime');
     }
 
     componentWillReceiveProps(nextProps){

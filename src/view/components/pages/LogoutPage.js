@@ -12,6 +12,10 @@ class LogoutPage extends RoleAwareComponent {
 
     componentWillMount() {
         let userSession = JSON.parse(localStorage.getItem('userSession'));
+        if(userSession == null){
+            console.log("User already logged out.");
+            return;
+        }
         socket.emit('removeUserSession', userSession["sessionID"]);
         socket.on('removedUserSession', function() {
         }.bind(this));

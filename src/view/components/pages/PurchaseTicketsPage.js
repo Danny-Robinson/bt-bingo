@@ -17,6 +17,9 @@ class PurchaseTicketsPage extends RoleAwareComponent {
         socket.on('connect',function() {
             console.log('Client has connected to the server!');
         });
+        socket.on('blockedTickets',function () {
+            console.log('Game started, you cannot buy new tickets');
+        });
         socket.on('message',function(data) {
             alert(data);
         });
@@ -39,10 +42,10 @@ class PurchaseTicketsPage extends RoleAwareComponent {
 
     handleSubmit(event) {
         let data = {user: this.state.user, number: this.state.number};
-        console.log(this.state.number);
-        console.log(this.state.user);
+        console.log("Purchase",this.state.number,"ticket(s) for:",this.state.user);
         socket.emit('purchase', data);
         event.preventDefault();
+        socket.emit('getJackpot');
     }
 
     render()

@@ -25,7 +25,7 @@ class BingoButton extends Component {
         socket.emit('getCalledNumbers');
         //socket.emit('resetTickets');
         socket.emit('calculateLeaderboard_RealTime');
-        socket.emit('getLeaderboard_RealTime');
+        //socket.emit('getLeaderboard_RealTime');
     };
 
     checkForBingo = () => {
