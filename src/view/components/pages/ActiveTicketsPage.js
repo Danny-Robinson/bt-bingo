@@ -42,6 +42,12 @@ class ActiveTicketsPage extends RoleAwareComponent {
 
     componentWillMount() {
         let userSession = JSON.parse(localStorage.getItem('userSession'));
+        if(userSession == null){
+            console.log("User has no session, please log in.");
+            alert("User has no session, please log in.");
+            window.location="/";
+            return;
+        }
         let user = userSession["sessionID"];
         socket.emit('getUserTickets', user);  //Can be changed to get ticket by user, eliminates below for loop
         socket.on('deliverTicket', function (book) {
