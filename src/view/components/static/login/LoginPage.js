@@ -75,8 +75,6 @@ class LoginPage extends Component {
                     let error = "New users blocked from connecting";
                     errors.push(error);
                     socket.off('newSessionBlocked');
-                    //localStorage.setItem('userSession', JSON.stringify(session));
-                    //window.location="/activeTickets";
                 });
             }.bind(this),
             error: function(xhr, status, error) {
@@ -101,6 +99,7 @@ class LoginPage extends Component {
 
     componentWillUnmount(){
         socket.off('storedSession');
+        socket.off('newSessionBlocked');
     }
 
     /**

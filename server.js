@@ -38,23 +38,25 @@ module.exports = (app, port) => {
             });
 
             console.log('User connected to Server');
+
+            /**
+             * CHAT features
+             *
+             */
             let name = userNames.getGuestName();
             socket.emit('init', {
                 name: name,
                 users: userNames.get()
             });
-
             socket.broadcast.emit('user:join', {
                 name: name
             });
-
             socket.on('send:message', function (data) {
                 socket.broadcast.emit('send:message', {
                     user: data.user,
                     text: data.text
                 });
             });
-
             // validate a user's name change, and broadcast it on success
             socket.on('change:name', function (data, fn) {
                 if (userNames.claim(data.name)) {
@@ -72,11 +74,14 @@ module.exports = (app, port) => {
                     fn(false);
                 }
             });
-
             socket.on('message',function(event){
                 console.log('Received message from client!',event);
             });
 
+            /**
+             * Tickets:
+             *
+             */
             socket.on('purchase',function(data){
                 if (purchasingBlocked){
                     console.log("Purchasing Tickets currently blocked.");
@@ -118,19 +123,26 @@ module.exports = (app, port) => {
             *                  "sessionId":"cc192d25b7cd12470c1a15d7d0295821792ad180fe1e12b6cca19e9a0655c19",
             *                  "userRole":"user"
             *                 }
+             *                 // TO DO: check if user already logged in current game allow re-connect (store users' "playing" state in users table?)
             **/
             socket.on('storeSession', function(JSONuser) {
-                if(newUsersBlocked){
-                    // TODO: check if user already logged in current game allow re-connect (store users' "playing" state in users table?)
-                    console.log("New users blocked from connecting.");
-                    socket.emit('newSessionBlocked');
-                    return;
-                }
-                var userObject = JSON.parse(JSONuser);
-                userObject["userRole"] = 'user';
-                mongoApi.storeUserSession(userObject, function (result) {
-                    if (result != "") {
-                        socket.emit('storedSession');
+                let userObject = JSON.parse(JSONuser);
+
+                mongoApi.userLoggedIn(userObject, function (loggedInState) {
+                    //let loggedInState = mongoApi.userLoggedIn(userObject.username);
+                    console.log("loggedinstate",loggedInState,userObject);
+
+                    if (newUsersBlocked && !loggedInState) {
+                        console.log("New users blocked from connecting.");
+                        socket.emit('newSessionBlocked');
+                    } else {
+                        userObject["userRole"] = 'user';
+                        userObject["loggedIn"] = true;
+                        mongoApi.storeUserSession(userObject, function (result) {
+                            if (result != "") {
+                                socket.emit('storedSession');
+                            }
+                        });
                     }
                 });
             });
@@ -144,6 +156,12 @@ module.exports = (app, port) => {
                     if (result !== null) {
                         socket.emit('removedUserSession');
                     }
+                });
+            });
+
+            socket.on('logUserOut',function(sessionId){
+                mongoApi.getUserFromSessionId(sessionId, function (user) {
+                    mongoApi.logUserOut(user.username);
                 });
             });
 
@@ -186,6 +204,8 @@ module.exports = (app, port) => {
                 console.log("New users can now connect");
 
                 console.log("Ending game...");
+                mongoApi.logAllUsersOut();
+                socket.emit('loggedUsersOut');
 
                 //Notify all clients that game finished
                 socket.emit('gameEnded');

@@ -83,7 +83,6 @@ class MongoApi {
      *
      * @param callback
      */
-
     static getCalledNumbers(callback) {
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -144,6 +143,89 @@ class MongoApi {
             }
         });
     }
+    static getUserFromSessionId(sessionId, callback) {
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                let collection = db.collection('users');
+                let findBySession = {sessionId: sessionId};
+                collection.findOne(findBySession, function (err, result) {
+                    if(err == null) {
+                        console.log("user found:",result);
+                        callback(result);
+                    }else{
+                        console.log("user not found FromSessionID: ",sessionId);
+                    }
+                });
+            }
+        });
+    }
+    static logAllUsersOut(){
+        //Log all users out.
+        MongoApi.getAllUsernames(function (listOfUsers) {
+            for (let i = 0; i < listOfUsers.length; i++) {
+                let username = listOfUsers[i][0];
+                console.log("logging out:",username);
+                MongoApi.logUserOut(username);
+            }
+        });
+    }
+    static logUserOut(username){
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                let collection = db.collection('users');
+                console.log("logging UserOut:",username);
+                let findByUsername = {username: username};
+                collection.findOneAndUpdate(findByUsername, {$set: {"loggedIn": false}}, {upsert : true}, function (err, result) {
+                    if(result == null || err != null){
+                        /*If loggedIn not created:
+                        user["loggedIn"] = false;
+                        collection.insert(user, function (err, result) {
+                            console.log("inserted db-createdLoggedIn-logged out");
+                        });*/
+                        console.log("'loggedIn' created, logged out");
+                    }else if (err == null) {
+                        console.log("updated db-updatedLoggedIn:",username);
+                    }
+                });
+            }
+        });
+    }
+    static userLoggedIn(user, callback){
+        console.log("userLoggedIn",user);
+        MongoClient.connect(url, function (err, db) {
+            if (err == null && user != null) {
+                let collection = db.collection('users');
+                let findByUser = {username: user.username};
+                collection.findOne(findByUser, function (err, result) {
+                    if(err == null && result != null) {
+                        let loggedIn = result.loggedIn;
+                        if(loggedIn == null){
+                            return;
+                        }
+                        if(loggedIn){
+                            //return result.username == user.username;
+                            console.log("userLoggedIn:loggedInTrue",user);
+                            callback(result.username == user.username);
+                        }else{
+                            console.log("userLoggedIn:loggedInFalse",user);
+                            callback(false);
+                                //return false;
+                        }
+                        /*//loggedIn doesn't exist, so must add (and set initial value to logged out)
+                        MongoApi.logUserOut(user.username);
+                        console.log("MongoApi.logUserOut(user)");
+                        callback(false);
+                        //return false;*/
+
+                    }else{
+                        console.log("username not found From SessionID: ",user.sessionId);
+                        callback(false);
+                        //return false;
+                    }
+                });
+            }
+        });
+    }
     static getAllUsernames(callback){
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
@@ -176,12 +258,13 @@ class MongoApi {
             if (err == null) {
                 let collection = db.collection('users');
                 /*
-                 * Edited to allow Update of Session ID in Mongo (and new inserts)
+                 * Edited to allow Update of Session ID, Password & LoggedIn in Mongo (and new inserts)
                  */
                 let findByUsername = {username: user.username};
-                collection.findOneAndUpdate(findByUsername, {$set: {"sessionId": user.sessionId}}, function (err, result) {
+                collection.findOneAndUpdate(findByUsername, {$set: {"sessionId": user.sessionId, "password": user.password, "loggedIn": user.loggedIn}}, function (err, result) {
                     if(result.value == null || err != null){
                         user["userWinnings"] = "0";
+                        user["loggedIn"] = false;
                         collection.insert(user, function (err, result) {
                             console.log("storeSession-inserted db");
                             callback(result);
