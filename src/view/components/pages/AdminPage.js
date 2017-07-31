@@ -11,17 +11,29 @@ class AdminPage extends RoleAwareComponent {
 
     constructor(props) {
         super(props);
-        this.state = {callNumSetSize: 4}
+        this.state = {callNumSetSize: 4, gameStatus: "Stopped"};
+        socket.emit('getGameStatus');
+        //socket.on('gotGameStatus', status);
     }
 
     startGame = () => {
         socket.emit('startNewGame');
+        this.setState({
+            gameStatus: "Started"
+        });
     };
     endGame = () => {
         socket.emit('endGame');
+        this.setState({
+            gameStatus: "Stopped"
+        });
     };
     resetGame = () => {
+        //socket.emit('endGame');
         socket.emit('resetGame');
+        this.setState({
+            gameStatus: "Stopped"
+        });
     };
 
     callNewNum = () => {
@@ -61,6 +73,9 @@ class AdminPage extends RoleAwareComponent {
             <div style={styles} className="admin">
                 <h3><font>Admin Page</font></h3>
                 <span>
+                    <div class="game-status">
+                        <h3>Game: {this.state.gameStatus}!</h3>
+                    </div>
                     <div class="btn-group">
                         <button type="button" className="btn btn-startgame" onClick={this.startGame}>
                             <h3>Start Game</h3>

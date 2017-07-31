@@ -191,7 +191,6 @@ class MongoApi {
         });
     }
     static userLoggedIn(user, callback){
-        console.log("userLoggedIn",user);
         MongoClient.connect(url, function (err, db) {
             if (err == null && user != null) {
                 let collection = db.collection('users');
@@ -199,28 +198,15 @@ class MongoApi {
                 collection.findOne(findByUser, function (err, result) {
                     if(err == null && result != null) {
                         let loggedIn = result.loggedIn;
-                        if(loggedIn == null){
-                            return;
-                        }
-                        if(loggedIn){
-                            //return result.username == user.username;
-                            console.log("userLoggedIn:loggedInTrue",user);
+                        if(loggedIn != null && loggedIn){
+                            console.log("userLoggedIn",user.username);
                             callback(result.username == user.username);
                         }else{
-                            console.log("userLoggedIn:loggedInFalse",user);
                             callback(false);
-                                //return false;
                         }
-                        /*//loggedIn doesn't exist, so must add (and set initial value to logged out)
-                        MongoApi.logUserOut(user.username);
-                        console.log("MongoApi.logUserOut(user)");
-                        callback(false);
-                        //return false;*/
-
                     }else{
-                        console.log("username not found From SessionID: ",user.sessionId);
+                        console.log("username not logged in: ", user.username);
                         callback(false);
-                        //return false;
                     }
                 });
             }
@@ -258,19 +244,25 @@ class MongoApi {
             if (err == null) {
                 let collection = db.collection('users');
                 /*
-                 * Edited to allow Update of Session ID, Password & LoggedIn in Mongo (and new inserts)
+                 * Allow Update of Session ID, Password & LoggedIn in Mongo (and new inserts)
                  */
                 let findByUsername = {username: user.username};
-                collection.findOneAndUpdate(findByUsername, {$set: {"sessionId": user.sessionId, "password": user.password, "loggedIn": user.loggedIn}}, function (err, result) {
+                if(user.username == null){
+                    return;
+                }
+                console.log("storingSession:",user.username,user.userRole);
+                collection.findOneAndUpdate(findByUsername, {$set: {"sessionId": user.sessionId, "password": user.password, "loggedIn": true}}, function (err, result) {
                     if(result.value == null || err != null){
+                        //only set userRole, winnings and loggedIn if not found in DB.
+                        user["userRole"] = 'user';
                         user["userWinnings"] = "0";
-                        user["loggedIn"] = false;
+                        user["loggedIn"] = true;
                         collection.insert(user, function (err, result) {
-                            console.log("storeSession-inserted db");
+                            console.log("inserted db");
                             callback(result);
                         });
                     }else if (err == null) {
-                        console.log("storeSession-updated db", user.sessionId);
+                        console.log("updated db", user.sessionId);
                         callback(result);
                     }
                 });
@@ -310,6 +302,20 @@ class MongoApi {
                         callback(result.userRole);
                     }
                     callback("");
+                });
+
+            }
+        });
+    }
+    static getUserTypeFromUsername(username, callback) {
+        MongoClient.connect(url, function (err, db) {
+            if (err === null) {
+                let collection = db.collection('users');
+                let findBySession = {username: username};
+                collection.findOne(findBySession, function (err, result) {
+                    if (err === null) {
+                        callback(result.userRole);
+                    }
                 });
 
             }

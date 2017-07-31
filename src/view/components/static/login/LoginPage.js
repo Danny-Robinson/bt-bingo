@@ -51,12 +51,37 @@ class LoginPage extends Component {
     **/
     performLDAPRequest(userEntity) {
         var errors = [];
+
+        /**
+         * IF LDAP is not connected/ working, fake success:
+         * @type {string}
+         */
+        let data = "0ec922f8723edc16dd154ab4e5b36854ae481c5f9e3daf9bb0a1a153d55bbfc4";
+        let session = LoginPage.getLoginState();
+        session.sessionID = data;
+        //store the session
+        userEntity.setSessionId(data);
+        socket.emit('storeSession', JSON.stringify(userEntity));
+        socket.on('storedSession', function() {
+            console.log('successfully stored session');
+            localStorage.setItem('userSession', JSON.stringify(session));
+            window.location="/activeTickets";
+        });
+        socket.on('newSessionBlocked', function() {
+            console.log('New users blocked from connecting');
+            alert('New users blocked from connecting');
+            let error = "New users blocked from connecting";
+            errors.push(error);
+            socket.off('newSessionBlocked');
+        });
+        /*
         $.ajax({
             url: '/activeTickets',
             dataType: 'json',
             type: 'POST',
             data: JSON.stringify(userEntity),
             contentType: 'application/json',
+
             success: function(data) {
                 //start the session
                 let session = LoginPage.getLoginState();
@@ -84,7 +109,7 @@ class LoginPage extends Component {
                 errors.push(error);
                 this.setState({formErrors:errors});
             }.bind(this)
-        })
+        })*/
     }
 
 

@@ -128,25 +128,29 @@ module.exports = (app, port) => {
             socket.on('storeSession', function(JSONuser) {
                 let userObject = JSON.parse(JSONuser);
 
-                mongoApi.userLoggedIn(userObject, function (loggedInState) {
-                    //let loggedInState = mongoApi.userLoggedIn(userObject.username);
-                    console.log("loggedinstate",loggedInState,userObject);
-
-                    if (newUsersBlocked && !loggedInState) {
-                        console.log("New users blocked from connecting.");
-                        socket.emit('newSessionBlocked');
-                    } else {
-                        userObject["userRole"] = 'user';
-                        userObject["loggedIn"] = true;
-                        mongoApi.storeUserSession(userObject, function (result) {
-                            if (result != "") {
-                                socket.emit('storedSession');
+                mongoApi.userLoggedIn(userObject, function (userIsLoggedIn) {
+                    console.log("storingSession:", userObject["username"], newUsersBlocked, userIsLoggedIn);
+                    mongoApi.getUserTypeFromUsername(userObject["username"], function (userType) {
+                        let userAdmin = false;
+                        if(userType != null) {
+                            if (userType == "admin") {
+                                userAdmin = true;
                             }
-                        });
-                    }
+                            console.log("logging in:", userObject["username"], userAdmin, !newUsersBlocked, userIsLoggedIn);
+                            if (userAdmin || !newUsersBlocked || userIsLoggedIn) {
+                                mongoApi.storeUserSession(userObject, function (result) {
+                                    if (result != "") {
+                                        socket.emit('storedSession');
+                                    }
+                                });
+                            } else {
+                                console.log("New users blocked from connecting.");
+                                socket.emit('newSessionBlocked');
+                            }
+                        }
+                    });
                 });
             });
-
 
             /**
             * Removes the user sessionId from the database upon successful logout.
@@ -167,7 +171,7 @@ module.exports = (app, port) => {
 
             socket.on('retrieveUserType', function(sessionId) {
                 mongoApi.getUserTypeFromSessionId(sessionId, function (userType) {
-                    if (userType !== '' && userType !== null) {
+                    if (userType !== null && userType !== '') {
                         socket.emit('retrievedUserType', userType);
                     }
                 });
@@ -213,6 +217,10 @@ module.exports = (app, port) => {
             });
             socket.on('resetGame',function(){
                 console.log("Resetting game...");
+            });
+            socket.on('getGameStatus', function () {
+                let gameStatus = "Started";
+                //socket.emit('gotGameStatus',gameStatus);
             });
 
             socket.on('callNumSetSize',function(setsize){
