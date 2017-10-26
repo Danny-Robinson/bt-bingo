@@ -12,7 +12,7 @@ class AdminPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
         this.state = {callNumSetSize: 4, gameStatus: "Stopped"};
-        socket.emit('getGameStatus');
+        socket.on('gameEnded', this.serverGameEnd);
         //socket.on('gotGameStatus', status);
     }
 
@@ -24,6 +24,11 @@ class AdminPage extends RoleAwareComponent {
     };
     endGame = () => {
         socket.emit('endGame');
+        this.setState({
+            gameStatus: "Stopped"
+        });
+    };
+    serverGameEnd = () => {
         this.setState({
             gameStatus: "Stopped"
         });
@@ -103,7 +108,7 @@ class AdminPage extends RoleAwareComponent {
                     <font>Size of set of Nums to add:</font>
                     <input type="number" value={this.state.callNumSetSize} min="1" max="8" onChange={e => { this.setState({callNumSetSize: e.target.value}) }} />
                     <p></p>
-                    <button type="button" className="btn btn-resetgame" onClick={this.callSetOfNums}>
+                    <button type="button" className="btn btn-resetgame" onClick={this.callSetOfNums} disabled={this.state.gameStatus == "Stopped" }>
                         <h3>Call Set Of Nums</h3>
                     </button>
                     <p></p>
@@ -112,7 +117,6 @@ class AdminPage extends RoleAwareComponent {
                             Reset All Time Leaderboard
                         </button>
                     </span>
-
                 </span>
             </div>
         );

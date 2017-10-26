@@ -5,9 +5,10 @@ class BingoButton extends Component {
         const { socket } = this.props;
         socket.on('deliverBingo', (bingo) => {
             if (bingo){
-                alert("Bingo! You win")
+                alert("Bingo! You win");
+                socket.emit('endGame');
             } else {
-                alert("No Dice")
+                alert("No Dice");
             }
         });
         socket.on('resetGame', this.resetGame);
@@ -33,6 +34,7 @@ class BingoButton extends Component {
         let userSessionId = JSON.parse(localStorage.getItem('userSession')).sessionID;
         //socket.emit('simulateBingoWin_AllTime', userSessionId);
         socket.emit('getBingo', userSessionId);
+
     };
 
     render() {

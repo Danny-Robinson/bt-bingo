@@ -574,7 +574,7 @@ class MongoApi {
         MongoApi.getCalledNumbers(function (calledNums) {
             MongoApi.getUserTickets(user, function (tickets) {
                 if (tickets != null && tickets) {
-                    let isItBingo = CalculateBingo.isItBingo(calledNums, tickets); //abstracted isItBingo calculation back in Calculatebingo.js
+                    let isItBingo = CalculateBingo.isItBingo(calledNums, tickets);
                     callback(isItBingo);
                 }
                 //getUserTickets returns multiple instances, cannot callback here, probably socket issues.
