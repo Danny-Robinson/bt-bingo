@@ -9,17 +9,31 @@
     span#ticket_container {
         width:50%;
     }
-    span#leaderboard_AllTime {
-        //background-color:#551a8b;
+
+    #leaderboard_container {
         background:rgba(85, 26, 139, 0.8);
         color:yellow;
-        height:40%;
-    }
-    span#leaderboard_RealTime {
-        //background-color:#551a8b;
-        background:rgba(85, 26, 139, 0.8);
-        color:yellow;
-        height:40%;
+        padding:20px;
+        height:600px;
+        margin-top:10px;
+        border-style:groove;
+        border-radius:20px;
+        font-size:1.5em;
+
+        span#leaderboard_AllTime {
+            //background-color:#551a8b;
+            background: rgba(85, 26, 139, 0.8);
+            color: yellow;
+            height: 40%;
+        }
+        span#leaderboard_RealTime {
+            //background-color:#551a8b;
+            background: rgba(85, 26, 139, 0.8);
+            color: yellow;
+            height: 40%;
+        }
+
+
     }
 
     @media screen and (max-width:775px) {
@@ -128,7 +142,9 @@
     #jackpot{
         #jackpotNum{
             color:deeppink;
-            font-size:4em;
+            font-size:3em;
+            background: black;
+            border-radius: 20px;
         }
     }
 

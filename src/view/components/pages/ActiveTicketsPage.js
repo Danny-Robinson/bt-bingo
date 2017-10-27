@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import NavigationBar from '../static/NavigationBar';
+import FooterBar from '../static/FooterBar';
 import TicketBook from '../ticket/TicketBook';
 import NumbersCalled from '../NumbersCalled';
 import BingoButton from '../BingoButton';
@@ -70,20 +71,13 @@ class ActiveTicketsPage extends RoleAwareComponent {
                     <span id="ticket_container" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
                         <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
                     </span>
-                    <span id="leaderboard_AllTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
-                        <JackpotComponent socket={socket}/>
-                        <AllTimeLeaderboard socket={socket} />
-                    </span>
-                    <span id="leaderboard_RealTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
-                        <RealTimeLeaderboard socket={socket} />
-                    </span>
+
                     <span>
 
                         <NumbersCalled socket={socket}/>
 
                         <div>
                             <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
-                            <BingoButton socket={socket}/>
                         </div>
                     </span>
                     <span>
@@ -91,7 +85,18 @@ class ActiveTicketsPage extends RoleAwareComponent {
                             <Chat socket={socket} />
                         </div>
                     </span>
+                    <div id="leaderboard_container">
+                        <span id="leaderboard_AllTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                            <JackpotComponent socket={socket}/>
+                            <AllTimeLeaderboard socket={socket} />
+                        </span>
+                        <span id="leaderboard_RealTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                            <RealTimeLeaderboard socket={socket} />
+                        </span>
+                        <BingoButton socket={socket}/>
+                    </div>
                 </div>
+                <FooterBar />
             </span>
         );
 
