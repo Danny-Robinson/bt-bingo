@@ -71,7 +71,7 @@ class DabChanger extends Component {
     render() {
         return (
             <div id="dabColors">
-                <h1>Dab color changer</h1>
+                <h1>Dab colour changer</h1>
                 <button type="button" className="btn btn-secondary" onClick={this.red}
                         style={{ width: '45px', height: '45px', backgroundColor: 'red',
                             cursor: `url(${this.state.cursor}) 5 70,pointer` }} />
