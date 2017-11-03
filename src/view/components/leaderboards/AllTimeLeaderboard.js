@@ -65,22 +65,22 @@ class AllTimeLeaderboard extends React.Component {
         let { global_winners } = this.state;
         const {socket} = this.props;
         return (
-            <div>
-                <div className='messages'>
-                    <h2> All Time: </h2>
-                    {
-                        global_winners.map((winner, i) => {
-                            return (
-                                <LeaderScore
-                                    key={i}
-                                    user={winner.user}
-                                    score={"£"+winner.winnings.toFixed(2)}
-                                />
-                            );
-                        })
-                    }
+
+             <div className='leaderboard_RealTime'>
+                 <h2> All Time: </h2>
+                 {
+                     global_winners.map((winner, i) => {
+                         return (
+                             <LeaderScore
+                                 key={i}
+                                 user={winner.user}
+                                 score={"£"+winner.winnings.toFixed(2)}
+                             />
+                         );
+                     })
+                 }
                 </div>
-            </div>
+
         );
     }
 }

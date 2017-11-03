@@ -88,19 +88,15 @@ class RealTimeLeaderboard extends React.Component {
     render() {
         let {rt_winners} = this.state;
         return (
-            <div>
-                <span>
-                    <div className='messages'>
-                        <h2> Real Time: </h2>
-                        {
-                            rt_winners.map((winner, i) => {
-                                return (
-                                    <LeaderScore key={i} user={winner.user} score={winner.numsLeft}/>
-                                );
-                            })
-                        }
-                    </div>
-                </span>
+            <div className='leaderboard_RealTime'>
+                <h2> Real Time: </h2>
+                {
+                    rt_winners.map((winner, i) => {
+                        return (
+                            <LeaderScore key={i} user={winner.user} score={winner.numsLeft}/>
+                        );
+                    })
+                }
             </div>
         );
     }

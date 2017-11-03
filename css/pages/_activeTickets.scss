@@ -28,6 +28,14 @@
         width: 50%;
         display:flex;
     }
+
+    .leaderboard_RealTime {
+        overflow:auto;
+        height:25%;
+        color: yellow;
+        margin-bottom:15px;
+
+    }
     #leaderboard_container {
         background:rgba(85, 26, 139, 0.8);
         color:yellow;
@@ -39,35 +47,41 @@
         font-size:1.5em;
         width: 32%;
 
-        span#leaderboard_AllTime {
-            //background-color:#551a8b;
-            background: rgba(85, 26, 139, 0.8);
-            color: yellow;
-            height: 40%;
+        ::-webkit-scrollbar {
+            width: 12px;
         }
-        span#leaderboard_RealTime {
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            color: yellow;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            background: rgba(255,255,0,0.8);
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+        }
+        ::-webkit-scrollbar-thumb:window-inactive {
+            background: rgba(255,255,0,0.4);
+        }
+
+        #leaderboard_AllTime {
             //background-color:#551a8b;
             background: rgba(85, 26, 139, 0.8);
             color: yellow;
             height: 40%;
-            overflow:auto;
-
-            ::-webkit-scrollbar-track {
-                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-                -webkit-border-radius: 10px;
-                border-radius: 10px;
-                color: yellow;
-            }
-
-            ::-webkit-scrollbar-thumb {
-                -webkit-border-radius: 10px;
-                border-radius: 10px;
-                background: rgba(255,255,0,0.8);
-                -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
-            }
-            ::-webkit-scrollbar-thumb:window-inactive {
-                background: rgba(255,255,0,0.4);
-            }
+            overflow: auto;
+        }
+        #leaderboard_RealTime {
+            //background-color:#551a8b;
+            background: rgba(85, 26, 139, 0.8);
+            color: yellow;
+            height: 40%;
+            overflow: auto;
         }
 
         @media screen and (max-width:775px) {
@@ -105,7 +119,7 @@
                 100%{ box-shadow: 0 0 0 5px yellow; opacity:1;}
         }
 
-        @media screen and (max-width:1326px) {
+        @media screen and (max-width:1400px) {
             width:85%;
         }
 
@@ -164,7 +178,6 @@
         border-bottom-left-radius:20px;
         color:yellow;
         text-align:center;
-        border-left-style:groove;
         border-top-style:groove;
 
         >h1 {
@@ -307,7 +320,7 @@
         top:0;
     }
 
-    @media screen and (max-width: 1326px) {
+    @media screen and (max-width: 1400px) {
         .component_container{
             display: block;
 
