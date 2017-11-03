@@ -12,9 +12,9 @@ const NavigationBar = () => (
             <li>
                 <Link to="/purchaseTickets" activeClassName="active">Purchase Tickets</Link>
             </li>
-            <li>
-                <Link to="/expiredTickets" activeClassName="active">Expired Tickets</Link>
-            </li>
+            {/*<li>*/}
+                {/*<Link to="/expiredTickets" activeClassName="active">Expired Tickets</Link>*/}
+            {/*</li>*/}
             <li>
                 <Link to="/leaderboard" activeClassName="active">Leaderboard</Link>
             </li>

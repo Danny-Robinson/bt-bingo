@@ -85,6 +85,7 @@ module.exports = (app, port) => {
             socket.on('purchase',function(data){
                 if (purchasingBlocked){
                     console.log("Purchasing Tickets currently blocked.");
+                    socket.send("Purchasing tickets currently not available");
                     return;
                 }
                 mongoApi.getUsernameFromSessionId(data.user, function (username) {

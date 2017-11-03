@@ -71,29 +71,30 @@ class ActiveTicketsPage extends RoleAwareComponent {
                     <span id="ticket_container" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
                         <TicketBook book={this.state.book} cursor={this.state.cursor} colour={this.state.colour}/>
                     </span>
+                    <div className="component_container">
+                        <div id="numbersCalled_container">
 
-                    <span>
+                            <NumbersCalled socket={socket}/>
 
-                        <NumbersCalled socket={socket}/>
-
-                        <div>
-                            <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
+                            <div>
+                                <DabChanger changeCursor={this.handleChange} cursor={this.state.cursor}/>
+                            </div>
                         </div>
-                    </span>
-                    <span>
-                        <div>
-                            <Chat socket={socket} />
+                        <div id="chat_container">
+                            <div>
+                                <Chat socket={socket} />
+                            </div>
                         </div>
-                    </span>
-                    <div id="leaderboard_container">
-                        <span id="leaderboard_AllTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
-                            <JackpotComponent socket={socket}/>
-                            <AllTimeLeaderboard socket={socket} />
-                        </span>
-                        <span id="leaderboard_RealTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
-                            <RealTimeLeaderboard socket={socket} />
-                        </span>
-                        <BingoButton socket={socket}/>
+                        <div id="leaderboard_container">
+                            <span id="leaderboard_AllTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                                <JackpotComponent socket={socket}/>
+                                <AllTimeLeaderboard socket={socket} />
+                            </span>
+                            <span id="leaderboard_RealTime" style={{cursor: `url(${this.state.cursor}) 5 70,pointer` }}>
+                                <RealTimeLeaderboard socket={socket} />
+                            </span>
+                            <BingoButton socket={socket}/>
+                        </div>
                     </div>
                 </div>
                 <FooterBar />

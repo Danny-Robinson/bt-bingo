@@ -10,7 +10,7 @@ class NumbersCalledList extends React.Component {
     render() {
         const {numbersList} = this.props;
         return (
-            <div className='messages'>
+            <span>
                 <div> Called Numbers:</div>
                 <div id="numberList">
                     {
@@ -19,7 +19,7 @@ class NumbersCalledList extends React.Component {
                         })
                     }
                 </div>
-            </div>
+            </span>
         );
     }
 }
