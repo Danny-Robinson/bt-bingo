@@ -2,7 +2,8 @@
     display:flex;
     min-width:446px;
     width:100%;
-    height:calc(100vh - 125px);
+    min-height:calc(100vh - 125px);
+    height: auto;
     background: url('../../images/backgroundActive.jpg') no-repeat fixed;
     background-size: cover;
 
