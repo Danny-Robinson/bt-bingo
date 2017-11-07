@@ -169,6 +169,16 @@ module.exports = (app, port) => {
                 purchasingBlocked = true;
             });
 
+            socket.on('getServerPTPMessage', function(){
+                console.log("retrieving PTP message");
+                socket.broadcast.emit('getPTPMessage');
+            });
+
+            socket.on('updateServerPTPMessage',function(data) {
+                console.log("receiving data" + data);
+                socket.broadcast.emit('updatePTPMessage',data);
+            });
+
             socket.on('startNewGame',function(){
                 console.log("Starting new game...");
 

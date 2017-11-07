@@ -11,9 +11,17 @@ class AdminPage extends RoleAwareComponent {
 
     constructor(props) {
         super(props);
-        this.state = {callNumSetSize: 4, gameStatus: "Stopped"};
+        this.state = {callNumSetSize: 4, gameStatus: "Stopped", message: ""};
+    }
+
+    componentDidMount(){
         socket.on('gameEnded', this.serverGameEnd);
-        //socket.on('gotGameStatus', status);
+        socket.on('getPTPMessage', this.sendMessage);
+    }
+
+    componentWillUnmount(){
+        socket.off('gameEnded');
+        socket.off('getPTPMessage');
     }
 
     startGame = () => {
@@ -85,15 +93,32 @@ class AdminPage extends RoleAwareComponent {
         socket.emit('resetLeaderboard_AllTime');
     };
 
+    sendMessage = () => {
+        let message = {
+            text : this.state.text
+        };
+        console.log("emmiting message: ", message);
+        socket.emit('updateServerPTPMessage', message);
+    };
+
+    handleMessageSubmit = (e) => {
+        e.preventDefault();
+        this.sendMessage();
+    };
+
+    changeHandler = (e) => {
+        this.setState({ text : e.target.value });
+    };
+
     render() {
         return (
             <div style={styles} className="admin">
                 <h3><font>Admin Page</font></h3>
                 <span>
-                    <div class="game-status">
+                    <div className="game-status">
                         <h3>Game: {this.state.gameStatus}!</h3>
                     </div>
-                    <div class="btn-group">
+                    <div className="btn-group">
                         <button type="button" className="btn btn-startgame" onClick={this.startGame}>
                             <h3>Start Game</h3>
                         </button>
@@ -138,6 +163,13 @@ class AdminPage extends RoleAwareComponent {
                         </button>
                     </span>
                 </span>
+                <h2>Set purchase ticket page message</h2>
+                <form onSubmit={this.handleMessageSubmit}>
+                    <input
+                        onChange={this.changeHandler}
+                        value={this.state.text} placeholder="Message"
+                    />
+                </form>
             </div>
         );
     }

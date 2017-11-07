@@ -7,7 +7,7 @@ class PurchaseTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
         let userSession = JSON.parse(localStorage.getItem('userSession'));
-        this.state = {number: 1, user: userSession["sessionID"]};
+        this.state = {number: 1, user: userSession["sessionID"], message:""};
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.authorize = ['user', 'admin'];
@@ -26,6 +26,13 @@ class PurchaseTicketsPage extends RoleAwareComponent {
         socket.on('disconnect',function() {
             console.log('The client has disconnected!');
         });
+        socket.on('updatePTPMessage',function(data){
+            console.log("setting state");
+            this.setState({
+                message: data.text
+            });
+        }.bind(this));
+        socket.emit('getServerPTPMessage');
         console.log("PTP mounted");
     }
 
@@ -33,6 +40,8 @@ class PurchaseTicketsPage extends RoleAwareComponent {
         socket.off('connect');
         socket.off('message');
         socket.off('disconnect');
+        socket.off('updatePTPMessage');
+        socket.off('getServerPTPMessage');
         console.log("PTP unmounted");
     }
 
@@ -51,7 +60,7 @@ class PurchaseTicketsPage extends RoleAwareComponent {
     render()
     {
         return (
-            <div>
+            <div style={{ color:'white'}}>
                 <span>
                     <NavigationBar/>
                     <form onSubmit={this.handleSubmit}>
@@ -65,6 +74,7 @@ class PurchaseTicketsPage extends RoleAwareComponent {
                         </fieldset>
                     </form>
                 </span>
+                <div>{this.state.message}</div>
             </div>
         );
     }
