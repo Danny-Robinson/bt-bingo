@@ -124,32 +124,14 @@ module.exports = (app, port) => {
             *                  "sessionId":"cc192d25b7cd12470c1a15d7d0295821792ad180fe1e12b6cca19e9a0655c19",
             *                  "userRole":"user"
             *                 }
-             *                 // TO DO: check if user already logged in current game allow re-connect (store users' "playing" state in users table?)
             **/
-            socket.on('storeSession', function(JSONuser) {
-                let userObject = JSON.parse(JSONuser);
 
-                mongoApi.userLoggedIn(userObject, function (userIsLoggedIn) {
-                    console.log("storingSession:", userObject["username"], newUsersBlocked, userIsLoggedIn);
-                    mongoApi.getUserTypeFromUsername(userObject["username"], function (userType) {
-                        let userAdmin = false;
-                        if(userType != null) {
-                            if (userType == "admin") {
-                                userAdmin = true;
-                            }
-                            console.log("logging in:", userObject["username"], userAdmin, !newUsersBlocked, userIsLoggedIn);
-                            if (userAdmin || !newUsersBlocked || userIsLoggedIn) {
-                                mongoApi.storeUserSession(userObject, function (result) {
-                                    if (result != "") {
-                                        socket.emit('storedSession');
-                                    }
-                                });
-                            } else {
-                                console.log("New users blocked from connecting.");
-                                socket.emit('newSessionBlocked');
-                            }
-                        }
-                    });
+            socket.on('storeSession', function(JSONuser) {var userObject = JSON.parse(JSONuser);
+                userObject["userRole"] = 'user';
+                mongoApi.storeUserSession(userObject, function (result) {
+                    if (result != "") {
+                        socket.emit('storedSession');
+                    }
                 });
             });
 

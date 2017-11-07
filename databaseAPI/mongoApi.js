@@ -123,7 +123,7 @@ class MongoApi {
      * User Management
      *
      * Format:
-     * { "_id" : ObjectId("58fa21cd35cafb180805a394"), "username" : "611218504", "password" : "password1", "sessionId" : "5d39bab174d1dc8b0ae82f1ace5cdcc5d64e7f40baf481fa54e61798cdc980f5", "userRole" : "user", "userWinnings" : 1056 }
+     * { "_id" : ObjectId("58fa21cd35cafb180805a394"), "username" : "611218504", "sessionId" : "5d39bab174d1dc8b0ae82f1ace5cdcc5d64e7f40baf481fa54e61798cdc980f5", "userRole" : "user", "userWinnings" : 1056 }
      *
      *
      * Gets the username from the existing sessionId value.
@@ -234,7 +234,6 @@ class MongoApi {
     /**
      * Stores the user session object to the database.
      * Session format: {"username":"611427411",
-    *                  "password":"abcd",
     *                  "sessionId":"cc192d25b7cd12470c1a15d7d0295821792ad180fe1e12b6cca19e9a0655c19",
     *                  "userRole":"user"
     *                 }
@@ -244,19 +243,19 @@ class MongoApi {
             if (err == null) {
                 let collection = db.collection('users');
                 /*
-                 * Allow Update of Session ID, Password & LoggedIn in Mongo (and new inserts)
+                 * Allow Update of Session ID & LoggedIn in Mongo (and new inserts)
                  */
                 let findByUsername = {username: user.username};
                 if(user.username == null){
                     return;
                 }
                 console.log("storingSession:",user.username,user.userRole);
-                collection.findOneAndUpdate(findByUsername, {$set: {"sessionId": user.sessionId, "password": user.password, "loggedIn": true}}, function (err, result) {
+                collection.findOneAndUpdate(findByUsername, {$set: {"sessionId": user.sessionId, "loggedIn": true}}, function (err, result) {
                     if(result.value == null || err != null){
-                        //only set userRole, winnings and loggedIn if not found in DB.
                         user["userRole"] = 'user';
                         user["userWinnings"] = "0";
                         user["loggedIn"] = true;
+                        user["password"] = "";
                         collection.insert(user, function (err, result) {
                             console.log("inserted db");
                             callback(result);
