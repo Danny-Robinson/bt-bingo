@@ -28,6 +28,18 @@ class AdminPage extends RoleAwareComponent {
             gameStatus: "Stopped"
         });
     };
+    openWindow = () => {
+        socket.emit('openPurchasingWindow');
+        this.setState({
+            gameStatus: "WindowOpen"
+        });
+    };
+    closeWindow = () => {
+        socket.emit('closePurchasingWindow');
+        this.setState({
+            gameStatus: "GameReady"
+        });
+    };
     serverGameEnd = () => {
         this.setState({
             gameStatus: "Stopped"
@@ -88,6 +100,14 @@ class AdminPage extends RoleAwareComponent {
                         <p></p>
                         <button type="button" className="btn btn-endgame" onClick={this.endGame}>
                             <h3>End Game</h3>
+                        </button>
+                        <p></p>
+                        <button type="button" className="btn btn-startgame" onClick={this.openWindow}>
+                            <h3>Open Purchasing window</h3>
+                        </button>
+                        <p></p>
+                        <button type="button" className="btn btn-endgame" onClick={this.closeWindow}>
+                            <h3>Close Purchasing window</h3>
                         </button>
                         <p></p>
                         <button type="button" className="btn btn-resetgame" onClick={this.resetGame}>

@@ -14,6 +14,20 @@ class MongoApi {
      * @param ticket
      * @param user
      */
+
+    static clearTickets(user){
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                console.log("Connected successfully to server");
+                let collection = db.collection('tickets');
+                collection.deleteMany({[user]:{$exists:true}}, function (err, result) {
+                    console.log("------------------------------------------------------------------------");
+                    console.log(result);
+                });
+            }
+        });
+    }
+
     static addTicket(ticket, user) {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {

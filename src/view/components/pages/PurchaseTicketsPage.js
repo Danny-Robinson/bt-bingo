@@ -56,18 +56,13 @@ class PurchaseTicketsPage extends RoleAwareComponent {
                     <NavigationBar/>
                     <form onSubmit={this.handleSubmit}>
                         <fieldset>
-                            <legend color="white">Purchase a ticket</legend>
+                            <legend color="white">Purchase up to 6 tickets</legend>
                             <label>
                                 Name:
                                 <input type="number" value={this.state.number} min="1" max="6" onChange={e => { this.setState({number: e.target.value}) }} />
                             </label>
                             <input type="submit" value="Purchase" />
                         </fieldset>
-                    </form>
-                </span>
-                <span>
-                    <form onSubmit={this.handleSubmit2}>
-                        <legend color="white">Amend tickets purchased</legend>
                     </form>
                 </span>
             </div>

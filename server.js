@@ -14,7 +14,6 @@ module.exports = (app, port) => {
     path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css')
   ));
     let purchasingBlocked = false;
-    let newUsersBlocked = false;
 
     const server = app.listen(port, (err) => {
         if (err) {
@@ -89,6 +88,7 @@ module.exports = (app, port) => {
                     return;
                 }
                 mongoApi.getUsernameFromSessionId(data.user, function (username) {
+                    mongoApi.clearTickets(username);
                     mongoApi.addTicket(bingoTicket.provideBook(data.number), username );
                     mongoApi.addNumTickets(username, data.number);
                     socket.send('Purchased ticket for user: ' + username);
@@ -160,18 +160,17 @@ module.exports = (app, port) => {
                 });
             });
 
+
+            socket.on('openPurchasingWindow', function(){
+                purchasingBlocked = false;
+            });
+
+            socket.on('closePurchasingWindow', function(){
+                purchasingBlocked = true;
+            });
+
             socket.on('startNewGame',function(){
                 console.log("Starting new game...");
-
-                purchasingBlocked = true;
-                socket.emit('blockedTickets');
-                socket.broadcast.emit('blockedTickets');
-                console.log("Blocked new tickets being bought");
-
-                newUsersBlocked = true;
-                socket.emit('blockedUsers');
-                socket.broadcast.emit('blockedUsers');
-                console.log("Blocked new users connecting");
 
                 //Notify all clients that game is about to start
                 socket.emit('newGameReady');
@@ -179,16 +178,6 @@ module.exports = (app, port) => {
             });
             socket.on('endGame',function(){
                 console.log("Ending game...");
-
-                purchasingBlocked = false;
-                socket.emit('unBlockedTickets');
-                socket.broadcast.emit('unBlockedTickets');
-                console.log("New tickets can now be bought");
-
-                newUsersBlocked = false;
-                socket.emit('unBlockedUsers');
-                socket.broadcast.emit('unBlockedUsers');
-                console.log("New users can now connect");
 
                 console.log("Ending game...");
                 mongoApi.logAllUsersOut();
