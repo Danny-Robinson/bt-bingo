@@ -21,8 +21,20 @@ class MongoApi {
                 console.log("Connected successfully to server");
                 let collection = db.collection('tickets');
                 collection.deleteMany({[user]:{$exists:true}}, function (err, result) {
-                    console.log("------------------------------------------------------------------------");
-                    console.log(result);
+                    //console.log(result);
+                });
+            }
+        });
+    }
+
+    static clearNumTickets(user){
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                let collection = db.collection('numTicketsPurchased');
+                let userObject = {};
+                userObject['user'] = user;
+                collection.deleteMany(userObject, function (err, result) {
+                    //console.log(result);
                 });
             }
         });

@@ -88,9 +88,14 @@ module.exports = (app, port) => {
                     return;
                 }
                 mongoApi.getUsernameFromSessionId(data.user, function (username) {
+                    mongoApi.clearNumTickets(username);
                     mongoApi.clearTickets(username);
                     mongoApi.addTicket(bingoTicket.provideBook(data.number), username );
                     mongoApi.addNumTickets(username, data.number);
+                    mongoApi.getNumTicketsPurchased(function(numTicketsPurchased){
+                        let jackpot = numTicketsPurchased/2;
+                        socket.broadcast.emit('gotJackpot',jackpot);
+                    });
                     socket.send('Purchased ticket for user: ' + username);
                 });
             });
@@ -120,13 +125,14 @@ module.exports = (app, port) => {
             /**
             * Saving the user session object in the database.
             * Session format: {"username":"611427411",
-            *                  "password":"abcd",
+            *                  "password":"",
             *                  "sessionId":"cc192d25b7cd12470c1a15d7d0295821792ad180fe1e12b6cca19e9a0655c19",
             *                  "userRole":"user"
             *                 }
             **/
 
-            socket.on('storeSession', function(JSONuser) {var userObject = JSON.parse(JSONuser);
+            socket.on('storeSession', function(JSONuser) {
+                var userObject = JSON.parse(JSONuser);
                 userObject["userRole"] = 'user';
                 mongoApi.storeUserSession(userObject, function (result) {
                     if (result != "") {
@@ -217,6 +223,8 @@ module.exports = (app, port) => {
 
                         socket.emit('deliverBingo', bingo);
                         if (bingo) {
+                            socket.broadcast.emit('gameEnded');
+                            socket.broadcast.emit('adminWinner', username);
                             mongoApi.getUserWinnings(username, function (prev_winnings) {
                                 if (prev_winnings == null || prev_winnings == "" || prev_winnings == "NaN") {
                                     return;
@@ -226,12 +234,10 @@ module.exports = (app, port) => {
                                         return;
                                     }
                                     if (prev_winnings != "NaN" || prev_winnings != null) {
-
                                         let new_winnings = +prev_winnings + +(current_jackpot);
-
                                         mongoApi.upsertLeader_AllTime({
                                             "user": username,
-                                            "winnings": new_winnings
+                                            "winnings": [new_winnings]
                                         }, function (userWinnings) {
                                             socket.emit('setLeaderboard_AllTime', userWinnings);
                                             socket.emit('refreshLeaderboard_AllTime', userWinnings);
@@ -274,7 +280,6 @@ module.exports = (app, port) => {
                mongoApi.getNumTicketsPurchased(function(numTicketsPurchased){
                     let jackpot = numTicketsPurchased/2;
                     socket.emit('gotJackpot',jackpot);
-                    socket.emit('setJackpot',jackpot);
                });
             });
 

@@ -11,17 +11,24 @@ class AdminPage extends RoleAwareComponent {
 
     constructor(props) {
         super(props);
-        this.state = {callNumSetSize: 4, gameStatus: "Stopped", message: ""};
+        this.state = {callNumSetSize: 4, gameStatus: "Stopped", message: "", winnerList: []};
     }
 
     componentDidMount(){
         socket.on('gameEnded', this.serverGameEnd);
         socket.on('getPTPMessage', this.sendMessage);
+        socket.on('adminWinner', function (data) {
+            console.log("set winner");
+            this.setState({
+                winnerList: [...this.state.winnerList, data] })
+        }.bind(this))
     }
 
     componentWillUnmount(){
         socket.off('gameEnded');
         socket.off('getPTPMessage');
+        socket.off('adminWinner');
+
     }
 
     startGame = () => {
@@ -58,6 +65,12 @@ class AdminPage extends RoleAwareComponent {
         socket.emit('resetGame');
         this.setState({
             gameStatus: "Stopped"
+        });
+    };
+
+    clearWinnerList = () => {
+        this.setState({
+            winnerList: []
         });
     };
 
@@ -170,6 +183,15 @@ class AdminPage extends RoleAwareComponent {
                         value={this.state.text} placeholder="Message"
                     />
                 </form>
+                <h2>Winners</h2>
+                <ul>
+                    {this.state.winnerList.map((item,index) =>
+                        <li key={index}>{item}</li>
+                    )}
+                </ul>
+                <button type="button" onClick={this.clearWinnerList}>
+                    Clear admin winner list
+                </button>
             </div>
         );
     }

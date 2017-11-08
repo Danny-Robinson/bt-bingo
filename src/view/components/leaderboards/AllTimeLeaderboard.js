@@ -17,7 +17,6 @@ class AllTimeLeaderboard extends React.Component {
         this._init = this._init.bind(this);
         this.refreshLeaderboard = this.refreshLeaderboard.bind(this);
         this.setLeaderboard = this.setLeaderboard.bind(this);
-        this.componentWillReceiveProps= this.componentWillReceiveProps.bind(this);
     }
 
     componentDidMount() {
@@ -28,8 +27,9 @@ class AllTimeLeaderboard extends React.Component {
     }
 
     componentWillUnmount() {
-        this.props.socket.on('setLeaderboard_AllTime');
-        this.props.socket.on('refreshLeaderboard_AllTime');
+        const { socket } = this.props;
+        socket.on('setLeaderboard_AllTime');
+        socket.on('refreshLeaderboard_AllTime');
     }
 
     _init(data){
@@ -63,7 +63,6 @@ class AllTimeLeaderboard extends React.Component {
 
     render() {
         let { global_winners } = this.state;
-        const {socket} = this.props;
         return (
 
              <div className='leaderboard_RealTime'>

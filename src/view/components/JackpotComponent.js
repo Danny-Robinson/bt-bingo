@@ -11,15 +11,18 @@ class JackpotComponent extends Component {
         this.state = {
             jackpot: 0
         };
-        this.componentDidMount = this.componentDidMount.bind(this);
-        this.componentWillReceiveProps = this.componentWillReceiveProps.bind(this);
         this.gotJackpot = this.gotJackpot.bind(this);
     }
 
     componentDidMount() {
         const {socket} = this.props;
-        socket.on('gotJackpot', this.gotJackpot);
+        socket.on('gotJackpot',function(data) {
+            this.setState({
+                jackpot: data
+            });
+        }.bind(this));
         socket.emit('getJackpot');
+        console.log("componentDidMount")
     }
 
     componentWillReceiveProps(nextProps){
@@ -29,7 +32,6 @@ class JackpotComponent extends Component {
     }
 
     componentWillUnmount() {
-        //this.props.socket.on('gotJackpot');
         this.props.socket.off('gotJackpot');
     }
 
