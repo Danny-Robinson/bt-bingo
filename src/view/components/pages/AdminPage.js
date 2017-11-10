@@ -155,10 +155,10 @@ class AdminPage extends RoleAwareComponent {
                     <span id="numscalledComponent">
                         <NumbersCalled socket={socket}/>
                     </span>
-                     <button type="button" className="btn btn-reset" onClick={this.resetNumbers}>
+                     <button type="button" className="btn btn-reset" onClick={this.resetNumbers} disabled={this.state.gameStatus == "Stopped" }>
                         Reset
                     </button>
-                    <button type="button" className="btn btn-refresh" onClick={this.callNewNum}>
+                    <button type="button" className="btn btn-refresh" onClick={this.callNewNum} disabled={this.state.gameStatus == "Stopped" }>
                         New Num
                     </button>
                     <p></p>
