@@ -83,6 +83,17 @@
         color:white;
     }
 
+    input[type="submit"] {
+        width:50%;
+        height:50px;
+        color:#08538c;
+        border-radius:5px;
+        background-color:white;
+        margin-left:auto;
+        margin-right:auto;
+        font-size:1.3em;
+    }
+
     input[type="text"]:hover, input[type="password"]:hover {
         border-color:yellow;
     }

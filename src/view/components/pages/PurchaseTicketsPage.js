@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import NavigationBar from '../static/NavigationBar';
 import RoleAwareComponent from '../RoleAwareComponent';
 import socket from '../static/socket';
+import * as styles from '../../../../css/pages/_purchaseTickets.scss';
+
 
 class PurchaseTicketsPage extends RoleAwareComponent {
     constructor(props) {
@@ -63,16 +65,18 @@ class PurchaseTicketsPage extends RoleAwareComponent {
             <div style={{ color:'white'}}>
                 <span>
                     <NavigationBar/>
-                    <form onSubmit={this.handleSubmit}>
-                        <fieldset>
-                            <legend color="white">Purchase up to 6 tickets</legend>
-                            <label>
-                                Name:
-                                <input type="number" value={this.state.number} min="1" max="6" onChange={e => { this.setState({number: e.target.value}) }} />
-                            </label>
-                            <input type="submit" value="Purchase" />
-                        </fieldset>
-                    </form>
+                    <div id="purchaseTickets">
+                        <form onSubmit={this.handleSubmit}>
+                            <fieldset>
+                                <legend color="white">Purchase up to 6 tickets</legend>
+                                <label>
+                                    Name:
+                                    <input type="number" value={this.state.number} min="1" max="6" onChange={e => { this.setState({number: e.target.value}) }} />
+                                </label>
+                                <input type="submit" value="Purchase" />
+                            </fieldset>
+                        </form>
+                    </div>
                 </span>
                 <div>{this.state.message}</div>
             </div>

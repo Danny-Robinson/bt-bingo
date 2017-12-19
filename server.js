@@ -133,7 +133,15 @@ module.exports = (app, port) => {
 
             socket.on('storeSession', function(JSONuser) {
                 var userObject = JSON.parse(JSONuser);
-                userObject["userRole"] = 'user';
+                mongoApi.isAdmin(userObject["username"], function (result) {
+                    if (result){
+                        userObject["userRole"] = 'admin';
+                        console.log("user is admin");
+                    } else {
+                        userObject["userRole"] = 'user';
+                    }
+                });
+
                 mongoApi.storeUserSession(userObject, function (result) {
                     if (result != "") {
                         socket.emit('storedSession');
@@ -489,7 +497,6 @@ module.exports = (app, port) => {
         adminClient.bind(btDN, password, function(err) {
 
             if (err !== null) {
-
                 if (err.name === "InvalidCredentialsError") {
                     res.sendStatus(401);
                 } else {

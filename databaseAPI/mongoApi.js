@@ -8,6 +8,23 @@ const CalculateBingo = require("./CalculateBingo");
 
 class MongoApi {
 
+
+
+    static isAdmin(username, callback){
+        MongoClient.connect(url, function (err, db) {
+            if (err == null) {
+                let collection = db.collection('admin');
+                collection.find({EIN: [username]} , function (err, result) {
+                    if (result != null) {
+                        callback(true);
+                    } else {
+                        callback(false);
+                    }
+                });
+            }
+        });
+    }
+
     /**
      * Ticket control
      *
@@ -512,41 +529,7 @@ class MongoApi {
             }
         });
     }
-    //For every user in rtwinners: get userTickets and calledNumbers to calculate real-time scores.
-    //Get nums remaining and calculate real-time scores, then update collection.
-    /*static calculateLeaderboard_RealTime() {
-        MongoApi.getAllUsernames(function (listOfUsers) {
-            MongoApi.getCalledNumbers(function (calledNums) {
 
-                for (let i = 0; i < listOfUsers.length; i++) {
-                    let username = listOfUsers[i][0];
-
-                    MongoApi.getUserTickets(username, function (ticketBook) {
-                        if ((ticketBook != null || ticketBook != "") && ticketBook) {
-                            let user = {user: username};
-                            user["numsLeft"] = CalculateBingo.numsRemaining(calledNums, ticketBook);
-                            let userFound = false;
-                            let winners = MongoApi.getWinners_RealTime();
-
-                            for (let i = 0; i < winners.length; i++) {
-                                if (winners[i].user == user.user) {
-                                    winners[i] = user;
-                                    userFound = true;
-                                    break;
-                                }
-                            }
-                            if (!userFound) {
-                                winners.push(user); //add new user to winners
-                            }
-                            MongoApi.updateWinners_RealTime(winners);
-                        } else {
-                            console.log("error getting User's tickets", username);
-                        }
-                    });
-                }
-            });
-        });
-    }*/
     static getWinners_RealTime(callback){
         MongoClient.connect(url, function (err, db) {
             if (err === null) {
@@ -602,9 +585,6 @@ class MongoApi {
                     let isItBingo = CalculateBingo.isItBingo(calledNums, tickets);
                     callback(isItBingo);
                 }
-                //getUserTickets returns multiple instances, cannot callback here, probably socket issues.
-                //console.log("Not bingo");
-                //callback(false);
             });
         });
     }

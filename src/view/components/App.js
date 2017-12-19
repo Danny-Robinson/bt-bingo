@@ -24,7 +24,7 @@ class App extends Component {
                     <Route path='/purchaseTickets' component={PurchaseTicketsPage} authorize={['user', 'admin']}/>
                     <Route path='/expiredTickets' component={ExpiredTicketsPage} authorize={['user']}/>
                     <Route path='/leaderboard' component={LeaderboardPage} authorize={['user']}/>
-                    <Route path='/admin' component={AdminPage} authorize={['admin']}/>
+                    <Route path='/admin123456' component={AdminPage} authorize={['admin']}/>
                     <Route path='/logout' component={LogoutPage}/>
                     <Route path='*' component={NotFoundPage}/>
                 </Router>
