@@ -26,7 +26,7 @@ const LoginForm = ( {handleLoginClick} ) => {
         </form>
 
     );
-}
+};
 
 
 export default LoginForm;

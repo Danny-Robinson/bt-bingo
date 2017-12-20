@@ -62,9 +62,6 @@ class PurchaseTicketsPage extends RoleAwareComponent {
     render()
     {
         return (
-            <div style={{ color:'white'}}>
-                <span>
-                    <NavigationBar/>
                     <div id="purchaseTickets">
                         <form onSubmit={this.handleSubmit}>
                             <fieldset>
@@ -76,10 +73,8 @@ class PurchaseTicketsPage extends RoleAwareComponent {
                                 <input type="submit" value="Purchase" />
                             </fieldset>
                         </form>
+                        <div>{this.state.message}</div>
                     </div>
-                </span>
-                <div>{this.state.message}</div>
-            </div>
         );
     }
 }

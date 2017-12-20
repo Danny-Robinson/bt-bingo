@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import LeaderScore from './LeaderScore';
-import JackpotComponent from '../JackpotComponent';
 
 class AllTimeLeaderboard extends React.Component {
 
@@ -14,32 +13,25 @@ class AllTimeLeaderboard extends React.Component {
             global_winners: []
         };
 
-        this._init = this._init.bind(this);
         this.refreshLeaderboard = this.refreshLeaderboard.bind(this);
         this.setLeaderboard = this.setLeaderboard.bind(this);
     }
 
-    componentDidMount() {
+    componentWillMount() {
         const { socket } = this.props;
-        socket.on('setLeaderboard_AllTime', this.setLeaderboard);
+        socket.on('setLeaderboard_AllTime', function (winners) {
+            this.setLeaderboard(winners);
+        }.bind(this));
         socket.on('refreshLeaderboard_AllTime', this.refreshLeaderboard);
         socket.emit('getLeaderboard_AllTime');
     }
 
     componentWillUnmount() {
         const { socket } = this.props;
-        socket.on('setLeaderboard_AllTime');
-        socket.on('refreshLeaderboard_AllTime');
+        socket.off('setLeaderboard_AllTime');
+        socket.off('refreshLeaderboard_AllTime');
     }
 
-    _init(data){
-
-        let winners = data["winners"];
-        this.setState({
-            global_winners: winners
-        });
-        console.log("_init_:", this.state.global_winners);
-    }
     componentWillReceiveProps(nextProps){
         this.setState({
             nextProps
@@ -52,11 +44,9 @@ class AllTimeLeaderboard extends React.Component {
         socket.emit('getLeaderboard_AllTime');
     }
 
-    setLeaderboard(data){
-
-        let winners = data["winners"];
+    setLeaderboard(winners){
         this.setState({
-            global_winners: winners
+            global_winners: winners['winners']
         });
         console.log("setLeaderboard_AllTime:", this.state.global_winners);
     }
@@ -73,7 +63,7 @@ class AllTimeLeaderboard extends React.Component {
                              <LeaderScore
                                  key={i}
                                  user={winner.user}
-                                 score={"£"+winner.winnings.toFixed(2)}
+                                 score={"£"+winner.winnings}
                              />
                          );
                      })

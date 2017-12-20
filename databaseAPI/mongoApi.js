@@ -398,7 +398,7 @@ class MongoApi {
                 if (winnings != null || winnings == "NaN") {
                     collection.findOneAndUpdate(findByUsername, {$set: {"userWinnings": winnings}});
                 }else {
-                    collection.findOneAndUpdate(findByUsername, {$set: {"userWinnings": 0}});
+                    //collection.findOneAndUpdate(findByUsername, {$set: {"userWinnings": 0}});
                 }
             }
         });

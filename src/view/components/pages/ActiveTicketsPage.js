@@ -13,7 +13,6 @@ import RealTimeLeaderboard from '../leaderboards/RealTimeLeaderboard';
 import * as styles from '../../../../css/pages/_activeTickets.scss';
 import socket from '../static/socket';
 
-
 class ActiveTicketsPage extends RoleAwareComponent {
     constructor(props) {
         super(props);
@@ -50,10 +49,9 @@ class ActiveTicketsPage extends RoleAwareComponent {
             return;
         }
         let user = userSession["sessionID"];
-        socket.emit('getUserTickets', user);  //Can be changed to get ticket by user, eliminates below for loop
+        socket.emit('getUserTickets', user);
         socket.on('deliverTicket', function (book) {
             book = JSON.parse(book);
-            //console.log(book);
             this.setBook(JSON.parse(book));
          }.bind(this));
     }

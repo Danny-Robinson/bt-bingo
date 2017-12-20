@@ -193,19 +193,19 @@ module.exports = (app, port) => {
                 socket.broadcast.emit('updatePTPMessage',data);
             });
 
+            gameStatus = "";
             socket.on('startNewGame',function(){
                 console.log("Starting new game...");
-
+                gameStatus = "Started";
                 //Notify all clients that game is about to start
                 socket.emit('newGameReady');
                 socket.broadcast.emit('newGameReady');
             });
             socket.on('endGame',function(){
                 console.log("Ending game...");
-
-                console.log("Ending game...");
-                mongoApi.logAllUsersOut();
+                //mongoApi.logAllUsersOut();
                 socket.emit('loggedUsersOut');
+                gameStatus = "Stopped";
 
                 //Notify all clients that game finished
                 socket.emit('gameEnded');
@@ -215,7 +215,6 @@ module.exports = (app, port) => {
                 console.log("Resetting game...");
             });
             socket.on('getGameStatus', function () {
-                let gameStatus = "Started";
                 //socket.emit('gotGameStatus',gameStatus);
             });
 
@@ -228,34 +227,38 @@ module.exports = (app, port) => {
             socket.on('getBingo', function(userSessionId){
                 mongoApi.getUsernameFromSessionId(userSessionId, function (username) {
                     mongoApi.getBingo(username, function (bingo) {
-
                         socket.emit('deliverBingo', bingo);
-                        if (bingo) {
+                        if (bingo && gameStatus=="Started") {
+                            addToLeaderboard(username);
                             socket.broadcast.emit('gameEnded');
+                            gameStatus = "Stopped";
                             socket.broadcast.emit('adminWinner', username);
-                            mongoApi.getUserWinnings(username, function (prev_winnings) {
-                                if (prev_winnings == null || prev_winnings == "" || prev_winnings == "NaN") {
-                                    return;
-                                }
-                                mongoApi.getCurrentJackpot(function (current_jackpot) {
-                                    if (current_jackpot!= 0 && (current_jackpot== null || current_jackpot == "")) {
-                                        return;
-                                    }
-                                    if (prev_winnings != "NaN" || prev_winnings != null) {
-                                        let new_winnings = +prev_winnings + +(current_jackpot);
-                                        mongoApi.upsertLeader_AllTime({
-                                            "user": username,
-                                            "winnings": [new_winnings]
-                                        }, function (userWinnings) {
-                                            socket.emit('setLeaderboard_AllTime', userWinnings);
-                                            socket.emit('refreshLeaderboard_AllTime', userWinnings);
-                                        });
-                                        mongoApi.updateUserWinnings(username, new_winnings);
-                                    }else{
-                                        mongoApi.updateUserWinnings(username, 0);
-                                    }
-                                });
+                        }
+                    });
+                });
+            });
+
+            let addToLeaderboard = (function (username) {
+                mongoApi.getUserWinnings(username, function (prev_winnings) {
+                    // if (prev_winnings == null || prev_winnings == "" || prev_winnings == "NaN") {
+                    //     return;
+                    // }
+                    mongoApi.getCurrentJackpot(function (current_jackpot) {
+                        if (current_jackpot!= 0 && (current_jackpot== null || current_jackpot == "")) {
+                            return;
+                        }
+                        if (prev_winnings != "NaN" || prev_winnings != null) {
+                            let new_winnings = +prev_winnings + +(current_jackpot);
+                            mongoApi.upsertLeader_AllTime({
+                                "user": username,
+                                "winnings": [new_winnings]
+                            }, function (userWinnings) {
+                                socket.emit('setLeaderboard_AllTime', userWinnings);
+                                socket.emit('refreshLeaderboard_AllTime', userWinnings);
                             });
+                            mongoApi.updateUserWinnings(username, new_winnings);
+                        }else{
+                            mongoApi.updateUserWinnings(username, 0);
                         }
                     });
                 });
