@@ -22,6 +22,12 @@ class Chat extends Component {
         this._userJoined = this._userJoined.bind(this);
         this._userLeft = this._userLeft.bind(this);
     }
+    scrollChatBottom = () => {
+        console.log("scrolling");
+        let objDiv = document.getElementById("messId");
+        objDiv.scrollTop = objDiv.scrollHeight;
+    };
+
 
     componentDidMount() {
         const { socket } = this.props;
@@ -30,6 +36,7 @@ class Chat extends Component {
         socket.on('change:name', this._userChangedName);
         socket.on('user:join', this._userJoined);
         socket.on('user:left', this._userLeft);
+        socket.on('send:scroll', this.scrollChatBottom);
     }
 
     componentWillUnmount() {
@@ -38,6 +45,7 @@ class Chat extends Component {
         this.props.socket.off('change:name');
         this.props.socket.off('user:join');
         this.props.socket.off('user:left');
+        this.props.socket.off('send:scroll');
     }
 
 
@@ -50,6 +58,7 @@ class Chat extends Component {
         let {messages} = this.state;
         messages.push(message);
         this.setState({messages});
+        this.scrollChatBottom();
     }
 
     _userJoined(data) {
@@ -61,6 +70,7 @@ class Chat extends Component {
             text : name +' Joined'
         });
         this.setState({users, messages});
+        this.scrollChatBottom();
     }
 
     _userLeft(data) {
@@ -73,6 +83,7 @@ class Chat extends Component {
             text : name +' Left'
         });
         this.setState({users, messages});
+        this.scrollChatBottom();
     }
 
     _userChangedName(data) {
@@ -85,6 +96,7 @@ class Chat extends Component {
             text : 'Change Name : ' + oldName + ' ==> '+ newName
         });
         this.setState({users, messages});
+        this.scrollChatBottom();
     }
 
     handleMessageSubmit(message) {

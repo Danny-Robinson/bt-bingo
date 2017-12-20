@@ -55,6 +55,7 @@ module.exports = (app, port) => {
                     user: data.user,
                     text: data.text
                 });
+                socket.emit('send:scroll');
             });
             // validate a user's name change, and broadcast it on success
             socket.on('change:name', function (data, fn) {

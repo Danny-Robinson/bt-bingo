@@ -1,15 +1,70 @@
-div#purchaseTickets {
-    height:400px;
-    width:500px;
-    background:rgba(8, 83, 140, 0.5);
-    margin-left:auto;
-    margin-right:auto;
-    left:0;
-    right:0;
-    margin-top:200px;
-    border-style:groove;
-    border-width:1px;
-    border-radius:10px;
-    box-shadow:0 0 20px black;
+div .Modal-modal-0-1-3 {
+    background: rgba(8, 83, 140, 0.9);
+    border-style: groove;
+    border-width: 1px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px black;
     z-index: 2;
+
+    div#purchaseTickets {
+        height: 300px;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+        left: 0;
+        right: 0;
+        margin-top: 100px;
+        border-radius: 10px;
+        text-align:center;
+
+        > form fieldset h1 {
+            color:white;
+        }
+
+        > form fieldset input[type="submit"] {
+            width:50%;
+            height:50px;
+            color:#08538c;
+            border-radius:5px;
+            background-color:white;
+            margin-left:auto;
+            margin-right:auto;
+            font-size:1.3em;
+        }
+
+        > form fieldset input[type="number"] {
+            width:70%;
+            height:50px;
+            border-radius:10px;
+            margin-right:auto;
+            margin-left:auto;
+            margin-top: 20px;
+            margin-bottom: 5px;
+            font-size:1.3em;
+            padding-left:10px;
+            background:transparent;
+            border-style:groove;
+            color:white;
+        }
+
+        > form fieldset input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            cursor:pointer;
+            display:block;
+            width:8px;
+            color: #333;
+            text-align:center;
+            position:relative;
+        }
+
+        > form fieldset input[type=number]:hover::-webkit-inner-spin-button {
+            background: #eee url('http://i.stack.imgur.com/YYySO.png') no-repeat 50% 50%;
+            width: 10px;
+            height: 16px;
+            padding: 4px;
+            position: relative;
+            right: 4px;
+            border-radius: 14px;
+        }
+    }
 }

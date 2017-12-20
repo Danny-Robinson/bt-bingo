@@ -62,19 +62,18 @@ class PurchaseTicketsPage extends RoleAwareComponent {
     render()
     {
         return (
-                    <div id="purchaseTickets">
-                        <form onSubmit={this.handleSubmit}>
-                            <fieldset>
-                                <legend color="white">Purchase up to 6 tickets</legend>
-                                <label>
-                                    Name:
-                                    <input type="number" value={this.state.number} min="1" max="6" onChange={e => { this.setState({number: e.target.value}) }} />
-                                </label>
-                                <input type="submit" value="Purchase" />
-                            </fieldset>
-                        </form>
-                        <div>{this.state.message}</div>
-                    </div>
+            <div id="purchaseTickets">
+                <form onSubmit={this.handleSubmit}>
+                    <fieldset>
+                        <h1 color="white">Bingo Tickets, £1 each!</h1>
+                        <label>
+                            <input type="number" value={this.state.number} min="1" max="6" onChange={e => { this.setState({number: e.target.value}) }} />
+                        </label>
+                        <input type="submit" value="Buy Now" />
+                    </fieldset>
+                </form>
+                <div>{this.state.message}</div>
+            </div>
         );
     }
 }

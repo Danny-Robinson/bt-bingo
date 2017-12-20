@@ -30,7 +30,7 @@ nav{
 
             a {
                 height:60px;
-                padding-top:10px;
+                padding-top:16px;
                 display:block;
                 text-decoration:none;
                 color:white;
@@ -47,6 +47,33 @@ nav{
 
             a:hover, a:active {
                 text-decoration:none;
+            }
+
+            > button {
+                width: 140px;
+                height: 58px;
+                text-align:center;
+                background-color:#551a8b;
+                color:white;
+                border:none !important;
+
+
+                @media screen and (max-width:758px) {
+                    width:100%;
+                    font-size: 1.5em;
+                }
+
+                @media screen and (max-width: 354px) {
+                    font-size:1em;
+                }
+
+            }
+
+            > button:hover {
+                list-style-type:none;
+                text-decoration:none;
+                background-color:deeppink;
+                color:#551a8b;
             }
         }
 

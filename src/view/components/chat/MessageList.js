@@ -9,7 +9,7 @@ class MessageList extends Component {
     render() {
         const { messages } = this.props;
         return (
-            <div className='messages'>
+            <div className='messages' id="messId">
                 <h3> Conversation: </h3>
                 {
                     messages.map((message, i) => {

@@ -35,7 +35,6 @@ class NavigationBar extends Component {
         }
         let user = userSession["sessionID"];
         socket.emit('getUserTickets', user);
-
     }
 
 
