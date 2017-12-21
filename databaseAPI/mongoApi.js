@@ -9,11 +9,13 @@ const CalculateBingo = require("./CalculateBingo");
 class MongoApi {
 
     static closeConnection(db){
-        setTimeout(function(){ db.close(); }, 3000);
+        //setTimeout(function(){ db.close(); }, 3000);
     }
 
     static isAdmin(username, callback){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url, {
+                poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('admin');
                 collection.find({EIN: [username]} , function (err, result) {
@@ -36,7 +38,9 @@ class MongoApi {
      */
 
     static clearTickets(user){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 console.log("Connected successfully to server");
                 let collection = db.collection('tickets');
@@ -49,7 +53,9 @@ class MongoApi {
     }
 
     static clearNumTickets(user){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('numTicketsPurchased');
                 let userObject = {};
@@ -63,7 +69,9 @@ class MongoApi {
     }
 
     static addTicket(ticket, user) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 console.log("Connected successfully to server");
                 MongoApi.insertTicket(db, ticket, user, function () {
@@ -73,7 +81,9 @@ class MongoApi {
         });
     }
     static getAllTickets(callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 MongoApi.findDocuments(db, function (result) {
                     callback(result);
@@ -84,7 +94,9 @@ class MongoApi {
         callback("");
     }
     static getUserTickets(user, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let userObject = {};
                 userObject[user] = {$exists: true};
@@ -108,7 +120,9 @@ class MongoApi {
      *  @param randomNums
      */
     static pushCalledNumSet(randomNums) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 MongoApi.getCalledNumbers(function (numbers) {
                     for (let y = 0; y < randomNums.length; y++) {
@@ -135,7 +149,9 @@ class MongoApi {
      * @param callback
      */
     static getCalledNumbers(callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('calledNumbers');
                 collection.findOne({"numbers": {$exists: true}}, function (err, result) {
@@ -182,7 +198,9 @@ class MongoApi {
      * Gets the username from the existing sessionId value.
      **/
     static getUsernameFromSessionId(sessionId, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('users');
                 let findBySession = {sessionId: sessionId};
@@ -198,7 +216,9 @@ class MongoApi {
         });
     }
     static getUserFromSessionId(sessionId, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('users');
                 let findBySession = {sessionId: sessionId};
@@ -225,7 +245,9 @@ class MongoApi {
         });
     }
     static logUserOut(username){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('users');
                 console.log("logging UserOut:",username);
@@ -247,7 +269,9 @@ class MongoApi {
         });
     }
     static userLoggedIn(user, callback){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null && user != null) {
                 let collection = db.collection('users');
                 let findByUser = {username: user.username};
@@ -270,7 +294,9 @@ class MongoApi {
         });
     }
     static getAllUsernames(callback){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('users');
                 collection.find().toArray(function (err, listOfUsers) {
@@ -297,7 +323,9 @@ class MongoApi {
     *                 }
      **/
     static storeUserSession(user, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('users');
                 /*
@@ -331,7 +359,9 @@ class MongoApi {
      * Removes user sessionId from the database.
      **/
     static removeUserSession(sessionId, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('users');
                 let deleteEntity = {sessionId: sessionId};
@@ -352,7 +382,9 @@ class MongoApi {
         callback("");
     }
     static getUserTypeFromSessionId(sessionId, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('users');
                 let findBySession = {sessionId: sessionId};
@@ -389,7 +421,9 @@ class MongoApi {
      * @param callback
      */
     static getUserWinnings(user, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('winners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
@@ -411,7 +445,9 @@ class MongoApi {
         });
     }
     static updateUserWinnings(username, winnings) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let findByUsername = {username: username};
                 let collection = db.collection('users');
@@ -425,7 +461,9 @@ class MongoApi {
         });
     }
     static resetUserWinnings() {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 console.log("resettingUserWinnings");
                 let collection = db.collection('users');
@@ -445,7 +483,9 @@ class MongoApi {
      * @param callback
      */
     static getLeaderBoard_AllTime(callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('winners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
@@ -460,7 +500,9 @@ class MongoApi {
      * @param leader_AllTime - format: {"user": "x", "numsleft": "Y"}
      */
     static upsertLeader_AllTime(leader_AllTime, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
 
                 let collection = db.collection('winners');
@@ -490,7 +532,9 @@ class MongoApi {
         });
     }
     static resetLeaderboard_AllTime() {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('winners');
                 collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
@@ -510,7 +554,9 @@ class MongoApi {
      * @param callback
      */
     static getLeaderboard_RealTime(callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('rtwinners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
@@ -533,7 +579,9 @@ class MongoApi {
      * @param leader_RealTime - format: {"user": "x", "numsLeft": Y}
      */
     static upsertLeader_RealTime(leader_RealTime, callback) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('rtwinners');
 
@@ -558,7 +606,9 @@ class MongoApi {
     }
 
     static getWinners_RealTime(callback){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('rtwinners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
@@ -574,7 +624,9 @@ class MongoApi {
         });
     }
     static updateWinners_RealTime(winners){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err === null) {
                 let collection = db.collection('rtwinners');
                 collection.findOne({"winners": {$exists: true}}, function (err, result) {
@@ -644,7 +696,9 @@ class MongoApi {
      * @param callback
      */
     static getNumTicketsPurchased(callback){
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 let collection = db.collection('numTicketsPurchased');
                 collection.find().toArray(function (err, numTicketsPurchasedList) {
@@ -750,7 +804,9 @@ class MongoApi {
      * @param number
      */
     static addNumTickets(username, number) {
-        MongoClient.connect(url, function (err, db) {
+        MongoClient.connect(url,{
+            poolSize: 100
+        }, function (err, db) {
             if (err == null) {
                 MongoApi.insertNumTickets(db, username, number, function () {
                     MongoApi.closeConnection(db);

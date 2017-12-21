@@ -77,17 +77,17 @@ class AdminPage extends RoleAwareComponent {
     callNewNum = () => {
         console.log("callSetOfNums:",1);
         socket.emit('callNewNumSet',1);
-        socket.emit('getCalledNumbers');
         socket.emit('calculateLeaderboard_RealTime');
         socket.emit('getLeaderboard_RealTime');
+        socket.emit('getCalledNumbers');
         //socket.emit('reRenderAllComponents');
     };
     callSetOfNums = () => {
         console.log("callSetOfNums:",this.state.callNumSetSize);
         socket.emit('callNewNumSet',this.state.callNumSetSize);
-        socket.emit('getCalledNumbers');
         socket.emit('calculateLeaderboard_RealTime');
         socket.emit('getLeaderboard_RealTime');
+        socket.emit('getCalledNumbers');
         //socket.emit('reRenderAllComponents');
     };
 
