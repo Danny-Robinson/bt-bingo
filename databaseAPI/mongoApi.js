@@ -8,7 +8,9 @@ const CalculateBingo = require("./CalculateBingo");
 
 class MongoApi {
 
-
+    static closeConnection(db){
+        setTimeout(function(){ db.close(); }, 3000);
+    }
 
     static isAdmin(username, callback){
         MongoClient.connect(url, function (err, db) {
@@ -22,6 +24,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -41,6 +44,7 @@ class MongoApi {
                     //console.log(result);
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -54,6 +58,7 @@ class MongoApi {
                     //console.log(result);
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -62,7 +67,7 @@ class MongoApi {
             if (err == null) {
                 console.log("Connected successfully to server");
                 MongoApi.insertTicket(db, ticket, user, function () {
-                    db.close();
+                    MongoApi.closeConnection(db);
                 });
             }
         });
@@ -72,6 +77,7 @@ class MongoApi {
             if (err == null) {
                 MongoApi.findDocuments(db, function (result) {
                     callback(result);
+                    MongoApi.closeConnection(db);
                 });
             }
         });
@@ -87,6 +93,7 @@ class MongoApi {
                     if(docs != null){
                         callback(docs);
                     }
+                    MongoApi.closeConnection(db);
                 });
             }
         });
@@ -117,6 +124,7 @@ class MongoApi {
                     MongoApi.setNumbers(numbers, db);
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -144,6 +152,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static setNumbers(numbers, db) {
@@ -158,6 +167,7 @@ class MongoApi {
                 let collection = db.collection('calledNumbers');
                 collection.updateOne({"numbers": {$exists: true}}, {$set: {"numbers": []}});
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -184,6 +194,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static getUserFromSessionId(sessionId, callback) {
@@ -200,6 +211,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static logAllUsersOut(){
@@ -231,6 +243,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static userLoggedIn(user, callback){
@@ -253,6 +266,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static getAllUsernames(callback){
@@ -271,6 +285,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -309,6 +324,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     /**
@@ -331,6 +347,7 @@ class MongoApi {
                     callback("");
                 });*/
             }
+            MongoApi.closeConnection(db);
         });
         callback("");
     }
@@ -347,6 +364,7 @@ class MongoApi {
                 });
 
             }
+            MongoApi.closeConnection(db);
         });
     }
     static getUserTypeFromUsername(username, callback) {
@@ -361,6 +379,7 @@ class MongoApi {
                 });
 
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -388,6 +407,7 @@ class MongoApi {
                     callback(0);
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static updateUserWinnings(username, winnings) {
@@ -401,6 +421,7 @@ class MongoApi {
                     //collection.findOneAndUpdate(findByUsername, {$set: {"userWinnings": 0}});
                 }
             }
+            MongoApi.closeConnection(db);
         });
     }
     static resetUserWinnings() {
@@ -410,6 +431,7 @@ class MongoApi {
                 let collection = db.collection('users');
                 collection.updateMany({}, {$set: {"userWinnings": 0}});
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -430,6 +452,7 @@ class MongoApi {
                     callback(result);
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     /**
@@ -463,6 +486,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static resetLeaderboard_AllTime() {
@@ -473,6 +497,7 @@ class MongoApi {
                 // resets the users' winnings in 'users' db.
                 MongoApi.resetUserWinnings();
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -500,6 +525,7 @@ class MongoApi {
                     callback(result);
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     /**
@@ -527,6 +553,7 @@ class MongoApi {
                     callback(winners);
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -543,6 +570,7 @@ class MongoApi {
                     callback(winners);
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static updateWinners_RealTime(winners){
@@ -557,6 +585,7 @@ class MongoApi {
                     collection.updateOne(result, {$set: {"winners": winners}});
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
     static resetLeaderboard_RealTime() {
@@ -566,6 +595,7 @@ class MongoApi {
                 collection.findOneAndUpdate({"winners": {$exists: true}}, {$set: {"winners": []}});
                 //MongoApi.resetUserWinnings();
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -632,6 +662,7 @@ class MongoApi {
                     }
                 });
             }
+            MongoApi.closeConnection(db);
         });
     }
 
@@ -649,7 +680,7 @@ class MongoApi {
                     {ticket: JSON.stringify(tick)}
                 ;
             MongoApi.insertDocuments(db, doc, function () {
-                db.close;
+                MongoApi.closeConnection(db);
             });
         });
     };
@@ -722,7 +753,7 @@ class MongoApi {
         MongoClient.connect(url, function (err, db) {
             if (err == null) {
                 MongoApi.insertNumTickets(db, username, number, function () {
-                    db.close();
+                    MongoApi.closeConnection(db);
                 });
             }
         });

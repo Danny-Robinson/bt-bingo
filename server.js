@@ -28,10 +28,9 @@ module.exports = (app, port) => {
         });
         console.log(`Server running at http://localhost: ${port}`);
 
-
         io.on('connection', (socket) => {
 
-            process.on('uncaughtException', function (err) {
+            process.once('uncaughtException', function (err) {
                 console.error(err.stack);
                 console.log("Node NOT Exiting...");
             });
@@ -229,11 +228,11 @@ module.exports = (app, port) => {
                 mongoApi.getUsernameFromSessionId(userSessionId, function (username) {
                     mongoApi.getBingo(username, function (bingo) {
                         socket.emit('deliverBingo', bingo);
+                        socket.broadcast.emit('adminWinner', username);
                         if (bingo && gameStatus=="Started") {
                             addToLeaderboard(username);
                             socket.broadcast.emit('gameEnded');
                             gameStatus = "Stopped";
-                            socket.broadcast.emit('adminWinner', username);
                         }
                     });
                 });
