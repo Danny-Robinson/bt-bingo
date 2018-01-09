@@ -12,6 +12,9 @@ Kanban board at https://drive.google.com/file/d/0B8sUXLkW28t2dm9GdVY0ZW1rVXc/vie
 Main Page
 ![alt text](screenshots/MainPage.PNG "Home Page")
 
+Responsive layouts
+![alt text](screenshots/ResponsiveCollage.PNG "Viewport responsive design")
+
 Login Screen
 ![alt text](screenshots/LoginScreen.PNG "Login Screen")
 
@@ -21,8 +24,7 @@ Buy ticket popup
 Admin page <br />
 ![alt text](screenshots/Admin.PNG "Admin functionality")
 
-Responsive Designs
-![alt text](screenshots/ResponsiveCollage.PNG "Viewport responsive design")
+
 
 
 
