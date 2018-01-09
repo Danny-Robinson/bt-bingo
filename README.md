@@ -9,7 +9,7 @@ DEV - npm run dev | PROD - npm start <br />
  <br />
 Kanban board at https://drive.google.com/file/d/0B8sUXLkW28t2dm9GdVY0ZW1rVXc/view?usp=sharing
 
-![alt text](screenshots/FullPage.PNG "Home Page")
+![alt text](screenshots/MainPage.PNG "Home Page")
 ![alt text](screenshots/LoginScreen.PNG "Login Screen")
 ![alt text](screenshots/TicketBuyModal.PNG "Purchase tickets modal")
 ![alt text](screenshots/Admin.PNG "Admin functionality")
