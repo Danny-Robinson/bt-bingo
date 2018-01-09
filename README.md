@@ -11,7 +11,7 @@ Kanban board at https://drive.google.com/file/d/0B8sUXLkW28t2dm9GdVY0ZW1rVXc/vie
 
 ![alt text](screenshots/FullPage.PNG "Home Page")
 ![alt text](screenshots/LoginScreen.PNG "Login Screen")
-![alt text](screenshots/PurchaseTickets.PNG "Purchase tickets modal")
+![alt text](screenshots/TicketBuyModal.PNG "Purchase tickets modal")
 ![alt text](screenshots/Admin.PNG "Admin functionality")
 ![alt text](screenshots/ResponsiveCollage.PNG "Viewport responsive design")
 
