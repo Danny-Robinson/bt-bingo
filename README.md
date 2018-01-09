@@ -18,7 +18,7 @@ Login Screen
 Buy ticket popup
 ![alt text](screenshots/TicketBuyModal.PNG "Purchase tickets modal")
 
-Admin page
+Admin page <br />
 ![alt text](screenshots/Admin.PNG "Admin functionality")
 
 Responsive Designs
